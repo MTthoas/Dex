@@ -1,24 +1,29 @@
 import React from "react";
+import Landpage from "./modules/landpage/Landpage";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Header from "./modules/header/Header";
+import Footer from "./modules/footer/Footer";
 
-function App() {
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <>
+      <Router>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh",
+          }}
         >
-          Learn React
-        </a>
-        <h1 className="text-3xl font-bold underline">Hello world!</h1>
-      </header>
-    </div>
+          <main style={{ flex: "1" }}>
+            <Header />
+            <Routes>
+              <Route path="/" element={<Landpage />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </Router>
+    </>
   );
 }
-
-export default App;
