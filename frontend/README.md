@@ -1,46 +1,86 @@
-# Getting Started with Create React App
+# React + Vite + TypeScript Template (react-vite-ui)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Dan5py/react-vite-ui/blob/main/LICENSE)
 
-## Available Scripts
+A React + Vite template powered by shadcn/ui.
 
-In the project directory, you can run:
+## 🎉 Features
 
-### `npm start`
+- **React** - A JavaScript library for building user interfaces.
+- **Vite** - A fast, opinionated frontend build tool.
+- **TypeScript** - A typed superset of JavaScript that compiles to plain JavaScript.
+- **Tailwind CSS** - A utility-first CSS framework.
+- **Tailwind Prettier Plugin** - A Prettier plugin for formatting Tailwind CSS classes.
+- **ESLint** - A pluggable linting utility for JavaScript and TypeScript.
+- **PostCSS** - A tool for transforming CSS with JavaScript.
+- **Autoprefixer** - A PostCSS plugin to parse CSS and add vendor prefixes.
+- **shadcn/ui** - Beautifully designed components that you can copy and paste into your apps.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## ⚙️ Prerequisites
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Make sure you have the following installed on your development machine:
 
-### `npm test`
+- Node.js (version 16 or above)
+- pnpm (package manager)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🚀 Getting Started
 
-### `npm run build`
+Follow these steps to get started with the react-vite-ui template:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clone the repository:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   ```bash
+   git clone https://github.com/dan5py/react-vite-ui.git
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. Navigate to the project directory:
 
-### `npm run eject`
+   ```bash
+   cd react-vite-ui
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+3. Install the dependencies:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   ```bash
+   pnpm install
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+4. Start the development server:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+   ```bash
+   pnpm dev
+   ```
 
-## Learn More
+## 📜 Available Scripts
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- pnpm dev - Starts the development server.
+- pnpm build - Builds the production-ready code.
+- pnpm lint - Runs ESLint to analyze and lint the code.
+- pnpm preview - Starts the Vite development server in preview mode.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 📂 Project Structure
+
+The project structure follows a standard React application layout:
+
+```python
+react-vite-ui/
+  ├── node_modules/      # Project dependencies
+  ├── public/            # Public assets
+  ├── src/               # Application source code
+  │   ├── components/    # React components
+  │   │   └── ui/        # shadc/ui components
+  │   ├── styles/        # CSS stylesheets
+  │   ├── lib/           # Utility functions
+  │   ├── App.tsx        # Application entry point
+  │   └── index.tsx      # Main rendering file
+  ├── .eslintrc.json     # ESLint configuration
+  ├── index.html         # HTML entry point
+  ├── postcss.config.js  # PostCSS configuration
+  ├── tailwind.config.js # Tailwind CSS configuration
+  ├── tsconfig.json      # TypeScript configuration
+  └── vite.config.ts     # Vite configuration
+```
+
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](https://choosealicense.com/licenses/mit/) file for details.
