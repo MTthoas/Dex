@@ -1,17 +1,18 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
+import { Button } from "../ui/button";
 
 export default function Header() {
   return (
-    <header className="bg-white">
+    <header className="dark">
       <nav
-        className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2 lg:px-8"
+        className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2 lg:px-8 mt-5"
         aria-label="Global"
       >
         <div className="flex lg:flex-1">
           <Link to="/" className="-m-1.5 p-1.5">
               <div className="flex flex-col">
-                <span className="text-sm font-semibold leading-5 text-gray-900 mt-5">
+                <span className="text-lg font-semibold leading-5 text-white">
                   Genx
                 </span>
               </div>
@@ -20,7 +21,7 @@ export default function Header() {
         <div className="flex lg:hidden">
           <button
             type="button"
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-white"
           >
             <span className="sr-only">Open main menu</span>
             <svg
@@ -39,7 +40,7 @@ export default function Header() {
             </svg>
           </button>
         </div>
-        <div className="hidden lg:flex lg:gap-x-12 pt-4">
+        <div className="hidden lg:flex lg:gap-x-12 pt-2">
           {/* <div className="relative">
                     <button type="button" className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900" aria-expanded="false">
                     Lorem
@@ -50,15 +51,22 @@ export default function Header() {
 
                 </div> */}
 
-          <p className="text-sm font-semibold leading-6 text-gray-900">
-            <NavLink to={"/projectList"}>Projects</NavLink>
-          </p>
+            <p className="text-sm font-semibold leading-6 text-white">
+                <NavLink to={"/projectList"}>Projects</NavLink>
+            </p>
 
-          <p className="text-sm font-semibold leading-6 text-gray-900">
-            <NavLink to={"/dashboard"}>Dashboard</NavLink>
+            <p className="text-sm font-semibold leading-6 text-white">
+                <NavLink to={"/dashboard"}>Dashboard</NavLink>
+            </p>
+            <p className="text-sm font-semibold leading-6 text-white">
+                <NavLink to={"/tokens"}>Tokens</NavLink>
           </p>
         </div>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end"></div>
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+            <Button variant="outline" className="text-sm font-semibold leading-6 bg-default text-white hover:bg-primary/90">
+                Connect to wallet
+            </Button>
+        </div>
       </nav>
     </header>
   );
