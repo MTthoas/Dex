@@ -1,16 +1,20 @@
 package main
 
 import (
-    "github.com/MTthoas/dex/api/src/routes"
-    "github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
+	"github.com/MTthoas/dex/api/controllers"
 )
 
 func main() {
-    router := gin.Default()
+    app := fiber.New()
 
-    // Configuration des routes
-    routes.InitializeRoutes(router)
+    app.Get("/", func(c *fiber.Ctx) error {
+        return c.SendString("Hello, World!")
+    })
 
-    // Démarrer le serveur
-    router.Run(":8080")
+	app.Get("/coins", controllers.GetCoins)
+
+	
+
+    app.Listen(":3000")
 }
