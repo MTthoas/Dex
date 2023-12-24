@@ -6,22 +6,49 @@ import (
 	"log"
 	"fmt"
 	"net/http"
+	"io/ioutil"
+	"bytes"
+	"os"
+	"github.com/joho/godotenv"
 )
-var ApiUrl = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=ethereum-ecosystem&order=market_cap_desc&per_page=30&page=1&sparkline=false&locale=en"
 
+func goDotEnvVariable(key string) string {
+
+	// load .env file
+	err := godotenv.Load(".env")
+  
+	if err != nil {
+	  log.Fatalf("Error loading .env file")
+	}
+  
+	return os.Getenv(key)
+  }
+  
 func ScrapeEthereumTokens() []models.Token {
-    // Faire une requête GET à l'API
-    resp, err := http.Get(ApiUrl)
-    if err != nil {
-        log.Fatal("Erreur lors de la requête à l'API :", err)
+
+	apiUrl := goDotEnvVariable("API_URL")
+
+    resp, err := http.Get(apiUrl)
+    if err != nil {	
+		fmt.Println("Erreur lors de la requête GET :", err)
     }
     defer resp.Body.Close()
+
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal("Erreur lors de la lecture de la réponse :", err)
+	}
+	bodyString := string(bodyBytes)
+	fmt.Println("Réponse brute de l'API :", bodyString)
+
+	// Réinitialiser le body pour le décodage JSON
+	resp.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 
     // Décoder le JSON reçu
     var tokens []models.Token
 	err = json.NewDecoder(resp.Body).Decode(&tokens)
 	if err != nil {
-		log.Fatal("Erreur lors du décodage du JSON :", err)
+		fmt.Println("Erreur lors du décodage JSON :", err)
 	}
 
 
