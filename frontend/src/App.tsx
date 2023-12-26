@@ -1,24 +1,30 @@
-import React from "react";
+import Landpage from "./components/landpage/Landpage";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Header from "./components/header/Header";
+import Footer from "./components/footer/Footer";
+import TokenPage from "./components/tokens/TokenPage";
 
-function App() {
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <>
+      <Router>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh",
+          }}
         >
-          Learn React
-        </a>
-        <h1 className="text-3xl font-bold underline">Hello world!</h1>
-      </header>
-    </div>
+          <main style={{ flex: "1" }}>
+            <Header />
+            <Routes>
+                <Route path="/" element={<Landpage />} />
+                <Route path="/tokens" element={<TokenPage />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </Router>
+    </>
   );
 }
-
-export default App;
