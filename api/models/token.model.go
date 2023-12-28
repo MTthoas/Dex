@@ -1,6 +1,7 @@
 package models
 
 type Token struct {
+	Id                        string  `json:"id"`
     Name                      string  `json:"name"`
     Symbol                    string  `json:"symbol"`
     Image                     string  `json:"image"`

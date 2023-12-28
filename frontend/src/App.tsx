@@ -1,4 +1,3 @@
-import React from "react";
 import Landpage from "./components/landpage/Landpage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/header/Header";

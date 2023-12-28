@@ -1,6 +1,6 @@
 module github.com/MTthoas/dex/api
 
-go 1.21.1
+go 1.23
 
 require (
 	github.com/daoleno/uniswap-sdk-core v0.1.5
@@ -16,6 +16,7 @@ require (
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
 	github.com/gofiber/fiber/v2 v2.51.0 // indirect
 	github.com/google/uuid v1.4.0 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/labstack/echo v3.3.10+incompatible // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
