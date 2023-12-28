@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
 import TokenPage from "./components/tokens/TokenPage";
+import SwapPage from "./components/swap/SwapPage";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
             <Routes>
                 <Route path="/" element={<Landpage />} />
                 <Route path="/tokens" element={<TokenPage />} />
+                <Route path="/swapPage" element={<SwapPage />} />
             </Routes>
           </main>
           <Footer />
