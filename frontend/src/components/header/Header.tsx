@@ -63,11 +63,14 @@ export default function Header() {
         <div className="hidden lg:flex lg:gap-x-12 pt-2">
 
             <p className="text-sm font-semibold leading-6 text-white">
-                <NavLink to={"/projectList"}>Projects</NavLink>
+                <NavLink to={"/swapPage"}>Swap</NavLink>
             </p>
 
             <p className="text-sm font-semibold leading-6 text-white">
                 <NavLink to={"/dashboard"}>Dashboard</NavLink>
+            </p>
+            <p className="text-sm font-semibold leading-6 text-white">
+                <NavLink to={"/tokens"}>Pools</NavLink>
             </p>
             <p className="text-sm font-semibold leading-6 text-white">
                 <NavLink to={"/tokens"}>Tokens</NavLink>
