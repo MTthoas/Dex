@@ -2,7 +2,7 @@ import Landpage from "./components/landpage/Landpage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
-import TokenPage from "./components/tokens/TokenPage";
+import TokenPage from "./components/tokens/TokenPage"
 
 import '@rainbow-me/rainbowkit/styles.css';
 import {
@@ -21,6 +21,7 @@ import {
 } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
+import SwapPage from "./components/swap/SwapPage";
 
 const { chains, publicClient } = configureChains(
   [mainnet, polygon, optimism, arbitrum, base, zora],
@@ -59,6 +60,8 @@ export default function App() {
               <Routes>
                   <Route path="/" element={<Landpage />} />
                   <Route path="/tokens" element={<TokenPage />} />
+                  <Route path="/swap" element={<SwapPage />} />
+
               </Routes>
             </main>
             <Footer />

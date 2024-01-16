@@ -1,6 +1,6 @@
 module github.com/MTthoas/dex/api
 
-go 1.23
+go 1.21.0
 
 require (
 	github.com/daoleno/uniswap-sdk-core v0.1.5

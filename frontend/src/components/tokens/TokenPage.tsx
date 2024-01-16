@@ -61,10 +61,9 @@ export default function TokenPage() {
         },
       })
       .then((response) => {
-        // Add an index to each item
-        const indexedData = response.data.map((item, index) => ({
+        const indexedData = response.data.map((item: any, index: any): any => ({
           ...item,
-          index: index + 1 // Assuming you want to start indexing from 1
+          index: index + 1 
         }));
         setData(indexedData);
       })
