@@ -22,6 +22,7 @@ import {
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import SwapPage from "./components/swap/SwapPage";
+import Dashboard from "./components/dashboard/dashboard";
 
 const { chains, publicClient } = configureChains(
   [mainnet, polygon, optimism, arbitrum, base, zora],
@@ -61,6 +62,7 @@ export default function App() {
                   <Route path="/" element={<Landpage />} />
                   <Route path="/tokens" element={<TokenPage />} />
                   <Route path="/swap" element={<SwapPage />} />
+                  <Route path="/dashboard" element={<Dashboard/>} />
 
               </Routes>
             </main>
