@@ -33,7 +33,7 @@ export default function Header() {
           <Link to="/" className="-m-1.5 p-1.5">
               <div className="flex flex-col">
                 <span className="text-lg font-semibold leading-5 text-white">
-                  Genx
+                  GenX
                 </span>
               </div>
           </Link>
@@ -71,7 +71,7 @@ export default function Header() {
             </p>
             <p className="text-sm font-semibold leading-6 text-white">
                 <NavLink to={"/tokens"}>Tokens</NavLink>
-          </p>
+            </p>
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end pt-1">
            {openConnectModal && (
