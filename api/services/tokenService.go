@@ -24,15 +24,15 @@ func goDotEnvVariable(key string) string {
 	return os.Getenv(key)
 }
 
-func ScrapeEthereumTokens() []models.Token {
+func ScrapeEthereumTokens() ([]models.Token, error) {
 
 	apiUrl := goDotEnvVariable("API_URL")
 
 	resp, err := http.Get(apiUrl)
 	if err != nil {
-		log.Fatal("Erreur lors de la requête GET :", err)
-	}
-	defer resp.Body.Close()
+        log.Printf("Erreur lors de la requête GET : %v", err)
+        return nil, err 
+    }
 
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -51,8 +51,5 @@ func ScrapeEthereumTokens() []models.Token {
 		log.Fatalf("Erreur lors de la lecture de la réponse : %v", err)
 	}
 
-	// Afficher les tokens récupérés pour le debug
-	fmt.Println("Tokens récupérés :", tokens)
-
-	return tokens
+	return tokens, nil
 }
