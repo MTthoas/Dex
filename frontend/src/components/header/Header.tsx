@@ -2,7 +2,27 @@ import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Button } from "../ui/button";
 
+import {
+  useConnectModal,
+  useAccountModal
+} from '@rainbow-me/rainbowkit';
+
+import { useAccount } from 'wagmi'
+
+
+
 export default function Header() {
+
+  const { openConnectModal } = useConnectModal();
+  const { openAccountModal } = useAccountModal();
+  const { address } = useAccount();
+
+  const formatAddress = (address: string) => {
+    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+  };
+
+
+
   return (
     <header className="dark">
       <nav
@@ -13,7 +33,7 @@ export default function Header() {
           <Link to="/" className="-m-1.5 p-1.5">
               <div className="flex flex-col">
                 <span className="text-lg font-semibold leading-5 text-white">
-                  Genx
+                  GenX
                 </span>
               </div>
           </Link>
@@ -41,31 +61,31 @@ export default function Header() {
           </button>
         </div>
         <div className="hidden lg:flex lg:gap-x-12 pt-2">
-          {/* <div className="relative">
-                    <button type="button" className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900" aria-expanded="false">
-                    Lorem
-                    <svg className="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-                    </svg>
-                    </button>
-
-                </div> */}
 
             <p className="text-sm font-semibold leading-6 text-white">
-                <NavLink to={"/projectList"}>Projects</NavLink>
+              <NavLink to={"/swap"}>Swap</NavLink>
             </p>
 
             <p className="text-sm font-semibold leading-6 text-white">
-                <NavLink to={"/dashboard"}>Dashboard</NavLink>
+              <NavLink to={"/dashboard"}>Dashboard</NavLink>
             </p>
             <p className="text-sm font-semibold leading-6 text-white">
                 <NavLink to={"/tokens"}>Tokens</NavLink>
-          </p>
+            </p>
         </div>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <Button variant="outline" className="text-sm font-semibold leading-6 bg-default text-white hover:bg-primary/90">
-                Connect to wallet
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end pt-1">
+           {openConnectModal && (
+            <Button variant="outline" onClick={openConnectModal} type="button" className="text-sm font-semibold leading-6 bg-default text-white hover:bg-primary/90">
+              Connect to wallet
             </Button>
+          )}
+
+          {openAccountModal && (
+            <Button variant="outline" onClick={openAccountModal} type="button">
+              {formatAddress(address ?? "")}
+            </Button>
+          )}
+
         </div>
       </nav>
     </header>

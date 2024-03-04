@@ -14,9 +14,10 @@ interface IERC20 {
 }
 
 contract Token is IERC20 {
-    string public constant name = "Token";
-    string public constant symbol = "PA";
+    string public constant name = "Geness";
+    string public constant symbol = "GEN";
     uint8 public constant decimals = 10;
+    uint256 public tokenPrice = 1; 
 
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
@@ -26,6 +27,7 @@ contract Token is IERC20 {
         _mint(msg.sender, initialSupply);
     }
 
+    // défini au déploiement
     function totalSupply() public view override returns (uint256) {
         return _totalSupply;
     }
@@ -85,5 +87,16 @@ contract Token is IERC20 {
 
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
+    }
+
+    function buyToken() public payable {
+        uint256 amount = msg.value * tokenPrice;
+        _mint(msg.sender, amount);
+    }
+
+    function sellToken(uint256 amount) public {
+        require(_balances[msg.sender] >= amount, "ERC20: burn amount exceeds balance");
+        _burn(msg.sender, amount);
+        payable(msg.sender).transfer(amount / tokenPrice);
     }
 }

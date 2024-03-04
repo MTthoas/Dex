@@ -1,0 +1,16 @@
+export type Token = {
+        Id: string,
+        Name: string,
+        Symbol: string,
+        Image: string,
+        CurrentPrice: number,
+        MarketCap: number,
+        MarketCapRank: number,
+        TotalVolume: number,
+        PriceChange24h: number,
+        PriceChangePercentage24h: number,
+        MarketCapChange24h: number,
+        MarketCapChangePercentage24h: number,
+        TotalSupply: number,
+        CirculatingSupply: number,
+}
