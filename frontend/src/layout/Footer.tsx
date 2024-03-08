@@ -4,10 +4,10 @@
  */
 export default function Component() {
     return (
-      <div className="flex flex-col">
+      <div className="flex flex-col  px-6">
         <header />
         <main className="flex-grow" />
-        <footer className="p-4 text-white">
+        <footer className=" text-white">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
             <div>
               <p className="text-lg font-bold">GenX.Wherever</p>
