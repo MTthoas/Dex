@@ -25,6 +25,10 @@ contract UserRegistry is Ownable {
     event UserBanned(address indexed userAddress, uint256 userId);
     event UserUnbanned(address indexed userAddress, uint256 userId);
 
+    function getRegisteredUserIds() public view returns (uint256[] memory) {
+        return registeredUserIds.values();
+    }
+
     function registerUser(string memory _name) public {
         require(users[msg.sender].id == 0, "User already registered");
 
