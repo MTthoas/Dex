@@ -19,11 +19,6 @@ contract UserRegistryTest is Test {
         nonOwner = address(0x9876);
     }
     
-    // Events to log
-    event UserRegistered(address indexed userAddress, uint256 userId);
-    event UserBanned(address indexed userAddress, uint256 userId);
-    event UserUnbanned(address indexed userAddress, uint256 userId);
-
     function testRegisterUser() public {
         vm.prank(user1);
         userRegistry.registerUser("Alice");
@@ -127,16 +122,16 @@ contract UserRegistryTest is Test {
     function expectEmitUserRegistered(address userAddress, uint256 userId) internal {
         // expectEmit(bool success, bool indexed, bool anonymous, bool data)
         vm.expectEmit(true, true, true, true);
-        emit UserRegistered(userAddress, userId);
+        emit UserRegistry.UserRegistered(userAddress, userId);
     }
 
     function expectEmitUserBanned(address userAddress, uint256 userId) internal {
         vm.expectEmit(true, true, true, true);
-        emit UserBanned(userAddress, userId);
+        emit UserRegistry.UserBanned(userAddress, userId);
     }
 
     function expectEmitUserUnbanned(address userAddress, uint256 userId) internal {
         vm.expectEmit(true, true, true, true);
-        emit UserUnbanned(userAddress, userId);
+        emit UserRegistry.UserUnbanned(userAddress, userId);
     }
 }
