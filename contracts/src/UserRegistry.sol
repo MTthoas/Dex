@@ -15,10 +15,13 @@ contract UserRegistry is Ownable {
     struct User {
         uint256 id;
         string name;
+        bool isBanned;
     }
 
-    // Event to log user registration
+    // Events to log
     event UserRegistered(address indexed userAddress, uint256 userId);
+    event UserBanned(address indexed userAddress, uint256 userId);
+    event UserUnbanned(address indexed userAddress, uint256 userId);
 
     function registerUser(string memory _name) public {
         require(users[msg.sender].id == 0, "User already registered");
@@ -30,13 +33,45 @@ contract UserRegistry is Ownable {
         emit UserRegistered(msg.sender, userId);
     }
 
-    // Check if an address is a registered user
     function isRegisteredUser(address _address) public view returns (bool) {
         return users[_address].id != 0;
     }
 
-    // Get the user ID associated with an address
     function getUserId(address _address) public view returns (uint256) {
         return users[_address].id;
+    }
+
+    function banUser(address _userAddress) public onlyOwner {
+        require(isRegisteredUser(_userAddress), "User not registered");
+
+        users[_userAddress].isBanned = true;
+
+        emit UserBanned(_userAddress, users[_userAddress].id);
+    }
+
+    function unbanUser(address _userAddress) public onlyOwner {
+        require(isRegisteredUser(_userAddress), "User not registered");
+        require(users[_userAddress].isBanned, "User not banned");
+
+        users[_userAddress].isBanned = false;
+
+        emit UserUnbanned(_userAddress, users[_userAddress].id);
+    }
+
+    function isUserBanned(address _userAddress) public view returns (bool) {
+        return isRegisteredUser(_userAddress) && users[_userAddress].isBanned;
+    }
+
+    function transferUserId(address _oldAddress, address _newAddress) public onlyOwner {
+        require(isRegisteredUser(_oldAddress), "Old address not registered");
+        require(!isRegisteredUser(_newAddress), "New address already registered");
+
+        uint256 userId = users[_oldAddress].id;
+        string memory name = users[_oldAddress].name;
+
+        delete users[_oldAddress];
+        users[_newAddress] = User(userId, name, false);
+
+        emit UserRegistered(_newAddress, userId);
     }
 }
