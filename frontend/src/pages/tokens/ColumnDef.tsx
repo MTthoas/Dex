@@ -2,7 +2,7 @@ import {
   CaretSortIcon,
   ChevronDownIcon,
   DotsHorizontalIcon,
-} from "@radix-ui/react-icons";
+} from "@radix-ui/react-icons"
 import {
   ColumnDef,
   ColumnFiltersState,

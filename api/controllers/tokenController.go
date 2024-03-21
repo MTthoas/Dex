@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-
 	"github.com/MTthoas/dex/api/services"
 	"github.com/gofiber/fiber/v2"
 )

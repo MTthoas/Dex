@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  # app:
+  #   build: ./api
+  #   ports:
+  #     - "5555:5555"
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     - DB_HOST=db
+  #     - DB_USER=postgres
+  #     - DB_PASSWORD=password
+  #     - DB_NAME=database
+  #     - DB_PORT=5432
+  db:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

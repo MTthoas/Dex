@@ -19,22 +19,22 @@ import SwapPage from "./pages/swap/SwapPage";
 const { chains, publicClient } = configureChains(
   [mainnet, polygon, optimism, arbitrum, base, zora],
   [
-    alchemyProvider({ apiKey: import.meta.env.ALCHEMY_ID || "" }),
-    publicProvider(),
+    alchemyProvider({ apiKey: import.meta.env.ALCHEMY_ID || '' }),
+    publicProvider()
   ]
 );
 
 const { connectors } = getDefaultWallets({
-  appName: import.meta.env.APP_NAME || "Wagmi",
-  projectId: import.meta.env.ALCHEMY_ID || "wagmi",
-  chains,
+  appName: import.meta.env.APP_NAME || 'Wagmi',
+  projectId: import.meta.env.ALCHEMY_ID || 'wagmi',
+  chains
 });
 
 const wagmiConfig = createConfig({
   autoConnect: true,
   connectors,
-  publicClient,
-});
+  publicClient
+})
 
 export default function App() {
   return (
@@ -51,9 +51,9 @@ export default function App() {
             <main style={{ flex: "1" }}>
               <Header />
               <Routes>
-                <Route path="/" element={<Landpage />} />
-                <Route path="/tokens" element={<TokenPage />} />
-                <Route path="/swap" element={<SwapPage />} />
+                  <Route path="/" element={<Landpage />} />
+                  <Route path="/tokens" element={<TokenPage />} />
+                  <Route path="/swap" element={<SwapPage />} />
               </Routes>
             </main>
             <Footer />
