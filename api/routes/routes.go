@@ -14,6 +14,15 @@ func PublicRoutes(a *fiber.App) {
 
 	route.Get("/users", controllers.GetUsers)
 	route.Get("/user/:id", controllers.GetUsers)
+	route.Post("/user", controllers.CreateUser)
+	route.Put("/user", controllers.UpdateUser)
+	route.Delete("/user/:id", controllers.DeleteUser)
+
+	route.Get("/transactions", controllers.GetTransactions)
+	route.Get("/transaction/:id", controllers.GetTransaction)
+	route.Post("/transaction", controllers.CreateTransaction)
+	route.Put("/transaction", controllers.UpdateTransaction)
+	route.Delete("/transaction/:id", controllers.DeleteTransaction)
 
 	// Routes for GET method:
 	route.Get("/api/coins", controllers.GetCoins)
