@@ -10,12 +10,12 @@ import (
 
 // Queries struct for collect all app queries.
 type Queries struct {
-	*queries.UserQueries // load queries from User model
+	*queries.UserQueries 
+	*queries.TransactionQueries
 }
 
 // OpenDBConnection func for opening database connection.
 func OpenDBConnection() (*Queries, error) {
-	// Assume dsn is your PostgreSQL data source name.
 	dsn := os.Getenv("DB_SERVER_URL")
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -24,6 +24,9 @@ func OpenDBConnection() (*Queries, error) {
 
 	return &Queries{
 		UserQueries: &queries.UserQueries{
+			DB: db,
+		},
+		TransactionQueries: &queries.TransactionQueries{
 			DB: db,
 		},
 	}, nil
