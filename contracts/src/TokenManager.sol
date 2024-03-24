@@ -68,4 +68,35 @@ contract TokenManager is Ownable {
 
         emit TokenDelisted(_tokenAddress);
     }
+
+    /**
+     * @notice Retrieves the token information for a given token address.
+     * @param _tokenAddress The address of the token contract.
+     * @return name The name of the token.
+     * @return symbol The symbol of the token.
+     * @return decimals The number of decimals of the token.
+     */
+    function getTokenInfo(
+        address _tokenAddress
+    )
+        public
+        view
+        returns (string memory name, string memory symbol, uint8 decimals)
+    {
+        require(listedTokens.contains(_tokenAddress), "Token not listed");
+        TokenInfo memory info = tokenInfos[_tokenAddress];
+        return (info.name, info.symbol, info.decimals);
+    }
+
+    /**
+     * @notice Retrieves the list of listed token addresses.
+     * @return tokens An array of listed token addresses.
+     */
+    function getListedTokens() public view returns (address[] memory tokens) {
+        uint256 count = listedTokens.length();
+        tokens = new address[](count);
+        for (uint256 i = 0; i < count; i++) {
+            tokens[i] = listedTokens.at(i);
+        }
+    }
 }
