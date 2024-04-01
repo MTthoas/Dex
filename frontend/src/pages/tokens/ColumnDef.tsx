@@ -1,42 +1,20 @@
 import {
-  CaretSortIcon,
-  ChevronDownIcon,
   DotsHorizontalIcon,
 } from "@radix-ui/react-icons"
 import {
   ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 
 import { Button } from "../../components/ui/button";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
-import { Input } from "../../components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../components/ui/table";
 import { Token } from "./token.model";
-import axios from "axios";
 
 function formatMarketCap(value: number) {
   let formattedValue;
@@ -52,10 +30,10 @@ function formatMarketCap(value: number) {
 
 export const columns: ColumnDef<Token>[] = [
   {
-    accessorFn: (row) => row.index,
+    accessorFn: (row) => row.Index,
     id: "index",
     header: "#",
-    cell: ({ getValue }) => <div className="capitalize">{getValue()}</div>,
+    cell: ({ getValue }) => <div className="capitalize">{String(getValue())}</div>,
   },
   {
     accessorKey: "image",
@@ -87,7 +65,8 @@ export const columns: ColumnDef<Token>[] = [
     accessorKey: "price_change_percentage_24h",
     header: "Change",
     cell: ({ row }) => {
-      const change = row.getValue("price_change_percentage_24h");
+      const change = parseFloat(row.getValue("price_change_percentage_24h"));
+      // const change = row.getValue("price_change_percentage_24h");
       const isPositive = change >= 0;
       const changeClass = isPositive ? "text-green-500" : "text-red-500";
       const changeSymbol = isPositive ? "▲" : "▼";
