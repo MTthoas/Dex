@@ -53,9 +53,9 @@ func GetTokens() []models.Token {
 	return tokens
 }
 
-func GetToken(tokenID string) *models.Token {
+func GetTokenByAddress(address string) *models.Token {
 	// Construction de l'URL avec le token ID comme paramètre
-	apiUrl := fmt.Sprintf("https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=%s&vs_currencies=usd", tokenID)
+	apiUrl := fmt.Sprintf("https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=%s&vs_currencies=usd", address)
 
 	// Création de la requête HTTP
 	req, err := http.NewRequest("GET", apiUrl, nil)
