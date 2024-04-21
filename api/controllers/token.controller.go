@@ -16,6 +16,12 @@ import (
 // @Success 200 {object} []models.Token
 // @Router /api/coins [get]
 func GetCoins(c *fiber.Ctx) error {
-	coins := queries.ScrapeEthereumTokens()
+	coins := queries.GetTokens()
 	return c.Status(http.StatusOK).JSON(coins)
+}
+
+func GetCoin(c *fiber.Ctx) error {
+	id := c.Params("id")
+	coin := queries.GetToken(id)
+	return c.Status(http.StatusOK).JSON(coin)
 }

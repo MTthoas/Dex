@@ -6,7 +6,11 @@ import (
 )
 
 func SwaggerRoute(a *fiber.App) {
-	route := a.Group("/swagger")
-	// Routes for GET method:
-	route.Get("*", swagger.HandlerDefault)
+	a.Get("/swagger/*", swagger.HandlerDefault) // default
+
+	a.Get("/swagger/*", swagger.New(swagger.Config{ // custom
+		URL: "http://example.com/doc.json",
+		DeepLinking: false,
+		DocExpansion: "none",
+	}))
 }
