@@ -12,6 +12,10 @@ func PublicRoutes(a *fiber.App) {
 
 	route.Get("/healthCheck", controllers.HealthCheck)
 
+	// Routes for GET method:
+	route.Get("/coins", controllers.GetCoins)
+	route.Get("/coins/:addresses", controllers.GetCoinByAddress)
+
 	route.Get("/users", controllers.GetUsers)
 	route.Get("/user/:id", controllers.GetUsers)
 	route.Post("/user", controllers.CreateUser)
@@ -23,8 +27,5 @@ func PublicRoutes(a *fiber.App) {
 	route.Post("/transaction", controllers.CreateTransaction)
 	route.Put("/transaction", controllers.UpdateTransaction)
 	route.Delete("/transaction/:id", controllers.DeleteTransaction)
-
-	// Routes for GET method:
-	route.Get("/api/coins", controllers.GetCoins)
 
 }

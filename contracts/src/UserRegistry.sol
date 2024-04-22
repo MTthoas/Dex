@@ -23,12 +23,12 @@ contract UserRegistry is Ownable {
         bool isBanned;
     }
 
-    constructor() Ownable(msg.sender) {}
-
     // Events to log
     event UserRegistered(address indexed userAddress, uint256 userId);
     event UserBanned(address indexed userAddress, uint256 userId);
     event UserUnbanned(address indexed userAddress, uint256 userId);
+
+    constructor() Ownable(msg.sender) {}
 
     /**
      * @notice Gets the user IDs of all registered users.
