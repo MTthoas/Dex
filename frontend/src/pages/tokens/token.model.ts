@@ -1,5 +1,6 @@
 export type Token = {
         Id: string,
+        Index: number,
         Name: string,
         Symbol: string,
         Image: string,

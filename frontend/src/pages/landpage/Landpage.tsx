@@ -1,5 +1,5 @@
 import { TransactionCard } from "@/components/cards/TransactionsCard";
-import { PriceCards } from "@/components/cards/priceCards";
+import { PriceCards } from "@/components/cards/PriceCards";
 import { Button } from "@/components/ui/button";
 
 export default function Component() {
