@@ -1,23 +1,36 @@
 FROM golang:1.21-alpine AS builder
 
-# Move to working directory (/build).
-WORKDIR /build
+# Install git - required for fetching Go modules and Swaggo.
+RUN apk add --no-cache git
 
-# Copy and download dependency using go mod.
+# Install Swag CLI.
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+
+# Move to the API directory where the Dockerfile and source code are.
+WORKDIR /api
+
+# Copy the go module files and download the dependencies.
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy the code into the container.
+# Copy the entire API directory and build it.
 COPY . .
 
-# Set necessary environmet variables needed for our image and build the API server.
+# Generate Swagger documentation.
+RUN swag init --generalInfo ./routes/swagger_routes.go --output ./docs
+
+# Set necessary environment variables needed for our image.
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
+
+# Build the API server.
 RUN go build -ldflags="-s -w" -o apiserver .
 
 FROM scratch
 
-# Copy binary and config files from /build to root folder of scratch container.
-COPY --from=builder ["/build/apiserver", "/build/.env", "/"]
+# Copy binary, config files, and Swagger docs from /api to the root folder of the scratch container.
+COPY --from=builder /api/apiserver /
+COPY --from=builder /api/.env /
+COPY --from=builder /api/docs /docs
 
 # Export necessary port.
 EXPOSE 5000
