@@ -81,7 +81,6 @@ function ArrowDownIcon(props: any) {
   )
 }
 
-
 // function BitcoinIcon(props: any) {
 //   return (
 //     <svg
