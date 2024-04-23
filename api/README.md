@@ -31,5 +31,4 @@ docker run --rm -d --name dev-fiber --network dev-network -p 5000:5000 fiber
 ## IN LOCAL
 
 swag init --generalInfo ./routes/swagger_routes.go --output ./docs
-
-> > go run main.go
+>> go run main.go
