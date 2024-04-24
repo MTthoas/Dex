@@ -13,6 +13,8 @@ import (
 type Queries struct {
 	*queries.UserQueries
 	*queries.TransactionQueries
+	*queries.PoolQueries
+	*queries.TokenQueries
 }
 
 // OpenDBConnection func for opening database connection.

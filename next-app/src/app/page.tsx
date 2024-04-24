@@ -2,7 +2,7 @@ import { TransactionCard } from "@/components/cards/TransactionsCard";
 import { PriceCards } from "@/components/cards/PriceCards";
 import { Button } from "@/components/ui/button";
 
-export default function Component() {
+const page = () => {
   return (
     <div key="1" className="text-white min-h-screen mx-auto my-12 px-3">
       <div className="container mx-auto px-4 py-12">
@@ -28,7 +28,16 @@ export default function Component() {
               <h2 className="text-2xl font-bold mb-4">Latest Transactions</h2>
               <div className="flex flex-col space-y-4 mb-5 overflow-auto max-h-64">
                 {[...Array(10)].map((_, index) => (
-                  <TransactionCard key={index} transaction={{ index, amount: (Math.random()), label: "ETH", price: (Math.random() * 10), timestamp: new Date() }} />
+                  <TransactionCard
+                    key={index}
+                    transaction={{
+                      index,
+                      amount: Math.random(),
+                      label: "ETH",
+                      price: Math.random() * 10,
+                      timestamp: new Date(),
+                    }}
+                  />
                 ))}
               </div>
             </div>
@@ -40,4 +49,6 @@ export default function Component() {
       </div>
     </div>
   );
-}
+};
+
+export default page;

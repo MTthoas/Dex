@@ -11,6 +11,8 @@ import (
 	"github.com/MTthoas/dex/api/models"
 )
 
+type TokenQueries struct{}
+
 func GetTokens() []models.Token {
 
 	apiUrl := "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=ethereum-ecosystem"

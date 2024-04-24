@@ -6,4 +6,8 @@ export const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
   },
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> develop
