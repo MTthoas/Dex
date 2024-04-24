@@ -6,20 +6,16 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 /**
  * @title UserRegistry
- * @author ronfflex
- * @notice This contract manages user registration, authentication, and administration for a decentralized exchange (DEX) platform.
+ * @dev This contract manages user registration, authentication, and administration for a decentralized exchange (DEX) platform.
  */
 contract UserRegistry is Ownable {
     using EnumerableSet for EnumerableSet.UintSet;
 
     mapping(address => User) public users;
-
-    // Set to store registered user IDs
     EnumerableSet.UintSet private registeredUserIds;
 
     struct User {
         uint256 id;
-        string name;
         bool isBanned;
     }
 
@@ -39,14 +35,13 @@ contract UserRegistry is Ownable {
     }
 
     /**
-     * @notice Registers a new user with the provided name.
-     * @param _name The name of the user.
+     * @notice Registers a new user.
      */
-    function registerUser(string memory _name) public {
+    function registerUser() public {
         require(users[msg.sender].id == 0, "User already registered");
 
         uint256 userId = registeredUserIds.length() + 1;
-        users[msg.sender] = User(userId, _name, false);
+        users[msg.sender] = User(userId, false);
         registeredUserIds.add(userId);
 
         emit UserRegistered(msg.sender, userId);
@@ -78,7 +73,6 @@ contract UserRegistry is Ownable {
         require(isRegisteredUser(_userAddress), "User not registered");
 
         users[_userAddress].isBanned = true;
-
         emit UserBanned(_userAddress, users[_userAddress].id);
     }
 
@@ -91,7 +85,6 @@ contract UserRegistry is Ownable {
         require(users[_userAddress].isBanned, "User not banned");
 
         users[_userAddress].isBanned = false;
-
         emit UserUnbanned(_userAddress, users[_userAddress].id);
     }
 
@@ -114,10 +107,9 @@ contract UserRegistry is Ownable {
         require(!isRegisteredUser(_newAddress), "New address already registered");
 
         uint256 userId = users[_oldAddress].id;
-        string memory name = users[_oldAddress].name;
 
         delete users[_oldAddress];
-        users[_newAddress] = User(userId, name, false);
+        users[_newAddress] = User(userId, false);
 
         emit UserRegistered(_newAddress, userId);
     }

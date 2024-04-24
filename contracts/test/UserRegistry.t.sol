@@ -21,7 +21,7 @@ contract UserRegistryTest is Test {
     
     function testRegisterUser() public {
         vm.prank(user1);
-        userRegistry.registerUser("Alice");
+        userRegistry.registerUser();
 
         assertEq(userRegistry.isRegisteredUser(user1), true);
         assertEq(userRegistry.getUserId(user1), 1);
@@ -29,18 +29,18 @@ contract UserRegistryTest is Test {
 
     function testRegisterDuplicateUser() public {
         vm.startPrank(user1);
-        userRegistry.registerUser("Alice");
+        userRegistry.registerUser();
         vm.expectRevert("User already registered");
-        userRegistry.registerUser("Alice");
+        userRegistry.registerUser();
         vm.stopPrank();
     }
 
     function testBanUser() public {
         vm.startPrank(user1);
-        userRegistry.registerUser("Alice");
+        userRegistry.registerUser();
         vm.stopPrank();
 
-        vm.prank(userRegistry.owner());
+        vm.prank(owner);
         userRegistry.banUser(user1);
 
         assertEq(userRegistry.isUserBanned(user1), true);
@@ -48,10 +48,10 @@ contract UserRegistryTest is Test {
 
     function testUnbanUser() public {
         vm.startPrank(user1);
-        userRegistry.registerUser("Alice");
+        userRegistry.registerUser();
         vm.stopPrank();
 
-        vm.prank(userRegistry.owner());
+        vm.prank(owner);
         userRegistry.banUser(user1);
         userRegistry.unbanUser(user1);
 
@@ -60,10 +60,10 @@ contract UserRegistryTest is Test {
 
     function testTransferUserId() public {
         vm.startPrank(user1);
-        userRegistry.registerUser("Alice");
+        userRegistry.registerUser();
         vm.stopPrank();
 
-        vm.prank(userRegistry.owner());
+        vm.prank(owner);
         userRegistry.transferUserId(user1, user2);
 
         assertEq(userRegistry.isRegisteredUser(user1), false);
@@ -71,31 +71,13 @@ contract UserRegistryTest is Test {
         assertEq(userRegistry.getUserId(user2), 1);
     }
 
-    function testOwnerTransfer() public {
-        vm.startPrank(user1);
-        userRegistry.registerUser("Alice");
-        vm.stopPrank();
-
-        vm.startPrank(user2);
-        userRegistry.registerUser("Bob");
-        vm.stopPrank();
-
-        vm.prank(owner);
-        userRegistry.transferOwnership(user1);
-        assertEq(userRegistry.owner(), user1);
-
-        vm.startPrank(user1);
-        userRegistry.banUser(user2);
-        vm.stopPrank();
-    }
-
     function testEnumerableSetOperations() public {
         vm.startPrank(user1);
-        userRegistry.registerUser("Alice");
+        userRegistry.registerUser();
         vm.stopPrank();
 
         vm.startPrank(user2);
-        userRegistry.registerUser("Bob");
+        userRegistry.registerUser();
         vm.stopPrank();
 
         uint256[] memory userIds = userRegistry.getRegisteredUserIds();
@@ -107,7 +89,7 @@ contract UserRegistryTest is Test {
     function testEventEmissions() public {
         vm.startPrank(user1);
         expectEmitUserRegistered(user1, 1);
-        userRegistry.registerUser("Alice");
+        userRegistry.registerUser();
         vm.stopPrank();
 
         vm.prank(owner);

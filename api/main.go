@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-
 	"github.com/MTthoas/dex/api/configs"
 	_ "github.com/MTthoas/dex/api/docs"
 	"github.com/MTthoas/dex/api/middleware"

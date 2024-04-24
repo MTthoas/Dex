@@ -34,5 +34,4 @@ docker build -t api-build .
 
 go install github.com/swaggo/swag/cmd/swag@latest
 swag init --generalInfo ./routes/swagger_routes.go --output ./docs
-
-> > go run main.go
+>> go run main.go
