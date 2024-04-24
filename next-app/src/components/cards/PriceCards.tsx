@@ -1,4 +1,4 @@
-import { formatPrice } from '../../utils/price'
+import { formatPrice } from '@/lib/price'
 
 interface PriceCardProps {
   label: string;
