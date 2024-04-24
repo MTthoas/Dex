@@ -33,8 +33,4 @@ export async function createUser(data: CreateUserRequest): Promise<any> {
     throw new Error("Network response was not ok");
   }
   return response.json();
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> develop

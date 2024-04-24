@@ -1,26 +1,20 @@
 import { Link, NavLink } from "react-router-dom";
 import { Button } from "../ui/button";
 
-import {
-  useConnectModal,
-  useAccountModal
-} from '@rainbow-me/rainbowkit';
+import { useConnectModal, useAccountModal } from "@rainbow-me/rainbowkit";
 
-import { useAccount } from 'wagmi'
-
-
+import { useAccount } from "wagmi";
 
 export default function Header() {
-
   const { openConnectModal } = useConnectModal();
   const { openAccountModal } = useAccountModal();
   const { address } = useAccount();
 
   const formatAddress = (address: string) => {
-    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+    return `${address.substring(0, 6)}...${address.substring(
+      address.length - 4
+    )}`;
   };
-
-
 
   return (
     <header className="dark">
@@ -30,17 +24,15 @@ export default function Header() {
       >
         <div className="flex lg:flex-1">
           <Link to="/" className="-m-1.5 p-1.5">
-              <div className="flex flex-col">
-                <span className="text-lg font-semibold leading-5 text-white">
-                  GenX
-                </span>
-              </div>
+            <div className="flex flex-col">
+              <span className="text-lg font-semibold leading-5 ">GenX</span>
+            </div>
           </Link>
         </div>
         <div className="flex lg:hidden">
           <button
             type="button"
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-white"
+            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5"
           >
             <span className="sr-only">Open main menu</span>
             <svg
@@ -60,21 +52,25 @@ export default function Header() {
           </button>
         </div>
         <div className="hidden lg:flex lg:gap-x-12 pt-2">
+          <p className="text-sm font-semibold leading-6 text-black">
+            <NavLink to={"/swap"}>Swap</NavLink>
+          </p>
 
-            <p className="text-sm font-semibold leading-6 text-white">
-              <NavLink to={"/swap"}>Swap</NavLink>
-            </p>
-
-            <p className="text-sm font-semibold leading-6 text-white">
-              <NavLink to={"/dashboard"}>Dashboard</NavLink>
-            </p>
-            <p className="text-sm font-semibold leading-6 text-white">
-                <NavLink to={"/tokens"}>Tokens</NavLink>
-            </p>
+          <p className="text-sm font-semibold leading-6 text-foreground">
+            <NavLink to={"/dashboard"}>Dashboard</NavLink>
+          </p>
+          <p className="text-sm font-semibold leading-6 text-foreground">
+            <NavLink to={"/tokens"}>Tokens</NavLink>
+          </p>
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end pt-1">
-           {openConnectModal && (
-            <Button variant="outline" onClick={openConnectModal} type="button" className="text-sm font-semibold leading-6 bg-default text-white hover:bg-primary/90">
+          {openConnectModal && (
+            <Button
+              variant="outline"
+              onClick={openConnectModal}
+              type="button"
+              className="text-sm font-semibold leading-6 bg-default text-white hover:bg-primary/90"
+            >
               Connect to wallet
             </Button>
           )}
@@ -84,7 +80,6 @@ export default function Header() {
               {formatAddress(address ?? "")}
             </Button>
           )}
-
         </div>
       </nav>
     </header>
