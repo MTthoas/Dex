@@ -3,8 +3,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/react-query";
 import type { Metadata } from "next";
 import "./globals.css";
-
-import { config } from "@/config";
 import Web3ModalProvider from "@/context";
 
 export const metadata: Metadata = {

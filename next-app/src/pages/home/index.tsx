@@ -1,8 +1,7 @@
-"use client";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { Button } from "@/components/ui/button";
 import { useAccount, useDisconnect } from "wagmi";
-import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   getUserByAdress,
   getUsers,
@@ -13,25 +12,20 @@ import { useEffect } from "react";
 
 export default function Home() {
   const { open } = useWeb3Modal();
-  const { address, isConnecting, isConnected, isDisconnected } = useAccount();
+  const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
+
+  const { data: user, error, isError } = useQuery({
+    queryKey: ["getUserByAddress", address],
+    queryFn: () => getUserByAdress(address!),
+    enabled: !!address,
+  });
 
   const { data: users } = useQuery({
     queryKey: ["users"],
     queryFn: getUsers,
   });
 
-  const {
-    data: getUserByAddress,
-    status,
-    isError: isErrorToGetUserByAddress,
-  } = useQuery({
-    queryKey: ["getUserByAddress", address],
-    queryFn: () => getUserByAdress(address!),
-    enabled: !!address,
-  });
-
-  console.log(getUserByAddress);
   const mutation = useMutation<
     ReturnType<typeof createUser>,
     Error,
@@ -39,45 +33,52 @@ export default function Home() {
   >({ mutationFn: createUser });
 
   useEffect(() => {
-    if (getUserByAddress && address && !isErrorToGetUserByAddress) {
-      mutation.mutate({ address, name: "New User" }); // Adjust "New User" as necessary
+    // Déclencher la mutation si une erreur survient et aucune donnée n'est retournée
+    if (!user && address && isError) {
+      mutation.mutate({ address, name: "New User" });
     }
-  }, [isConnected]);
+  }, [address, isError, user]);
 
   return (
     <div className="flex min-h-screen flex-col items-center p-24">
       <div className="flex-col items-center">
         <h1 className="text-4xl font-bold my-2">Welcome to Dex App</h1>
-
-        {!isConnected && <Button onClick={() => open()}>Connect me</Button>}
-        {isConnected && (
-          <Button onClick={() => disconnect()}> Disconnect </Button>
+        {!isConnected ? (
+          <Button onClick={() => open()}>Connect</Button>
+        ) : (
+          <Button onClick={() => disconnect()}>Disconnect</Button>
         )}
-
-        {isConnecting && <p>Connecting...</p>}
-        {isDisconnected && <p>Disconnected</p>}
-        {address && <p>Connected with {address}</p>}
-      </div>
-      <div className="mt-8">List of user registered</div>
-      {users && (
-        <ul>
-          {users.data.map((user: any) => (
-            <li key={user.id}>
-              {user.name} / {user.address}
-            </li>
-          ))}
-        </ul>
-      )}
-      <div className="mt-8">User information</div>
-      {isErrorToGetUserByAddress && <p> User not found </p>}
-      {getUserByAddress && (
         <div>
-          <p>ID : {getUserByAddress.data.id}</p>
-          <p>Name: {getUserByAddress.data.name}</p>
-          <p>Address : {getUserByAddress.data.address}</p>
-          <p>created_at : {getUserByAddress.data.created_at} </p>
+          {isConnected && <p>Connected with {address}</p>}
+          {isError && (
+            <p>Error: {error.message}. User not found, creating...</p>
+          )}
+
+          <div className="mt-7">
+            <h1> User information </h1>
+            {user && (
+              <div>
+                <p>ID: {user.data.id}</p>
+                <p>Name: {user.data.name}</p>
+                <p>Address: {user.data.address}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-7">
+            <h1> List of users registered </h1>
+            {users && (
+              <ul>
+                {users.data.map((user: any) => (
+                  <li key={user.id}>
+                    {user.name} / {user.address}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
