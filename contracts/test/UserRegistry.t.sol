@@ -12,8 +12,8 @@ contract UserRegistryTest is Test {
     address public nonOwner;
 
     function setUp() public {
-        userRegistry = new UserRegistry();
-        owner = userRegistry.owner();
+        userRegistry = new UserRegistry(address(this));
+        owner = address(this);
         user1 = address(0x1234);
         user2 = address(0x5678);
         nonOwner = address(0x9876);
@@ -40,7 +40,7 @@ contract UserRegistryTest is Test {
         userRegistry.registerUser("Alice");
         vm.stopPrank();
 
-        vm.prank(userRegistry.owner());
+        vm.prank(owner);
         userRegistry.banUser(user1);
 
         assertEq(userRegistry.isUserBanned(user1), true);
@@ -51,7 +51,7 @@ contract UserRegistryTest is Test {
         userRegistry.registerUser("Alice");
         vm.stopPrank();
 
-        vm.prank(userRegistry.owner());
+        vm.prank(owner);
         userRegistry.banUser(user1);
         userRegistry.unbanUser(user1);
 
@@ -63,7 +63,7 @@ contract UserRegistryTest is Test {
         userRegistry.registerUser("Alice");
         vm.stopPrank();
 
-        vm.prank(userRegistry.owner());
+        vm.prank(owner);
         userRegistry.transferUserId(user1, user2);
 
         assertEq(userRegistry.isRegisteredUser(user1), false);
@@ -79,10 +79,6 @@ contract UserRegistryTest is Test {
         vm.startPrank(user2);
         userRegistry.registerUser("Bob");
         vm.stopPrank();
-
-        vm.prank(owner);
-        userRegistry.transferOwnership(user1);
-        assertEq(userRegistry.owner(), user1);
 
         vm.startPrank(user1);
         userRegistry.banUser(user2);

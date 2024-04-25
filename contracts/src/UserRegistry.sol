@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "@openzeppelin/contracts/access/manager/AccessManaged.sol";
 
 /**
  * @title UserRegistry
  * @author ronfflex
  * @notice This contract manages user registration, authentication, and administration for a decentralized exchange (DEX) platform.
  */
-contract UserRegistry is Ownable {
+contract UserRegistry is AccessManaged {
     using EnumerableSet for EnumerableSet.UintSet;
 
     mapping(address => User) public users;
@@ -28,7 +28,7 @@ contract UserRegistry is Ownable {
     event UserBanned(address indexed userAddress, uint256 userId);
     event UserUnbanned(address indexed userAddress, uint256 userId);
 
-    constructor() Ownable(msg.sender) {}
+    constructor(address accessManager) AccessManaged(accessManager) { }
 
     /**
      * @notice Gets the user IDs of all registered users.
@@ -74,7 +74,7 @@ contract UserRegistry is Ownable {
      * @notice Bans the user with the given address.
      * @param _userAddress The address of the user to ban.
      */
-    function banUser(address _userAddress) public onlyOwner {
+    function banUser(address _userAddress) public restricted {
         require(isRegisteredUser(_userAddress), "User not registered");
 
         users[_userAddress].isBanned = true;
@@ -86,7 +86,7 @@ contract UserRegistry is Ownable {
      * @notice Unbans the user with the given address.
      * @param _userAddress The address of the user to unban.
      */
-    function unbanUser(address _userAddress) public onlyOwner {
+    function unbanUser(address _userAddress) public restricted {
         require(isRegisteredUser(_userAddress), "User not registered");
         require(users[_userAddress].isBanned, "User not banned");
 
@@ -109,7 +109,7 @@ contract UserRegistry is Ownable {
      * @param _oldAddress The old address of the user.
      * @param _newAddress The new address of the user.
      */
-    function transferUserId(address _oldAddress, address _newAddress) public onlyOwner {
+    function transferUserId(address _oldAddress, address _newAddress) public restricted {
         require(isRegisteredUser(_oldAddress), "Old address not registered");
         require(!isRegisteredUser(_newAddress), "New address already registered");
 
