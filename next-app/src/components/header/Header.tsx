@@ -1,20 +1,11 @@
-import { Link, NavLink } from "react-router-dom";
-import { Button } from "../ui/button";
+"use client";
 
-import { useConnectModal, useAccountModal } from "@rainbow-me/rainbowkit";
-
+import Link from "next/link";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 
 export default function Header() {
-  const { openConnectModal } = useConnectModal();
-  const { openAccountModal } = useAccountModal();
   const { address } = useAccount();
-
-  const formatAddress = (address: string) => {
-    return `${address.substring(0, 6)}...${address.substring(
-      address.length - 4
-    )}`;
-  };
 
   return (
     <header className="dark">
@@ -23,7 +14,7 @@ export default function Header() {
         aria-label="Global"
       >
         <div className="flex lg:flex-1">
-          <Link to="/" className="-m-1.5 p-1.5">
+          <Link href="/" className="-m-1.5 p-1.5">
             <div className="flex flex-col">
               <span className="text-lg font-semibold leading-5 ">GenX</span>
             </div>
@@ -52,34 +43,19 @@ export default function Header() {
           </button>
         </div>
         <div className="hidden lg:flex lg:gap-x-12 pt-2">
-          <p className="text-sm font-semibold leading-6 text-black">
-            <NavLink to={"/swap"}>Swap</NavLink>
+          <p className="text-sm font-semibold leading-6 text-foreground">
+            <Link href={"/swap"}>Swap</Link>
           </p>
 
           <p className="text-sm font-semibold leading-6 text-foreground">
-            <NavLink to={"/dashboard"}>Dashboard</NavLink>
+            <Link href={"/dashboard"}>Dashboard</Link>
           </p>
           <p className="text-sm font-semibold leading-6 text-foreground">
-            <NavLink to={"/tokens"}>Tokens</NavLink>
+            <Link href={"/tokens"}>Tokens</Link>
           </p>
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end pt-1">
-          {openConnectModal && (
-            <Button
-              variant="outline"
-              onClick={openConnectModal}
-              type="button"
-              className="text-sm font-semibold leading-6 bg-default text-white hover:bg-primary/90"
-            >
-              Connect to wallet
-            </Button>
-          )}
-
-          {openAccountModal && (
-            <Button variant="outline" onClick={openAccountModal} type="button">
-              {formatAddress(address ?? "")}
-            </Button>
-          )}
+          <ConnectButton />
         </div>
       </nav>
     </header>

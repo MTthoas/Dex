@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+
 	"github.com/MTthoas/dex/api/configs"
 	_ "github.com/MTthoas/dex/api/docs"
 	"github.com/MTthoas/dex/api/middleware"
@@ -14,10 +15,13 @@ import (
 
 func main() {
 
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	print(err)
+
 	config := configs.FiberConfig()
 
 	app := fiber.New(config)

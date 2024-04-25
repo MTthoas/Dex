@@ -4,6 +4,9 @@ FROM golang:1.21-alpine AS builder
 # Installation de git, nécessaire pour récupérer les modules Go et Swaggo.
 RUN apk add --no-cache git
 
+# Installation des certificats CA, cruciaux pour les appels HTTPS.
+RUN apk add --no-cache ca-certificates
+
 # Installation de Swag CLI pour la documentation Swagger.
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 
@@ -33,6 +36,9 @@ FROM scratch
 COPY --from=builder /api/apiserver /
 COPY --from=builder /api/.env /
 COPY --from=builder /api/docs /docs
+
+# Copie des certificats CA.
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 # Exposition du port sur lequel le serveur API s'exécute.
 EXPOSE 5000

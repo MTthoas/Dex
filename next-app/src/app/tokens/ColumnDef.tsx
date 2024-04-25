@@ -1,9 +1,5 @@
-import {
-  DotsHorizontalIcon,
-} from "@radix-ui/react-icons"
-import {
-  ColumnDef,
-} from "@tanstack/react-table";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { ColumnDef } from "@tanstack/react-table";
 
 import { Button } from "../../components/ui/button";
 import {
@@ -30,10 +26,11 @@ function formatMarketCap(value: number) {
 
 export const columns: ColumnDef<Token>[] = [
   {
-    accessorFn: (row) => row.Index,
-    id: "index",
-    header: "#",
-    cell: ({ getValue }) => <div className="capitalize">{String(getValue())}</div>,
+    accessorKey: "market_cap_rank",
+    header: "Rank",
+    cell: ({ row }) => (
+      <div className="capitalize"> {row.getValue("market_cap_rank")}</div>
+    ),
   },
   {
     accessorKey: "image",

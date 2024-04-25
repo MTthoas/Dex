@@ -1,7 +1,5 @@
 "use client";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { Button } from "@/components/ui/button";
-import { useAccount, useDisconnect } from "wagmi";
+import { useAccount } from "wagmi";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   getUserByAdress,
@@ -12,11 +10,13 @@ import {
 import { useEffect } from "react";
 
 export default function Profil() {
-  const { open } = useWeb3Modal();
   const { address, isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
 
-  const { data: user, error, isError } = useQuery({
+  const {
+    data: user,
+    error,
+    isError,
+  } = useQuery({
     queryKey: ["getUserByAddress", address],
     queryFn: () => getUserByAdress(address!),
     enabled: !!address,
