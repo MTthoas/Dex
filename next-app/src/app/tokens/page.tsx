@@ -13,7 +13,10 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
+import { useAccount, useReadContract } from "wagmi";
+import { abi } from "../../abi/Token.json";
+import { ethers } from "ethers";
+import { useWriteContract } from 'wagmi'
 import { Button } from "../../components/ui/button";
 import {
   DropdownMenu,
@@ -34,6 +37,11 @@ import { Token } from "./token.model";
 import axios from "axios";
 import { columns } from "./ColumnDef";
 
+const contractConfig = {
+  address: "0xcF8fB3da3f2E622D14f8a61d2D7361B7f94E75eB",
+  abi: abi,
+} as const;
+
 export default function TokenPage() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -43,7 +51,27 @@ export default function TokenPage() {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
+  const [amountToBuy, setAmountToBuy] = React.useState('');
+
   const [data, setData] = React.useState<Token[]>([]);
+
+  const { data: balance } = useReadContract({
+    ...contractConfig,
+    args: [useAccount().address],
+    functionName: "balanceOf",
+  });
+  
+  const { data: totalSupply } = useReadContract({
+    ...contractConfig,
+    functionName: "totalSupply",
+  });
+
+  const walletUser = useAccount().address;
+  
+  const { writeContract } = useWriteContract();
+
+  console.log("TotalSupply :", totalSupply);
+  console.log("Balance of :", balance);
 
   React.useEffect(() => {
     axios
@@ -204,6 +232,32 @@ export default function TokenPage() {
               Next
             </Button>
           </div>
+        </div>
+        <div className="flex w-full max-w-sm items-center space-x-2 py-4">
+          <Input
+            type="number"
+            min="0"
+            placeholder="Amount in ETH to buy tokens"
+            value={amountToBuy}
+            onChange={(e) => setAmountToBuy(e.target.value)}
+            className="max-w-sm"
+          />
+          <Button
+            onClick={() => 
+              writeContract({ 
+                abi,
+                address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+                functionName: 'buyToken',
+                args: [
+                  walletUser,
+                  '0x6b175474e89094c44da98b954eedeac495271d0f',
+                  123,
+                ],
+             })
+            }
+          >
+            Buy Our Token
+          </Button>
         </div>
       </div>
     </div>

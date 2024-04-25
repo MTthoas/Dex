@@ -1,0 +1,2 @@
+Token=[staticcall][0m
+Token=0xcF8fB3da3f2E622D14f8a61d2D7361B7f94E75eB

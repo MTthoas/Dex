@@ -6,12 +6,7 @@ import "../src/UserRegistry.sol";
 
 contract DeployUserRegistry is Script {
     function run() external {
-        vm.startBroadcast();
-
         UserRegistry userRegistry = new UserRegistry();
-
-        vm.stopBroadcast();
-
         // Output the address
         console.log("UserRegistry deployed to:", address(userRegistry));
     }

@@ -1,13 +1,5 @@
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
-import {
-  mainnet,
-  polygon,
-  optimism,
-  arbitrum,
-  base,
-  zora,
-  sepolia,
-} from "wagmi/chains";
+import { sepolia } from "wagmi/chains";
 
 // Get projectId at https://cloud.walletconnect.com
 export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
@@ -15,6 +7,6 @@ export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 export const config = getDefaultConfig({
   appName: "My RainbowKit App",
   projectId: projectId || "",
-  chains: [mainnet, polygon, optimism, arbitrum, base, zora, sepolia],
+  chains: [sepolia],
   ssr: true, // If your dApp uses server side rendering (SSR)
 });
