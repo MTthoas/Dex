@@ -2,14 +2,26 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import "@openzeppelin/contracts/access/manager/AccessManaged.sol";
+import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradeable.sol";
 
 /**
  * @title UserRegistry
  * @author ronfflex
  * @notice This contract manages user registration, authentication, and administration for a decentralized exchange (DEX) platform.
  */
-contract UserRegistry is AccessManaged {
+
+contract UserRegistry is AccessManagedUpgradeable {
+    constructor() {
+        _disableInitializers(); // using this so that the deployed logic contract later cannot be initialized.
+    }
+
+    /**
+     * @notice Initializer of the contract
+     */
+    function initialize(address _initialAuthority) external initializer {
+        __AccessManaged_init(_initialAuthority);
+    }
+
     using EnumerableSet for EnumerableSet.UintSet;
 
     mapping(address => User) public users;
@@ -27,8 +39,6 @@ contract UserRegistry is AccessManaged {
     event UserRegistered(address indexed userAddress, uint256 userId);
     event UserBanned(address indexed userAddress, uint256 userId);
     event UserUnbanned(address indexed userAddress, uint256 userId);
-
-    constructor(address accessManager) AccessManaged(accessManager) { }
 
     /**
      * @notice Gets the user IDs of all registered users.

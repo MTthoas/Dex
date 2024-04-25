@@ -3,15 +3,17 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
 import "../src/DexAccessManager.sol";
+import "../src/UserRegistry.sol";
 
-contract DexAccessManagerScript is Script {
+contract DeployDexContracts is Script {
     function run() external {
-        vm.startBroadcast();
+        // Deploy the AccessManager
+        address initialAdmin = msg.sender; // or any other admin address
+        DexAccessManager dexAccessManager = new DexAccessManager(initialAdmin);
+        console.log("DexAccessManager deployed to:", address(dexAccessManager));
 
-        address initialAdmin = msg.sender;
-        AccessManager accessManager = new AccessManager(initialAdmin);
-
-        console.log("AccessManager deployed at:", address(accessManager));
-        vm.stopBroadcast();
+        // Deploy the UserRegistry
+        UserRegistry userRegistry = new UserRegistry(address(dexAccessManager));
+        console.log("UserRegistry deployed to:", address(userRegistry));
     }
 }

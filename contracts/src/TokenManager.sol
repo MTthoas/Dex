@@ -11,6 +11,8 @@ import "@openzeppelin/contracts/access/manager/AccessManaged.sol";
  * @notice This contract manages the listing and delisting of tokens on the decentralized exchange (DEX) platform.
  */
 contract TokenManager is AccessManaged {
+    constructor(address accessManager) AccessManaged(accessManager) {}
+
     using EnumerableSet for EnumerableSet.AddressSet;
 
     mapping(address => TokenInfo) public tokenInfos;
@@ -31,8 +33,6 @@ contract TokenManager is AccessManaged {
         uint8 decimals
     );
     event TokenDelisted(address indexed tokenAddress);
-
-    constructor(address accessManager) AccessManaged(accessManager) { }
 
     /**
      * @notice Lists a new token on the DEX platform.
