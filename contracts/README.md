@@ -27,34 +27,21 @@ $ forge build
 $ forge test
 ```
 
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
 ### Deploy
+1.Create wallet for deployer
 
 ```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+$ cast wallet import deployer --interactive
 ```
 
-### Cast
-
+2.Set environment variables and source them
 ```shell
-$ cast <subcommand>
+$ source .env
+```
+
+3.Deploy AccessManager contract
+```shell
+$ forge script script/DeployAccessManager.s.sol:AccessManagerDeploymentScript --rpc-url $SEPOLIA_RPC --broadcast --verify --account deployer -vvvv
 ```
 
 ### Help
@@ -63,4 +50,19 @@ $ cast <subcommand>
 $ forge --help
 $ anvil --help
 $ cast --help
+```
+
+## Setup
+
+### Install dependencies
+
+```shell
+$ yarn install
+```
+
+### Install submodules
+
+```shell
+$ ../
+$ git submodule update --init --recursive
 ```

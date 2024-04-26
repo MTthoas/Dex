@@ -11,8 +11,29 @@ import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradea
  */
 
 contract UserRegistry is AccessManagedUpgradeable {
+    using EnumerableSet for EnumerableSet.UintSet;
+
+    // Set to store registered user IDs
+    EnumerableSet.UintSet private registeredUserIds;
+
+    mapping(address => User) public users;
+
+    struct User {
+        uint256 id;
+        string name;
+        bool isBanned;
+    }
+
+    /**************************************************/
+    /********************* Events *********************/
+    /**************************************************/
+
+    event UserRegistered(address indexed userAddress, uint256 userId);
+    event UserBanned(address indexed userAddress, uint256 userId);
+    event UserUnbanned(address indexed userAddress, uint256 userId);
+
     constructor() {
-        _disableInitializers(); // using this so that the deployed logic contract later cannot be initialized.
+        _disableInitializers();
     }
 
     /**
@@ -22,23 +43,9 @@ contract UserRegistry is AccessManagedUpgradeable {
         __AccessManaged_init(_initialAuthority);
     }
 
-    using EnumerableSet for EnumerableSet.UintSet;
-
-    mapping(address => User) public users;
-
-    // Set to store registered user IDs
-    EnumerableSet.UintSet private registeredUserIds;
-
-    struct User {
-        uint256 id;
-        string name;
-        bool isBanned;
-    }
-
-    // Events to log
-    event UserRegistered(address indexed userAddress, uint256 userId);
-    event UserBanned(address indexed userAddress, uint256 userId);
-    event UserUnbanned(address indexed userAddress, uint256 userId);
+    /***************************************************/
+    /********************* Getters *********************/
+    /***************************************************/
 
     /**
      * @notice Gets the user IDs of all registered users.
@@ -46,20 +53,6 @@ contract UserRegistry is AccessManagedUpgradeable {
      */
     function getRegisteredUserIds() public view returns (uint256[] memory) {
         return registeredUserIds.values();
-    }
-
-    /**
-     * @notice Registers a new user with the provided name.
-     * @param _name The name of the user.
-     */
-    function registerUser(string memory _name) public {
-        require(users[msg.sender].id == 0, "User already registered");
-
-        uint256 userId = registeredUserIds.length() + 1;
-        users[msg.sender] = User(userId, _name, false);
-        registeredUserIds.add(userId);
-
-        emit UserRegistered(msg.sender, userId);
     }
 
     /**
@@ -78,6 +71,33 @@ contract UserRegistry is AccessManagedUpgradeable {
      */
     function getUserId(address _address) public view returns (uint256) {
         return users[_address].id;
+    }
+
+    /**
+     * @notice Checks if the given user is banned.
+     * @param _userAddress The address of the user.
+     * @return bool True if the user is banned, false otherwise.
+     */
+    function isUserBanned(address _userAddress) public view returns (bool) {
+        return isRegisteredUser(_userAddress) && users[_userAddress].isBanned;
+    }
+
+    /***************************************************/
+    /********************* Setters *********************/
+    /***************************************************/    
+
+    /**
+     * @notice Registers a new user with the provided name.
+     * @param _name The name of the user.
+     */
+    function registerUser(string memory _name) public restricted {
+        require(users[msg.sender].id == 0, "User already registered");
+
+        uint256 userId = registeredUserIds.length() + 1;
+        users[msg.sender] = User(userId, _name, false);
+        registeredUserIds.add(userId);
+
+        emit UserRegistered(msg.sender, userId);
     }
 
     /**
@@ -103,15 +123,6 @@ contract UserRegistry is AccessManagedUpgradeable {
         users[_userAddress].isBanned = false;
 
         emit UserUnbanned(_userAddress, users[_userAddress].id);
-    }
-
-    /**
-     * @notice Checks if the given user is banned.
-     * @param _userAddress The address of the user.
-     * @return bool True if the user is banned, false otherwise.
-     */
-    function isUserBanned(address _userAddress) public view returns (bool) {
-        return isRegisteredUser(_userAddress) && users[_userAddress].isBanned;
     }
 
     /**

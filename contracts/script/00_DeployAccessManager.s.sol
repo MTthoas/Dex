@@ -6,7 +6,6 @@ import "forge-std/console.sol";
 import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import "@openzeppelin/contracts/access/manager/AccessManager.sol";
 
-// script to deploy the Factory Instance and Proxy
 contract AccessManagerDeploymentScript is Script {
     address private testRes;
     address private initialSuperAdmin;
@@ -51,6 +50,7 @@ contract AccessManagerDeploymentScript is Script {
         initialSuperAdmin = _initialSuperAdmin;
         run();
         _testRes = testRes;
+        // Reset the variables for the next test
         forTest = false;
         testRes = address(0);
         initialSuperAdmin = address(0);
