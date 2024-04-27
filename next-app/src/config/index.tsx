@@ -15,6 +15,6 @@ export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 export const config = getDefaultConfig({
   appName: "My RainbowKit App",
   projectId: projectId || "",
-  chains: [mainnet, polygon, optimism, arbitrum, base, zora, sepolia],
+  chains: [mainnet, sepolia],
   ssr: true, // If your dApp uses server side rendering (SSR)
 });
