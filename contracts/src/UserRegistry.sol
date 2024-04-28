@@ -92,7 +92,7 @@ contract UserRegistry is AccessManagedUpgradeable {
         require(users[msg.sender].id == 0, "User already registered");
 
         uint256 userId = registeredUserIds.length() + 1;
-        users[msg.sender] = User(userId, _name, false);
+        users[msg.sender] = User(userId, false);
         registeredUserIds.add(userId);
 
         emit UserRegistered(msg.sender, userId);
