@@ -1,0 +1,4 @@
+/contracts/.yarn/**            linguist-vendored
+/contracts/.yarn/releases/*    binary
+/contracts/.yarn/plugins/**/*  binary
+/contracts/.pnp.*              binary linguist-generated
