@@ -17,7 +17,7 @@ export default function page() {
     queryFn: getPools,
   });
 
-  // Connect pools in to doo
+  // Connect pools in to doo to display in the UI
 
   return (
     <div className="w-full flex justify-center h-screen ">
