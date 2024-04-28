@@ -1,30 +1,49 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradeable.sol";
 
 /**
  * @title UserRegistry
  * @dev This contract manages user registration, authentication, and administration for a decentralized exchange (DEX) platform.
  */
-contract UserRegistry is Ownable {
+
+contract UserRegistry is AccessManagedUpgradeable {
     using EnumerableSet for EnumerableSet.UintSet;
 
-    mapping(address => User) public users;
+    // Set to store registered user IDs
     EnumerableSet.UintSet private registeredUserIds;
+
+    mapping(address => User) public users;
 
     struct User {
         uint256 id;
         bool isBanned;
     }
 
-    // Events to log
+    /**************************************************/
+    /********************* Events *********************/
+    /**************************************************/
+
     event UserRegistered(address indexed userAddress, uint256 userId);
     event UserBanned(address indexed userAddress, uint256 userId);
     event UserUnbanned(address indexed userAddress, uint256 userId);
 
-    constructor() Ownable(msg.sender) {}
+    constructor() {
+        _disableInitializers();
+    }
+
+    /**
+     * @notice Initializer of the contract
+     */
+    function initialize(address _initialAuthority) external initializer {
+        __AccessManaged_init(_initialAuthority);
+    }
+
+    /***************************************************/
+    /********************* Getters *********************/
+    /***************************************************/
 
     /**
      * @notice Gets the user IDs of all registered users.
@@ -32,19 +51,6 @@ contract UserRegistry is Ownable {
      */
     function getRegisteredUserIds() public view returns (uint256[] memory) {
         return registeredUserIds.values();
-    }
-
-    /**
-     * @notice Registers a new user.
-     */
-    function registerUser() public {
-        require(users[msg.sender].id == 0, "User already registered");
-
-        uint256 userId = registeredUserIds.length() + 1;
-        users[msg.sender] = User(userId, false);
-        registeredUserIds.add(userId);
-
-        emit UserRegistered(msg.sender, userId);
     }
 
     /**
@@ -66,10 +72,37 @@ contract UserRegistry is Ownable {
     }
 
     /**
+     * @notice Checks if the given user is banned.
+     * @param _userAddress The address of the user.
+     * @return bool True if the user is banned, false otherwise.
+     */
+    function isUserBanned(address _userAddress) public view returns (bool) {
+        return isRegisteredUser(_userAddress) && users[_userAddress].isBanned;
+    }
+
+    /***************************************************/
+    /********************* Setters *********************/
+    /***************************************************/    
+
+    /**
+     * @notice Registers a new user with the provided name.
+     * @param _name The name of the user.
+     */
+    function registerUser(string memory _name) public restricted {
+        require(users[msg.sender].id == 0, "User already registered");
+
+        uint256 userId = registeredUserIds.length() + 1;
+        users[msg.sender] = User(userId, _name, false);
+        registeredUserIds.add(userId);
+
+        emit UserRegistered(msg.sender, userId);
+    }
+
+    /**
      * @notice Bans the user with the given address.
      * @param _userAddress The address of the user to ban.
      */
-    function banUser(address _userAddress) public onlyOwner {
+    function banUser(address _userAddress) public restricted {
         require(isRegisteredUser(_userAddress), "User not registered");
 
         users[_userAddress].isBanned = true;
@@ -80,7 +113,7 @@ contract UserRegistry is Ownable {
      * @notice Unbans the user with the given address.
      * @param _userAddress The address of the user to unban.
      */
-    function unbanUser(address _userAddress) public onlyOwner {
+    function unbanUser(address _userAddress) public restricted {
         require(isRegisteredUser(_userAddress), "User not registered");
         require(users[_userAddress].isBanned, "User not banned");
 
@@ -89,20 +122,11 @@ contract UserRegistry is Ownable {
     }
 
     /**
-     * @notice Checks if the given user is banned.
-     * @param _userAddress The address of the user.
-     * @return bool True if the user is banned, false otherwise.
-     */
-    function isUserBanned(address _userAddress) public view returns (bool) {
-        return isRegisteredUser(_userAddress) && users[_userAddress].isBanned;
-    }
-
-    /**
      * @notice Transfers the user ID from the old address to the new address.
      * @param _oldAddress The old address of the user.
      * @param _newAddress The new address of the user.
      */
-    function transferUserId(address _oldAddress, address _newAddress) public onlyOwner {
+    function transferUserId(address _oldAddress, address _newAddress) public restricted {
         require(isRegisteredUser(_oldAddress), "Old address not registered");
         require(!isRegisteredUser(_newAddress), "New address already registered");
 

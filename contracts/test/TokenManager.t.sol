@@ -11,7 +11,7 @@ contract TokenManagerTest is Test {
     MockERC20 public token2;
 
     function setUp() public {
-        tokenManager = new TokenManager();
+        tokenManager = new TokenManager(address(this));
         token1 = new MockERC20("Token 1", "TKN1");
         token2 = new MockERC20("Token 2", "TKN2");
     }
