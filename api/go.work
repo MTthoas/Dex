@@ -1,0 +1,7 @@
+go 1.20
+
+use (
+	.
+)
+
+// sois un go mod pour tout le projet, soit un go mod par package
