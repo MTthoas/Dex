@@ -1,14 +1,23 @@
+"use client";
 import React from "react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { getPools } from "@/hook/pools.hook";
 
 export default function page() {
+  const { data: pools } = useQuery({
+    queryKey: ["pools"],
+    queryFn: getPools,
+  });
+
+  // Connect pools in to doo
+
   return (
     <div className="w-full flex justify-center h-screen ">
       <div className="w-2/3">
