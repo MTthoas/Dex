@@ -41,7 +41,7 @@ $ source .env
 
 3.Deploy AccessManager contract
 ```shell
-$ forge script script/DeployAccessManager.s.sol:AccessManagerDeploymentScript --rpc-url $SEPOLIA_RPC --broadcast --verify --account deployer -vvvv
+$ forge script script/00_DeployAccessManager.s.sol:AccessManagerDeploymentScript --rpc-url $SEPOLIA_RPC --broadcast --verify --account deployer -vvvv
 ```
 
 ### Help
