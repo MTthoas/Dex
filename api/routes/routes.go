@@ -25,13 +25,13 @@ func PublicRoutes(a *fiber.App) {
 
 	route.Get("/transactions", controllers.GetTransactions)
 	route.Get("/transaction/:id", controllers.GetTransaction)
-	route.Post("/transaction", controllers.CreateTransaction)
-	route.Put("/transaction", controllers.UpdateTransaction)
-	route.Delete("/transaction/:id", controllers.DeleteTransaction)
-	
+	route.Post("/transactions", controllers.CreateTransaction)
+	route.Put("/transactions", controllers.UpdateTransaction)
+	route.Delete("/transactions/:id", controllers.DeleteTransaction)
+
 	route.Get("/pools", controllers.GetPools)
-	route.Get("/pool/:id", controllers.GetPool)
-	route.Post("/pool", controllers.CreatePool)
-	route.Put("/pool", controllers.UpdatePool)
-	route.Delete("/pool/:id", controllers.DeletePool)
+	route.Get("/pools/:id", controllers.GetPool)
+	route.Post("/pools", controllers.CreatePool)
+	route.Put("/pools", controllers.UpdatePool)
+	route.Delete("/pools/:id", controllers.DeletePool)
 }
