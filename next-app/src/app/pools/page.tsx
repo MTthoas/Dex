@@ -41,7 +41,17 @@ export default function page() {
   );
 }
 
-const PoolItem = ({ name, earned, apr, liquidity }) => {
+const PoolItem = ({
+  name,
+  earned,
+  apr,
+  liquidity,
+}: {
+  name: string;
+  earned: string;
+  apr: string;
+  liquidity: string;
+}) => {
   return (
     <Card>
       <CardHeader>{name}</CardHeader>
