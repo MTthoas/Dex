@@ -19,6 +19,7 @@ contract UserRegistry is AccessManagedUpgradeable {
 
     struct User {
         uint256 id;
+        string name;
         bool isBanned;
     }
 
@@ -133,7 +134,7 @@ contract UserRegistry is AccessManagedUpgradeable {
         uint256 userId = users[_oldAddress].id;
 
         delete users[_oldAddress];
-        users[_newAddress] = User(userId, false);
+        users[_newAddress] = User(userId, users[_oldAddress].name, users[_oldAddress].isBanned);
 
         emit UserRegistered(_newAddress, userId);
     }

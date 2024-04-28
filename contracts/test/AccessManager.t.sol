@@ -14,7 +14,6 @@ contract AccessManagerTest is Test {
     address public accessManagersuperAdmin = 0x00000000000000000000000000000000000000a0;
     address public accessManagersuperAdmin2 = 0x00000000000000000000000000000000000000A1;
     address MOCK_ADDR_1 = 0x0000000000000000000000000000000000000001;
-    address MOCK_ADDR_2 = 0x0000000000000000000000000000000000000002;
     uint256 fork;
     string SEPOLIA_RPC_URL = vm.envString("SEPOLIA_RPC");
 
