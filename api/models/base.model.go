@@ -5,8 +5,7 @@ import (
 )
 
 type Base struct {
-	ID        uint      `json:"id" gorm:"primaryKey"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	DeletedAt time.Time `json:"deleted_at"`
+	ID        uint      `json:"id" gorm:"primaryKey" example:"1"`
+	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime" example:"2021-08-01T00:00:00Z"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime" example:"2021-08-01T00:00:00Z"`
 }

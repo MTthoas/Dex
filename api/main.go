@@ -15,10 +15,13 @@ import (
 
 func main() {
 
-	err := godotenv.Load() // Cela charge les variables d'environnement à partir du fichier `.env`.
+
+	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	print(err)
+
 	config := configs.FiberConfig()
 
 	app := fiber.New(config)
@@ -27,8 +30,8 @@ func main() {
 	middleware.FiberMiddleware(app)
 
 	// Routes.
-	routes.SwaggerRoute(app)  // Register a route for API Docs (Swagger).
 	routes.PublicRoutes(app)  // Register a public routes for app.
+	routes.SwaggerRoute(app)  // Register a route for API Docs (Swagger).
 	routes.NotFoundRoute(app) // Register route for 404 Error.
 
 	// Start server (with graceful shutdown).

@@ -6,7 +6,5 @@ import (
 )
 
 func SwaggerRoute(a *fiber.App) {
-	route := a.Group("/swagger")
-	// Routes for GET method:
-	route.Get("*", swagger.HandlerDefault)
+	a.Get("/swagger/*", swagger.HandlerDefault)
 }

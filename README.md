@@ -8,7 +8,6 @@ Annual project focused on creating a complete decentralized application (dApp) t
 - npm
 - Wallet ( metamask / trust .. )
 
-<<<<<<< HEAD
 ## Technologies
 
 To the global web architecture we're using foundry.Foundry manages your dependencies, compiles your project, runs tests, deploys, and lets you interact with the chain from the command-line and via Solidity scripts.
@@ -42,8 +41,6 @@ We're using React to create the frontend of the dApp. We're using TypeScript to 
 
 We're using Docker to run the API and the smart contracts on the same network.
 
-=======
->>>>>>> develop
 ## Structure
 ```
 ├── contracts
@@ -71,7 +68,6 @@ We're using Docker to run the API and the smart contracts on the same network.
     └── styles
 ```
 
-<<<<<<< HEAD
 ## Installation
 
 ### 1. Clone the repository
@@ -106,21 +102,3 @@ cd ./frontend
 npm i
 npm start
 ```
-=======
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> develop

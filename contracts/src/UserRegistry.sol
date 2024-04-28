@@ -6,8 +6,7 @@ import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradea
 
 /**
  * @title UserRegistry
- * @author ronfflex
- * @notice This contract manages user registration, authentication, and administration for a decentralized exchange (DEX) platform.
+ * @dev This contract manages user registration, authentication, and administration for a decentralized exchange (DEX) platform.
  */
 
 contract UserRegistry is AccessManagedUpgradeable {
@@ -20,7 +19,6 @@ contract UserRegistry is AccessManagedUpgradeable {
 
     struct User {
         uint256 id;
-        string name;
         bool isBanned;
     }
 
@@ -108,7 +106,6 @@ contract UserRegistry is AccessManagedUpgradeable {
         require(isRegisteredUser(_userAddress), "User not registered");
 
         users[_userAddress].isBanned = true;
-
         emit UserBanned(_userAddress, users[_userAddress].id);
     }
 
@@ -121,7 +118,6 @@ contract UserRegistry is AccessManagedUpgradeable {
         require(users[_userAddress].isBanned, "User not banned");
 
         users[_userAddress].isBanned = false;
-
         emit UserUnbanned(_userAddress, users[_userAddress].id);
     }
 
@@ -135,10 +131,9 @@ contract UserRegistry is AccessManagedUpgradeable {
         require(!isRegisteredUser(_newAddress), "New address already registered");
 
         uint256 userId = users[_oldAddress].id;
-        string memory name = users[_oldAddress].name;
 
         delete users[_oldAddress];
-        users[_newAddress] = User(userId, name, false);
+        users[_newAddress] = User(userId, false);
 
         emit UserRegistered(_newAddress, userId);
     }

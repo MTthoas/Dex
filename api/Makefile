@@ -5,9 +5,9 @@ BUILD_DIR = build
 MIGRATIONS_FOLDER = $(CURDIR)/platform/migrations
 DATABASE_URL = postgres://postgres:password@localhost/postgres?sslmode=disable
 
-clean:
-	if exist $(BUILD_DIR) rmdir /s /q $(BUILD_DIR)
-	del /f /q cover.out 2>nul
+# clean:
+# 	if exist $(BUILD_DIR) rmdir /s /q $(BUILD_DIR)
+# 	del /f /q cover.out 2>nul
 
 test:
 	go test -v -timeout 30s -coverprofile=cover.out -cover ./...

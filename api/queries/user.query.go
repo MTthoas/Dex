@@ -5,7 +5,6 @@ import (
 	"gorm.io/gorm"
 )
 
-
 type UserQueries struct {
 	DB *gorm.DB
 }
@@ -26,6 +25,14 @@ func (uq *UserQueries) GetUserByID(id int) (models.User, error) {
 	return user, nil
 }
 
+func (uq *UserQueries) GetUserByAddress(address string) (models.User, error) {
+	var user models.User
+	if err := uq.DB.Where("address = ?", address).First(&user).Error; err != nil {
+		return models.User{}, err
+	}
+	return user, nil
+}
+
 func (uq *UserQueries) CreateUser(user models.User) (models.User, error) {
 	if err := uq.DB.Create(&user).Error; err != nil {
 		return models.User{}, err
@@ -39,7 +46,6 @@ func (uq *UserQueries) UpdateUser(user models.User) (models.User, error) {
 	}
 	return user, nil
 }
-
 
 func (uq *UserQueries) DeleteUser(id int) error {
 	if err := uq.DB.Delete(&models.User{}, id).Error; err != nil {

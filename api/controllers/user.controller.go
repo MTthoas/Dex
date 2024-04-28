@@ -11,7 +11,7 @@ import (
 // GetUsers function to get all users
 // @Summary Get all users
 // @Description Retrieves a list of all users in the database.
-// @Tags Users
+// @Tags User
 // @Accept json
 // @Produce json
 // @Success 200 {object} models.User
@@ -38,14 +38,14 @@ func GetUsers(c *fiber.Ctx) error {
 // GetUser function to get user by ID
 // @Summary Get user by ID
 // @Description Retrieves a user by ID from the database.
-// @Tags Users
+// @Tags User
 // @Accept json
 // @Produce json
 // @Param id path int true "User ID"
 // @Success 200 {object} models.User
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /api/v1/user/{id} [get]
+// @Router /api/v1/users/{id} [get]
 func GetUser(c *fiber.Ctx) error {
 	db, err := database.OpenDBConnection()
 	if err != nil {
@@ -71,10 +71,46 @@ func GetUser(c *fiber.Ctx) error {
 	})
 }
 
+// GetUserByAddress function to get user by address
+// @Summary Get user by address
+// @Description Retrieves a user by address from the database.
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param address path string true "User address"
+// @Success 200 {object} models.User
+// @Failure 404 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /api/v1/users/address/{address} [get]
+func GetUserByAddress(c *fiber.Ctx) error {
+	db, err := database.OpenDBConnection()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	address := c.Params("address")
+	user, err := db.UserQueries.GetUserByAddress(address)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": true,
+				"msg":   "user not found",
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"data": user,
+	})
+}
+
 // CreateUser function to create a new user
 // @Summary Create a new user
 // @Description Creates a new user in the database.
-// @Tags Users
+// @Tags User
 // @Accept json
 // @Produce json
 // @Param user body models.User true "User object"
@@ -109,7 +145,7 @@ func CreateUser(c *fiber.Ctx) error {
 // UpdateUser function to update a user
 // @Summary Update a user
 // @Description Updates a user in the database.
-// @Tags Users
+// @Tags User
 // @Accept json
 // @Produce json
 // @Param id path int true "User ID"
@@ -118,7 +154,7 @@ func CreateUser(c *fiber.Ctx) error {
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /api/v1/user/{id} [put]
+// @Router /api/v1/users/{id} [put]
 func UpdateUser(c *fiber.Ctx) error {
 
 	db, err := database.OpenDBConnection()
@@ -159,14 +195,14 @@ func UpdateUser(c *fiber.Ctx) error {
 // DeleteUser function to delete a user
 // @Summary Delete a user
 // @Description Deletes a user from the database.
-// @Tags Users
+// @Tags User
 // @Accept json
 // @Produce json
 // @Param id path int true "User ID"
 // @Success 204
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
-// @Router /api/v1/user/{id} [delete]
+// @Router /api/v1/users/{id} [delete]
 func DeleteUser(c *fiber.Ctx) error {
 
 	db, err := database.OpenDBConnection()
