@@ -7,10 +7,10 @@ export default function Component() {
     <div className="flex flex-col">
       <header />
       <main className="flex-grow" />
-      <footer className="p-4 text-white">
+      <footer className="p-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div>
-            <p className="text-lg font-bold">GenX Company</p>
+            <p className="text-lg font-medium">GenX Company</p>
             <p className="text-sm">
               Unlock the world of cryptocurrency trading.
             </p>

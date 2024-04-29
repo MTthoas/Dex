@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Button } from "../ui/button";
 import { NavLink } from "@/types/header.type";
+import { ModeToggle } from "../ModeToggle";
 
 const HeaderLinks: NavLink[] = [
   {
@@ -130,6 +131,8 @@ export default function Header(): JSX.Element {
                             alignItems: "center",
                           }}
                           type="button"
+                          variant="ghost"
+                          
                         >
                           {chain.hasIcon && (
                             <div
@@ -167,6 +170,9 @@ export default function Header(): JSX.Element {
               );
             }}
           </ConnectButton.Custom>
+          <div className="ml-2">
+            <ModeToggle />
+          </div>
         </div>
       </nav>
     </header>
