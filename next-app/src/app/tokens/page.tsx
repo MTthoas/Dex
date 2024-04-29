@@ -31,8 +31,9 @@ import {
   TableRow,
 } from "../../components/ui/table";
 import { Token } from "./token.model";
-import axios from "axios";
 import { columns } from "./ColumnDef";
+import { useQuery } from "@tanstack/react-query";
+import { getCoins } from "@/hook/coins.hook";
 
 export default function TokenPage() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -43,30 +44,14 @@ export default function TokenPage() {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const [data, setData] = React.useState<Token[]>([]);
-
-  React.useEffect(() => {
-    axios
-      .get("http://localhost:5002/api/v1/coins", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        const indexedData = response.data.map((item: any, index: any): any => ({
-          ...item,
-          index: index + 1,
-        }));
-        setData(indexedData);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  const { data: tokens } = useQuery<Token[]>({
+    queryKey: ["tokens"],
+    queryFn: getCoins,
+  });
 
   const table = useReactTable({
-    data,
-    columns,
+    data: tokens ?? [],
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),

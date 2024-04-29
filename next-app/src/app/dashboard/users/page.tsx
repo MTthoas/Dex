@@ -2,9 +2,9 @@
 "use client";
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getUsers } from "@/hook";
-import { Hook, User } from "@/types/hookResponse";
+import { Hook, User } from "@/types/hookResponse.type";
 import UsersTable from "@/components/dashboard/users/UsersTable";
+import { getUsers } from "@/hook/users.hook";
 
 const UsersPage: React.FC = () => {
   const {

@@ -6,7 +6,7 @@ import {
   TableBody,
   Table,
 } from "@/components/ui/table";
-import { User } from "@/types/hookResponse";
+import { User } from "@/types/hookResponse.type";
 
 type UsersTableProps = {
   users: User[];

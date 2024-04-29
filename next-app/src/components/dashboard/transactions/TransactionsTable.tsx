@@ -6,7 +6,7 @@ import {
   TableBody,
   Table,
 } from "@/components/ui/table";
-import { Transaction } from "@/types/hookResponse";
+import { Transaction } from "@/types/hookResponse.type";
 
 type TransactionsTableProps = {
   transactions: Transaction[];
@@ -44,7 +44,6 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
 };
 
 function TransactionRow({ transaction }: { transaction: Transaction }) {
-  const transactionId = transaction.id;
   const date = new Date(transaction.created_at).toLocaleString("fr");
 
   return (

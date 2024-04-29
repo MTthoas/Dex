@@ -2,12 +2,30 @@
 
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
 import { Button } from "../ui/button";
+import { NavLink } from "@/types/header.type";
+import { ModeToggle } from "../ModeToggle";
 
-export default function Header() {
-  const { address } = useAccount();
+const HeaderLinks: NavLink[] = [
+  {
+    name: "Swap",
+    href: "/swap",
+  },
+  {
+    name: "Dashboard",
+    href: "/dashboard",
+  },
+  {
+    name: "Tokens",
+    href: "/tokens",
+  },
+  {
+    name: "Pools",
+    href: "/pools",
+  },
+];
 
+export default function Header(): JSX.Element {
   return (
     <header className="dark">
       <nav
@@ -44,16 +62,18 @@ export default function Header() {
           </button>
         </div>
         <div className="hidden lg:flex lg:gap-x-12 pt-2">
-          <p className="text-sm font-semibold leading-6 text-foreground">
-            <Link href={"/swap"}>Swap</Link>
-          </p>
-
-          <p className="text-sm font-semibold leading-6 text-foreground">
-            <Link href={"/dashboard"}>Dashboard</Link>
-          </p>
-          <p className="text-sm font-semibold leading-6 text-foreground">
-            <Link href={"/tokens"}>Tokens</Link>
-          </p>
+          {HeaderLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              className="
+                text-sm
+                font-medium
+                hover:text-gray-500"
+            >
+              {link.name}
+            </Link>
+          ))}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end pt-1">
           <ConnectButton.Custom>
@@ -111,6 +131,8 @@ export default function Header() {
                             alignItems: "center",
                           }}
                           type="button"
+                          variant="ghost"
+                          
                         >
                           {chain.hasIcon && (
                             <div
@@ -148,6 +170,9 @@ export default function Header() {
               );
             }}
           </ConnectButton.Custom>
+          <div className="ml-2">
+            <ModeToggle />
+          </div>
         </div>
       </nav>
     </header>

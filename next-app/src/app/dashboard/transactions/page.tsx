@@ -2,9 +2,9 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { Hook, Transaction } from "@/types/hookResponse";
-import { getTransactions } from "@/hook";
+import { Hook, Transaction } from "@/types/hookResponse.type";
 import TransactionsTable from "@/components/dashboard/transactions/TransactionsTable";
+import { getTransactions } from "@/hook/users.hook";
 
 const TransactionsPage: React.FC = () => {
   const {

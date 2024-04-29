@@ -9,9 +9,12 @@ import (
 	"os"
 
 	"github.com/MTthoas/dex/api/models"
+	"gorm.io/gorm"
 )
 
-type TokenQueries struct{}
+type TokenQueries struct {
+	DB *gorm.DB
+}
 
 func GetTokens() []models.Token {
 

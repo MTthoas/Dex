@@ -9,7 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// Queries struct for collect all app queries.
 type Queries struct {
 	*queries.UserQueries
 	*queries.TransactionQueries
@@ -17,7 +16,6 @@ type Queries struct {
 	*queries.TokenQueries
 }
 
-// OpenDBConnection func for opening database connection.
 func OpenDBConnection() (*Queries, error) {
 	dsn := os.Getenv("DB_SERVER_URL")
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -25,18 +23,15 @@ func OpenDBConnection() (*Queries, error) {
 		return nil, err
 	}
 
-	// Perform auto-migration to keep the schema updated.
-	err = db.AutoMigrate(&models.User{}, &models.Transaction{})
-	if err != nil {
+	// AutoMigrate for all referenced models
+	if err := db.AutoMigrate(&models.User{}, &models.Transaction{}, &models.Pool{}, &models.Token{}); err != nil {
 		return nil, err
 	}
 
 	return &Queries{
-		UserQueries: &queries.UserQueries{
-			DB: db,
-		},
-		TransactionQueries: &queries.TransactionQueries{
-			DB: db,
-		},
+		UserQueries:        &queries.UserQueries{DB: db},
+		TransactionQueries: &queries.TransactionQueries{DB: db},
+		PoolQueries:        &queries.PoolQueries{DB: db},
+		TokenQueries:       &queries.TokenQueries{DB: db},
 	}, nil
 }
