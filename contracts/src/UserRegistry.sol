@@ -92,8 +92,8 @@ contract UserRegistry is AccessManagedUpgradeable {
     function registerUser(string memory _name) public restricted {
         require(users[msg.sender].id == 0, "User already registered");
 
-        uint256 userId = registeredUserIds.length() + 1;
-        users[msg.sender] = User(userId, false);
+        uint256 userId = registeredUserIds.length() + 1; // TODO: this is not working if we remove a user but can we remove a user ?
+        users[msg.sender] = User(userId, _name, false);
         registeredUserIds.add(userId);
 
         emit UserRegistered(msg.sender, userId);

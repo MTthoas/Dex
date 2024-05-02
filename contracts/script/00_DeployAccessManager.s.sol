@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
-import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import "@openzeppelin/contracts/access/manager/AccessManager.sol";
 
 contract AccessManagerDeploymentScript is Script {

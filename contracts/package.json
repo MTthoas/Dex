@@ -14,9 +14,11 @@
   "scripts": {
     "prettier": "prettier --write --plugin=prettier-plugin-solidity 'contracts/**/*.sol'",
     "lint": "prettier --list-different --plugin=prettier-plugin-solidity 'contracts/**/*.sol'",
+    "sub-modules": "cd ../ && git submodule update --init --recursive",
     "gas-report": "forge test --gas-report",
-    "deploy-access-manager": "forge script script/00_deployAccessManager.s.sol --rpc-url $RPC_URL --private-key $ACCOUNT_PRIVATE_KEY --broadcast --verify -vvvv",
-    "deploy-registry": "forge script script/01_deployRegistry.s.sol --rpc-url $RPC_URL --private-key $ACCOUNT_PRIVATE_KEY --broadcast --verify -vvvv"
+    "build": "forge build",
+    "test": "forge test",
+    "deploy-access-manager": "forge script script/00_deployAccessManager.s.sol --rpc-url $RPC_URL --private-key $ACCOUNT_PRIVATE_KEY --broadcast --verify -vvvv"
   },
   "dependencies": {
     "dotenv": "16.4.5"
