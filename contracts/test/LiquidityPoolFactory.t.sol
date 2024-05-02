@@ -20,29 +20,19 @@ contract LiquidityPoolFactoryTest is Test {
         assertEq(factory.getNumberOfPools(), 1, "One pool should be created");
 
         address createdPoolAddress = factory.allPools(0);
-        assertTrue(
-            createdPoolAddress != address(0),
-            "Pool address should be valid"
-        );
+        assertTrue(createdPoolAddress != address(0), "Pool address should be valid");
     }
 
     function testCreateMultipleLiquidityPools() public {
         factory.createLiquidityPool();
         factory.createLiquidityPool();
         factory.createLiquidityPool();
-        assertEq(
-            factory.getNumberOfPools(),
-            3,
-            "Three pools should be created"
-        );
+        assertEq(factory.getNumberOfPools(), 3, "Three pools should be created");
     }
 
     function testGetPoolAddress() public {
         factory.createLiquidityPool();
         address createdPoolAddress = factory.getPoolAddress(0);
-        assertTrue(
-            createdPoolAddress != address(0),
-            "Pool address should be valid"
-        );
+        assertTrue(createdPoolAddress != address(0), "Pool address should be valid");
     }
 }

@@ -19,20 +19,12 @@ contract DeployContracts is Script {
         console.log("LiquidityPool deployed at:", address(liquidityPool));
 
         // Deploy LiquidityPoolFactory
-        LiquidityPoolFactory liquidityPoolFactory = new LiquidityPoolFactory(
-            address(gensToken)
-        );
-        console.log(
-            "LiquidityPoolFactory deployed at:",
-            address(liquidityPoolFactory)
-        );
+        LiquidityPoolFactory liquidityPoolFactory = new LiquidityPoolFactory(address(gensToken));
+        console.log("LiquidityPoolFactory deployed at:", address(liquidityPoolFactory));
 
         // Optionally, create a LiquidityPool through the factory
         liquidityPoolFactory.createLiquidityPool();
-        console.log(
-            "LiquidityPool created via factory at index 0:",
-            liquidityPoolFactory.allPools(0)
-        );
+        console.log("LiquidityPool created via factory at index 0:", liquidityPoolFactory.allPools(0));
 
         vm.stopBroadcast();
     }

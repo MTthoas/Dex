@@ -8,7 +8,6 @@ import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradea
  * @title UserRegistry
  * @dev This contract manages user registration, authentication, and administration for a decentralized exchange (DEX) platform.
  */
-
 contract UserRegistry is AccessManagedUpgradeable {
     using EnumerableSet for EnumerableSet.UintSet;
 

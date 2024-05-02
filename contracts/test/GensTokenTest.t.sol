@@ -15,11 +15,7 @@ contract GensTokenTest is Test {
     function testInitialMint() public view {
         // Test that all tokens are minted to the deployer (address(this) in tests)
         uint256 expectedSupply = 1_000_000_000 * 10 ** gensToken.decimals();
-        assertEq(
-            gensToken.balanceOf(address(this)),
-            expectedSupply,
-            "Initial minting failed"
-        );
+        assertEq(gensToken.balanceOf(address(this)), expectedSupply, "Initial minting failed");
     }
 
     function testSymbol() public view {

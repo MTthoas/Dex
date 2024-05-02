@@ -16,11 +16,11 @@ contract LiquidityPoolFactory {
         allPools.push(address(newPool));
     }
 
-    function getNumberOfPools() external view returns (uint) {
+    function getNumberOfPools() external view returns (uint256) {
         return allPools.length;
     }
 
-    function getPoolAddress(uint _index) external view returns (address) {
+    function getPoolAddress(uint256 _index) external view returns (address) {
         return allPools[_index];
     }
 }

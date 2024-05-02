@@ -26,12 +26,7 @@ contract TokenManager is AccessManaged {
         uint8 decimals;
     }
 
-    event TokenListed(
-        address indexed tokenAddress,
-        string name,
-        string symbol,
-        uint8 decimals
-    );
+    event TokenListed(address indexed tokenAddress, string name, string symbol, uint8 decimals);
     event TokenDelisted(address indexed tokenAddress);
 
     /**
@@ -41,12 +36,10 @@ contract TokenManager is AccessManaged {
      * @param _symbol The symbol of the token.
      * @param _decimals The number of decimals of the token.
      */
-    function listToken(
-        address _tokenAddress,
-        string memory _name,
-        string memory _symbol,
-        uint8 _decimals
-    ) public restricted {
+    function listToken(address _tokenAddress, string memory _name, string memory _symbol, uint8 _decimals)
+        public
+        restricted
+    {
         require(!listedTokens.contains(_tokenAddress), "Token already listed");
         require(_tokenAddress != address(0), "Invalid token address");
 
@@ -76,9 +69,7 @@ contract TokenManager is AccessManaged {
      * @return symbol The symbol of the token.
      * @return decimals The number of decimals of the token.
      */
-    function getTokenInfo(
-        address _tokenAddress
-    )
+    function getTokenInfo(address _tokenAddress)
         public
         view
         returns (string memory name, string memory symbol, uint8 decimals)

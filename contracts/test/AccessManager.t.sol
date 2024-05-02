@@ -32,9 +32,7 @@ contract AccessManagerTest is Test {
     function testAccessManagerAccess() public {
         // revertData is the encoded data for the AccessManagerUnauthorizedAccount event
         bytes memory revertData = abi.encodeWithSelector(
-            bytes4(keccak256("AccessManagerUnauthorizedAccount(address,uint64)")),
-            accessManagersuperAdmin2,
-            0
+            bytes4(keccak256("AccessManagerUnauthorizedAccount(address,uint64)")), accessManagersuperAdmin2, 0
         );
         // Only a super admin can grant roles. So accessManagersuperAdmin2 cannot grant super admin role to MOCK_ADDR_1
         vm.expectRevert(revertData);

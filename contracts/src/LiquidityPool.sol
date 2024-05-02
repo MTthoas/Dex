@@ -7,32 +7,29 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 
 contract LiquidityPool is ERC20, ERC20Burnable {
     ERC20 public gensToken;
-    uint public ethReserve;
-    uint public gensReserve;
+    uint256 public ethReserve;
+    uint256 public gensReserve;
 
     constructor(address _gensTokenAddress) ERC20("LiquidityPoolToken", "LPT") {
         gensToken = ERC20(_gensTokenAddress);
     }
 
-    function addLiquidity(uint _gensAmount) external payable {
-        uint ethInput = msg.value;
-        uint gensInput = _gensAmount;
+    function addLiquidity(uint256 _gensAmount) external payable {
+        uint256 ethInput = msg.value;
+        uint256 gensInput = _gensAmount;
 
         if (ethReserve > 0 && gensReserve > 0) {
-            uint ethOutput = (ethReserve * gensInput) / gensReserve;
-            uint gensOutput = (gensReserve * ethInput) / ethReserve;
+            uint256 ethOutput = (ethReserve * gensInput) / gensReserve;
+            uint256 gensOutput = (gensReserve * ethInput) / ethReserve;
             require(gensOutput <= gensInput, "Slippage limit reached");
             require(ethOutput <= ethInput, "Slippage limit reached");
         }
 
         gensToken.transferFrom(msg.sender, address(this), gensInput);
 
-        uint liquidityMinted = totalSupply() == 0
+        uint256 liquidityMinted = totalSupply() == 0
             ? Math.sqrt(ethInput * gensInput)
-            : Math.min(
-                (ethInput * totalSupply()) / ethReserve,
-                (gensInput * totalSupply()) / gensReserve
-            );
+            : Math.min((ethInput * totalSupply()) / ethReserve, (gensInput * totalSupply()) / gensReserve);
 
         _mint(msg.sender, liquidityMinted);
 
@@ -40,9 +37,9 @@ contract LiquidityPool is ERC20, ERC20Burnable {
         gensReserve += gensInput;
     }
 
-    function removeLiquidity(uint _liquidityAmount) external {
-        uint ethAmount = (ethReserve * _liquidityAmount) / totalSupply();
-        uint gensAmount = (gensReserve * _liquidityAmount) / totalSupply();
+    function removeLiquidity(uint256 _liquidityAmount) external {
+        uint256 ethAmount = (ethReserve * _liquidityAmount) / totalSupply();
+        uint256 gensAmount = (gensReserve * _liquidityAmount) / totalSupply();
         require(ethAmount > 0 && gensAmount > 0, "Insufficient liquidity");
 
         _burn(msg.sender, _liquidityAmount);
@@ -50,16 +47,13 @@ contract LiquidityPool is ERC20, ERC20Burnable {
         ethReserve -= ethAmount;
         gensReserve -= gensAmount;
 
-        (bool successEth, ) = payable(msg.sender).call{value: ethAmount}("");
+        (bool successEth,) = payable(msg.sender).call{value: ethAmount}("");
         require(successEth, "ETH Transfer failed");
 
-        require(
-            gensToken.transfer(msg.sender, gensAmount),
-            "GENS Transfer failed"
-        );
+        require(gensToken.transfer(msg.sender, gensAmount), "GENS Transfer failed");
     }
 
-    function getReserves() external view returns (uint, uint) {
+    function getReserves() external view returns (uint256, uint256) {
         return (ethReserve, gensReserve);
     }
 }

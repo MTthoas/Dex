@@ -15,10 +15,7 @@ contract AccessManagerDeploymentScript is Script {
         if (forTest) {
             address accessManagerInstance = address(new AccessManager(initialSuperAdmin));
             console.log(
-                "AccessManager instance deployed at",
-                accessManagerInstance,
-                "with super admin",
-                initialSuperAdmin
+                "AccessManager instance deployed at", accessManagerInstance, "with super admin", initialSuperAdmin
             );
             testRes = accessManagerInstance;
         } else {
@@ -35,10 +32,7 @@ contract AccessManagerDeploymentScript is Script {
 
             address accessManagerInstance = address(new AccessManager(initialSuperAdmin));
             console.log(
-                "AccessManager instance deployed at",
-                accessManagerInstance,
-                "with super admin",
-                initialSuperAdmin
+                "AccessManager instance deployed at", accessManagerInstance, "with super admin", initialSuperAdmin
             );
         }
         vm.stopBroadcast();
