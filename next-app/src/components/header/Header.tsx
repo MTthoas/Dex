@@ -29,7 +29,6 @@ const HeaderLinks: NavLink[] = [
 
 export default function Header(): JSX.Element {
   const { address } = useAccount();
-  console.log(address);
   return (
     <header className="dark">
       <nav
