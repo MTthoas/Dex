@@ -1,8 +1,6 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/3sM1nk3LnSA
- */
-export default function Component() {
+import Link from "next/link";
+
+export default function footer() {
     return (
       <div className="flex flex-col">
         <header />
@@ -13,20 +11,23 @@ export default function Component() {
               <p className="text-lg font-bold">GenX.Wherever</p>
               <p className="text-sm">Unlock the world of cryptocurrency trading.</p>
             </div>
-            <nav className="flex space-x-4">
-              <a className="hover:underline" href="#">
-                Mets
-              </a>
-              <a className="hover:underline" href="#">
-                Ce Que
-              </a>
-              <a className="hover:underline" href="#">
-                Tu
-              </a>
-              <a className="hover:underline" href="#">
-                Veux
-              </a>
-            </nav>
+            <div>
+              <div className="hidden lg:flex lg:gap-x-12 pt-2">
+                  <p className="text-sm font-semibold leading-6 text-foreground">
+                    <Link href={"/swap"}>Swap</Link>
+                  </p>
+
+                  <p className="text-sm font-semibold leading-6 text-foreground">
+                    <Link href={"/dashboard"}>Dashboard</Link>
+                  </p>
+                  <p className="text-sm font-semibold leading-6 text-foreground">
+                    <Link href={"/tokens"}>Tokens</Link>
+                  </p>
+                  <p className="text-sm font-semibold leading-6 text-foreground">
+                    <Link href={"/staking"}>Staking</Link>
+                  </p>
+              </div>
+            </div>
           </div>
         </footer>
       </div>
