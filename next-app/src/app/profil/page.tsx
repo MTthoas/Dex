@@ -25,7 +25,6 @@ export default function Profil() {
     enabled: !!address,
   });
 
-  console.log(user);
 
   const mutation = useMutation<
     ReturnType<typeof createUser>,
