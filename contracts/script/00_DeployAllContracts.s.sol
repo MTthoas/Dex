@@ -5,10 +5,16 @@ import {BaseScript} from "./utils/Base.s.sol";
 import {AccessManagerHelpers} from "./utils/AccessManagerHelpers.s.sol";
 import "forge-std/console.sol";
 import "@openzeppelin/contracts/access/manager/AccessManager.sol";
+import "../src/libraries/Roles.sol";
+
+import "../src/LiquidityPoolFactoryV2.sol";
+import "../src/LiquidityPoolV2.sol";
 
 contract DeployAllContractsScript is BaseScript, AccessManagerHelpers {
-    /// @dev Instance of an AccessManager
+    /// @dev Instance of contracts
     AccessManager manager;
+    LiquidityPool liquidityPool;
+    LiquidityPoolFactory liquidityPoolFactory;
 
     address private testRes;
     bool private forTest;
@@ -16,13 +22,29 @@ contract DeployAllContractsScript is BaseScript, AccessManagerHelpers {
     function run() public broadcast {
         if (forTest) {
             manager = new AccessManager(broadcaster);
-            console.log("AccessManager instance deployed at", address(manager), "with the next temporary super admin", broadcaster);
+            console.log(
+                "AccessManager instance deployed at",
+                address(manager),
+                "with the next temporary super admin",
+                broadcaster
+            );
             testRes = address(manager);
         } else {
             manager = new AccessManager(broadcaster);
-            console.log(
-                "AccessManager instance deployed at", address(manager), "with super admin", broadcaster
-            );
+            liquidityPool = new LiquidityPool();
+            liquidityPoolFactory = new LiquidityPoolFactory();
+            liquidityPoolFactory.initialize(address(liquidityPool), msg.sender);
+
+            console.log("AccessManager instance deployed at", address(manager), "with super admin", broadcaster);
+            console.log("LiquidityPoolFactory instance deployed at", address(liquidityPoolFactory));
+            console.log("LiquidityPool instance deployed at", address(liquidityPool));
+
+            // Restrict functions
+            // manager.setTargetFunctionRole(
+            //     address(liquidityPoolFactory),
+            //     _asSingletonArray("createLiquidityPool"),
+            //     Roles.ADMIN_ROLE
+            // );
         }
     }
 
@@ -36,7 +58,6 @@ contract DeployAllContractsScript is BaseScript, AccessManagerHelpers {
         testRes = address(0);
         broadcaster = address(0);
     }
-
 
     // Deploy the all contracts.
     // Then Restrict functions

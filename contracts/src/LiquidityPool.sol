@@ -1,148 +1,94 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
-import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradeable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-contract LiquidityPool is ReentrancyGuardUpgradeable, AccessManagedUpgradeable {
+contract LiquidityPool is ReentrancyGuard {
     using Math for uint256;
 
-    // Addresses of the tokens in the liquidity pool
-    address public tokenA;
-    address public tokenB;
+    address public token0;
+    address public token1;
 
-    // Reserves of the tokens in the liquidity pool
-    uint256 private reserveA;
-    uint256 private reserveB;
+    uint256 public reserve0;
+    uint256 public reserve1;
 
-    // Liquidity token balances and total supply
-    mapping(address => uint256) private liquidityBalances;
-    uint256 private totalLiquidity;
+    uint256 public totalSupply;
+    mapping(address => uint256) public balanceOf;
 
-    // Platform fee (in basis points, e.g., 30 for 0.3%)
-    uint256 public platformFee;
+    event Mint(address indexed sender, uint256 amount0, uint256 amount1);
+    event Burn(address indexed sender, uint256 amount0, uint256 amount1, address indexed to);
+    event Swap(address indexed sender, uint256 amount0Out, uint256 amount1Out, address indexed to);
+    event Sync(uint256 reserve0, uint256 reserve1);
 
-    // Events
-    event LiquidityAdded(address indexed user, uint256 tokenAAmount, uint256 tokenBAmount);
-    event LiquidityRemoved(address indexed user, uint256 tokenAAmount, uint256 tokenBAmount);
-    event SwapExecuted(address indexed user, address tokenIn, uint256 amountIn, address tokenOut, uint256 amountOut);
-
-    // Initializer function (replaces constructor)
-    function initialize(address _tokenA, address _tokenB, address _initialAuthority) public initializer {
-        require(_tokenA != address(0) && _tokenB != address(0), "LiquidityPool: invalid token addresses");
-        tokenA = _tokenA;
-        tokenB = _tokenB;
-
-        __ReentrancyGuard_init();
-        __AccessManaged_init(_initialAuthority);
+    constructor(address _token0, address _token1) {
+        token0 = _token0;
+        token1 = _token1;
     }
 
-    // Function to add liquidity to the pool
-    function addLiquidity(uint256 tokenAAmount, uint256 tokenBAmount) external restricted nonReentrant {
-        require(tokenAAmount > 0 && tokenBAmount > 0, "LiquidityPool: amounts must be greater than zero");
+    function _update(uint256 balance0, uint256 balance1) private {
+        reserve0 = balance0;
+        reserve1 = balance1;
+        emit Sync(reserve0, reserve1);
+    }
 
-        // Transfer tokens from sender to the contract
-        ERC20Upgradeable(tokenA).transferFrom(msg.sender, address(this), tokenAAmount);
-        ERC20Upgradeable(tokenB).transferFrom(msg.sender, address(this), tokenBAmount);
+    function addLiquidity(uint256 amount0, uint256 amount1) external nonReentrant returns (uint256 liquidity) {
+        IERC20(token0).transferFrom(msg.sender, address(this), amount0);
+        IERC20(token1).transferFrom(msg.sender, address(this), amount1);
 
-        // Calculate liquidity tokens to mint
-        uint256 liquidity;
-        if (totalLiquidity == 0) {
-            liquidity = Math.sqrt(tokenAAmount * tokenBAmount);
+        uint256 balance0 = IERC20(token0).balanceOf(address(this));
+        uint256 balance1 = IERC20(token1).balanceOf(address(this));
+
+        uint256 _totalSupply = totalSupply;
+        if (_totalSupply == 0) {
+            liquidity = Math.sqrt(amount0 * amount1);
         } else {
-            liquidity = Math.min(
-                (tokenAAmount * totalLiquidity) / reserveA,
-                (tokenBAmount * totalLiquidity) / reserveB
-            );
+            liquidity = Math.min(amount0 * _totalSupply / reserve0, amount1 * _totalSupply / reserve1);
         }
-        require(liquidity > 0, "LiquidityPool: insufficient liquidity minted");
+        require(liquidity > 0, "INSUFFICIENT_LIQUIDITY_MINTED");
 
-        // Update reserves and mint liquidity tokens
-        _updateReserves();
-        liquidityBalances[msg.sender] += liquidity;
-        totalLiquidity += liquidity;
+        balanceOf[msg.sender] += liquidity;
+        totalSupply += liquidity;
 
-        emit LiquidityAdded(msg.sender, tokenAAmount, tokenBAmount);
+        _update(balance0, balance1);
+        emit Mint(msg.sender, amount0, amount1);
     }
 
-    // Function to remove liquidity from the pool
-    function removeLiquidity(uint256 liquidityTokens) external restricted nonReentrant {
-        require(liquidityTokens > 0, "LiquidityPool: amount must be greater than zero");
-        require(liquidityBalances[msg.sender] >= liquidityTokens, "LiquidityPool: insufficient liquidity balance");
+    function removeLiquidity(uint256 liquidity) external nonReentrant returns (uint256 amount0, uint256 amount1) {
+        uint256 _totalSupply = totalSupply;
+        require(_totalSupply > 0, "NO_LIQUIDITY");
 
-        // Calculate amounts of tokens to return to the user
-        uint256 tokenAAmount = (liquidityTokens * reserveA) / totalLiquidity;
-        uint256 tokenBAmount = (liquidityTokens * reserveB) / totalLiquidity;
+        amount0 = liquidity * reserve0 / _totalSupply;
+        amount1 = liquidity * reserve1 / _totalSupply;
+        require(amount0 > 0 && amount1 > 0, "INSUFFICIENT_LIQUIDITY_BURNED");
 
-        require(tokenAAmount > 0 && tokenBAmount > 0, "LiquidityPool: insufficient token amounts");
+        balanceOf[msg.sender] -= liquidity;
+        totalSupply -= liquidity;
 
-        // Update reserves and burn liquidity tokens
-        _updateReserves();
-        liquidityBalances[msg.sender] -= liquidityTokens;
-        totalLiquidity -= liquidityTokens;
+        IERC20(token0).transfer(msg.sender, amount0);
+        IERC20(token1).transfer(msg.sender, amount1);
 
-        // Transfer tokens back to the user
-        ERC20Upgradeable(tokenA).transfer(msg.sender, tokenAAmount);
-        ERC20Upgradeable(tokenB).transfer(msg.sender, tokenBAmount);
+        uint256 balance0 = IERC20(token0).balanceOf(address(this));
+        uint256 balance1 = IERC20(token1).balanceOf(address(this));
 
-        emit LiquidityRemoved(msg.sender, tokenAAmount, tokenBAmount);
+        _update(balance0, balance1);
+        emit Burn(msg.sender, amount0, amount1, msg.sender);
     }
 
-// Function to execute a swap
-    function swap(address tokenIn, uint256 amountIn, uint256 minAmountOut, address recipient) external restricted nonReentrant {
-        require(amountIn > 0, "LiquidityPool: amount must be greater than zero");
-        require(tokenIn == tokenA || tokenIn == tokenB, "LiquidityPool: invalid token address");
+    function swap(uint256 amount0Out, uint256 amount1Out, address to) external nonReentrant {
+        require(amount0Out > 0 || amount1Out > 0, "INSUFFICIENT_OUTPUT_AMOUNT");
+        uint256 balance0 = IERC20(token0).balanceOf(address(this));
+        uint256 balance1 = IERC20(token1).balanceOf(address(this));
+        require(amount0Out < balance0 && amount1Out < balance1, "INSUFFICIENT_LIQUIDITY");
 
-        address tokenOut = (tokenIn == tokenA) ? tokenB : tokenA;
-        uint256 reserveIn = (tokenIn == tokenA) ? reserveA : reserveB;
-        uint256 reserveOut = (tokenIn == tokenA) ? reserveB : reserveA;
+        if (amount0Out > 0) IERC20(token0).transfer(to, amount0Out);
+        if (amount1Out > 0) IERC20(token1).transfer(to, amount1Out);
 
-        // Transfer the input tokens from the user to the contract
-        ERC20Upgradeable(tokenIn).transferFrom(msg.sender, address(this), amountIn);
+        uint256 balance0Adjusted = balance0 - amount0Out;
+        uint256 balance1Adjusted = balance1 - amount1Out;
 
-        // Calculate the output amount using the constant product formula
-        uint256 amountInWithFee = amountIn * (10000 - platformFee) / 10000;
-        uint256 amountOut = (reserveOut * amountInWithFee) / (reserveIn + amountInWithFee);
-
-        require(amountOut >= minAmountOut, "LiquidityPool: insufficient output amount");
-
-        // Update reserves
-        _updateReserves();
-
-        // Transfer the output tokens to the recipient
-        ERC20Upgradeable(tokenOut).transfer(recipient, amountOut);
-
-        emit SwapExecuted(msg.sender, tokenIn, amountIn, tokenOut, amountOut);
-    }
-
-    // Function to get the current reserves of the pool
-    function getReserves() external view returns (uint256, uint256) {
-        return (reserveA, reserveB);
-    }
-
-    // Function to get the price of a token amount in the other token
-    function getPrice(address tokenIn, uint256 amountIn) external view returns (uint256) {
-        require(tokenIn == tokenA || tokenIn == tokenB, "LiquidityPool: invalid token address");
-
-        uint256 reserveIn = (tokenIn == tokenA) ? reserveA : reserveB;
-        uint256 reserveOut = (tokenIn == tokenA) ? reserveB : reserveA;
-
-        uint256 amountInWithFee = amountIn * (10000 - platformFee) / 10000;
-        uint256 amountOut = (reserveOut * amountInWithFee) / (reserveIn + amountInWithFee);
-
-        return amountOut;
-    }
-
-    // Function to update the platform fee
-    function updatePlatformFee(uint256 newFee) external restricted {
-        platformFee = newFee;
-    }
-
-    // Internal function to update reserves based on the actual balances of tokens in the contract
-    function _updateReserves() internal {
-        reserveA = ERC20Upgradeable(tokenA).balanceOf(address(this));
-        reserveB = ERC20Upgradeable(tokenB).balanceOf(address(this));
+        _update(balance0Adjusted, balance1Adjusted);
+        emit Swap(msg.sender, amount0Out, amount1Out, to);
     }
 }

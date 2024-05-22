@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradeable.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
-import "./LiquidityPool.sol";
+import "./LiquidityPoolV2.sol";
 
 contract LiquidityPoolFactory is AccessManagedUpgradeable {
     using Clones for address;
