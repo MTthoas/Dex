@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getPools } from "@/hook/pools.hook";
 import { Plus } from "lucide-react";
+import { UserRound } from "lucide-react";
 
 export default function page() {
   const { data: pools } = useQuery({
@@ -22,7 +23,7 @@ export default function page() {
   return (
     <div className="w-full flex justify-center h-screen ">
       <div className="w-2/3">
-        <div className="my-12 flex space-between ">
+        <div className="my-12 flex space-between">
           <h1 className="text-3xl font-semibold"> List of pools</h1>
           <Button size="lg" className="h-8 gap-1 ml-auto">
             <Plus className="h-3.5 w-3.5" />

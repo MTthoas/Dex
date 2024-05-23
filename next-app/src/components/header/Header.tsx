@@ -5,6 +5,8 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Button } from "../ui/button";
 import { NavLink } from "@/types/header.type";
 import { ModeToggle } from "../ModeToggle";
+import { UserRound } from "lucide-react";
+import { useAccount } from "wagmi";
 
 const HeaderLinks: NavLink[] = [
   {
@@ -26,6 +28,7 @@ const HeaderLinks: NavLink[] = [
 ];
 
 export default function Header(): JSX.Element {
+  const { address } = useAccount();
   return (
     <header className="dark">
       <nav
@@ -61,7 +64,7 @@ export default function Header(): JSX.Element {
             </svg>
           </button>
         </div>
-        <div className="hidden lg:flex lg:gap-x-12 pt-2">
+        <div className="hidden lg:flex lg:gap-x-12 pt-1 mr-24 pr-12">
           {HeaderLinks.map((link) => (
             <Link
               key={link.name}
@@ -75,7 +78,7 @@ export default function Header(): JSX.Element {
             </Link>
           ))}
         </div>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end pt-1">
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end pt-1 w-1/3">
           <ConnectButton.Custom>
             {({
               account,
@@ -132,7 +135,6 @@ export default function Header(): JSX.Element {
                           }}
                           type="button"
                           variant="ghost"
-                          
                         >
                           {chain.hasIcon && (
                             <div
@@ -170,6 +172,16 @@ export default function Header(): JSX.Element {
               );
             }}
           </ConnectButton.Custom>
+
+          {/* If the user is connected, show the account button */}
+          {address && (
+            <Link href="/profil">
+              <Button className="ml-2">
+                <UserRound size={16} className="mr-2" />
+                Account
+              </Button>
+            </Link>
+          )}
           <div className="ml-2">
             <ModeToggle />
           </div>
