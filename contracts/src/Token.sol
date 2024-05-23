@@ -59,6 +59,7 @@ contract Token is IERC20 {
     function _transfer(address sender, address recipient, uint256 amount) internal {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
+        require(_balances[sender] >= amount, "ERC20: transfer amount exceeds balance");
 
         _balances[sender] -= amount;
         _balances[recipient] += amount;
@@ -75,6 +76,7 @@ contract Token is IERC20 {
 
     function _burn(address account, uint256 amount) internal {
         require(account != address(0), "ERC20: burn from the zero address");
+        require(_balances[account] >= amount, "ERC20: burn amount exceeds balance");
 
         _balances[account] -= amount;
         _totalSupply -= amount;
@@ -90,6 +92,7 @@ contract Token is IERC20 {
     }
 
     function buyToken() public payable {
+        require(msg.value > 0, "ETH amount must be greater than 0");
         uint256 amount = msg.value * tokenPrice;
         _mint(msg.sender, amount);
     }
