@@ -13,8 +13,8 @@ import "../src/LiquidityPoolV2.sol";
 contract DeployAllContractsScript is BaseScript, AccessManagerHelpers {
     /// @dev Instance of contracts
     AccessManager manager;
-    LiquidityPool liquidityPool;
-    LiquidityPoolFactory liquidityPoolFactory;
+    LiquidityPoolV2 liquidityPool;
+    LiquidityPoolFactoryV2 liquidityPoolFactory;
 
     address private testRes;
     bool private forTest;
@@ -31,8 +31,8 @@ contract DeployAllContractsScript is BaseScript, AccessManagerHelpers {
             testRes = address(manager);
         } else {
             manager = new AccessManager(broadcaster);
-            liquidityPool = new LiquidityPool();
-            liquidityPoolFactory = new LiquidityPoolFactory();
+            liquidityPool = new LiquidityPoolV2();
+            liquidityPoolFactory = new LiquidityPoolFactoryV2();
             liquidityPoolFactory.initialize(address(liquidityPool), msg.sender);
 
             console.log("AccessManager instance deployed at", address(manager), "with super admin", broadcaster);

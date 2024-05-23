@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradeable.sol";
 
-contract LiquidityPool is ReentrancyGuardUpgradeable, AccessManagedUpgradeable {
+contract LiquidityPoolV2 is ReentrancyGuardUpgradeable, AccessManagedUpgradeable {
     using Math for uint256;
 
     // Addresses of the tokens in the liquidity pool

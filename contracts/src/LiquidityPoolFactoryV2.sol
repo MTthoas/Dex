@@ -5,7 +5,7 @@ import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradea
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "./LiquidityPoolV2.sol";
 
-contract LiquidityPoolFactory is AccessManagedUpgradeable {
+contract LiquidityPoolFactoryV2 is AccessManagedUpgradeable {
     using Clones for address;
 
     // Address of the liquidity pool implementation
@@ -36,7 +36,7 @@ contract LiquidityPoolFactory is AccessManagedUpgradeable {
 
         // Create a new liquidity pool using the implementation
         address pool = liquidityPoolImplementation.clone();
-        LiquidityPool(pool).initialize(tokenA, tokenB, admin);
+        LiquidityPoolV2(pool).initialize(tokenA, tokenB, admin);
 
         // Store the new pool's address
         getPool[tokenA][tokenB] = pool;
