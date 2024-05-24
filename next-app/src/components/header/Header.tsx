@@ -53,6 +53,9 @@ export default function Header() {
           <p className="text-sm font-semibold leading-6 text-foreground">
             <Link href={"/tokens"}>Tokens</Link>
           </p>
+          <p className="text-sm font-semibold leading-6 text-foreground">
+            <Link href={"/staking"}>Staking</Link>
+          </p>
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end pt-1">
           <ConnectButton />
