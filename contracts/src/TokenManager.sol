@@ -2,15 +2,17 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "@openzeppelin/contracts/access/manager/AccessManaged.sol";
 
 /**
  * @title TokenManager
  * @author ronfflex
  * @notice This contract manages the listing and delisting of tokens on the decentralized exchange (DEX) platform.
  */
-contract TokenManager is Ownable {
+contract TokenManager is AccessManaged {
+    constructor(address accessManager) AccessManaged(accessManager) {}
+
     using EnumerableSet for EnumerableSet.AddressSet;
 
     mapping(address => TokenInfo) public tokenInfos;
@@ -24,15 +26,8 @@ contract TokenManager is Ownable {
         uint8 decimals;
     }
 
-    event TokenListed(
-        address indexed tokenAddress,
-        string name,
-        string symbol,
-        uint8 decimals
-    );
+    event TokenListed(address indexed tokenAddress, string name, string symbol, uint8 decimals);
     event TokenDelisted(address indexed tokenAddress);
-
-    constructor() Ownable(msg.sender) {}
 
     /**
      * @notice Lists a new token on the DEX platform.
@@ -41,12 +36,10 @@ contract TokenManager is Ownable {
      * @param _symbol The symbol of the token.
      * @param _decimals The number of decimals of the token.
      */
-    function listToken(
-        address _tokenAddress,
-        string memory _name,
-        string memory _symbol,
-        uint8 _decimals
-    ) public onlyOwner {
+    function listToken(address _tokenAddress, string memory _name, string memory _symbol, uint8 _decimals)
+        public
+        restricted
+    {
         require(!listedTokens.contains(_tokenAddress), "Token already listed");
         require(_tokenAddress != address(0), "Invalid token address");
 
@@ -60,7 +53,7 @@ contract TokenManager is Ownable {
      * @notice Delists a token from the DEX platform.
      * @param _tokenAddress The address of the token contract to delist.
      */
-    function delistToken(address _tokenAddress) public onlyOwner {
+    function delistToken(address _tokenAddress) public restricted {
         require(listedTokens.contains(_tokenAddress), "Token not listed");
 
         listedTokens.remove(_tokenAddress);
@@ -76,9 +69,7 @@ contract TokenManager is Ownable {
      * @return symbol The symbol of the token.
      * @return decimals The number of decimals of the token.
      */
-    function getTokenInfo(
-        address _tokenAddress
-    )
+    function getTokenInfo(address _tokenAddress)
         public
         view
         returns (string memory name, string memory symbol, uint8 decimals)

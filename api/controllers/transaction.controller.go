@@ -73,7 +73,6 @@ func GetTransaction(c *fiber.Ctx) error {
 // CreateTransaction function to create a new transaction
 // @Summary Create a new transaction
 // @Description Creates a new transaction in the database
-// @Examples { "amount": 0, "from": "IDDIZAIDAD", "to": "IDDIZAIDADddd", "transaction": "IDDIZAIDADdddddddd", "created_at": "2021-09-01T00:00:00Z", "updated_at": "2021-09-01T00:00:00Z"}
 // @Tags Transactions
 // @Accept json
 // @Produce json

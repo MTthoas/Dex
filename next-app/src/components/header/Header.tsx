@@ -2,11 +2,33 @@
 
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Button } from "../ui/button";
+import { NavLink } from "@/types/header.type";
+import { ModeToggle } from "../ModeToggle";
+import { UserRound } from "lucide-react";
 import { useAccount } from "wagmi";
 
-export default function Header() {
-  const { address } = useAccount();
+const HeaderLinks: NavLink[] = [
+  {
+    name: "Swap",
+    href: "/swap",
+  },
+  {
+    name: "Dashboard",
+    href: "/dashboard",
+  },
+  {
+    name: "Tokens",
+    href: "/tokens",
+  },
+  {
+    name: "Pools",
+    href: "/pools",
+  },
+];
 
+export default function Header(): JSX.Element {
+  const { address } = useAccount();
   return (
     <header className="dark">
       <nav
@@ -42,23 +64,127 @@ export default function Header() {
             </svg>
           </button>
         </div>
-        <div className="hidden lg:flex lg:gap-x-12 pt-2">
-          <p className="text-sm font-semibold leading-6 text-foreground">
-            <Link href={"/swap"}>Swap</Link>
-          </p>
-
-          <p className="text-sm font-semibold leading-6 text-foreground">
-            <Link href={"/dashboard"}>Dashboard</Link>
-          </p>
-          <p className="text-sm font-semibold leading-6 text-foreground">
-            <Link href={"/tokens"}>Tokens</Link>
-          </p>
-          <p className="text-sm font-semibold leading-6 text-foreground">
-            <Link href={"/staking"}>Staking</Link>
-          </p>
+        <div className="hidden lg:flex lg:gap-x-12 pt-1 mr-24 pr-12">
+          {HeaderLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              className="
+                text-sm
+                font-medium
+                hover:text-gray-500"
+            >
+              {link.name}
+            </Link>
+          ))}
         </div>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end pt-1">
-          <ConnectButton />
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end pt-1 w-1/3">
+          <ConnectButton.Custom>
+            {({
+              account,
+              chain,
+              openAccountModal,
+              openChainModal,
+              openConnectModal,
+              authenticationStatus,
+              mounted,
+            }) => {
+              // Note: If your app doesn't use authentication, you
+              // can remove all 'authenticationStatus' checks
+              const ready = mounted && authenticationStatus !== "loading";
+              const connected =
+                ready &&
+                account &&
+                chain &&
+                (!authenticationStatus ||
+                  authenticationStatus === "authenticated");
+
+              return (
+                <div
+                  {...(!ready && {
+                    "aria-hidden": true,
+                    style: {
+                      opacity: 0,
+                      pointerEvents: "none",
+                      userSelect: "none",
+                    },
+                  })}
+                >
+                  {(() => {
+                    if (!connected) {
+                      return (
+                        <Button onClick={openConnectModal} variant="secondary">
+                          Connect Wallet
+                        </Button>
+                      );
+                    }
+
+                    if (chain.unsupported) {
+                      return (
+                        <Button onClick={openChainModal}>Wrong network</Button>
+                      );
+                    }
+
+                    return (
+                      <div style={{ display: "flex", gap: 12 }}>
+                        <Button
+                          onClick={openChainModal}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                          type="button"
+                          variant="ghost"
+                        >
+                          {chain.hasIcon && (
+                            <div
+                              style={{
+                                background: chain.iconBackground,
+                                width: 12,
+                                height: 12,
+                                borderRadius: 999,
+                                overflow: "hidden",
+                                marginRight: 4,
+                              }}
+                            >
+                              {chain.iconUrl && (
+                                <img
+                                  alt={chain.name ?? "Chain icon"}
+                                  src={chain.iconUrl}
+                                  style={{ width: 12, height: 12 }}
+                                />
+                              )}
+                            </div>
+                          )}
+                          {chain.name}
+                        </Button>
+
+                        <Button onClick={openAccountModal} type="button">
+                          {account.displayName}
+                          {account.displayBalance
+                            ? ` (${account.displayBalance})`
+                            : ""}
+                        </Button>
+                      </div>
+                    );
+                  })()}
+                </div>
+              );
+            }}
+          </ConnectButton.Custom>
+
+          {/* If the user is connected, show the account button */}
+          {address && (
+            <Link href="/profil">
+              <Button className="ml-2">
+                <UserRound size={16} className="mr-2" />
+                Account
+              </Button>
+            </Link>
+          )}
+          <div className="ml-2">
+            <ModeToggle />
+          </div>
         </div>
       </nav>
     </header>
