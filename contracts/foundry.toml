@@ -3,11 +3,24 @@ src = "src"
 out = "out"
 libs = ["lib"]
 solc = "0.8.25"
-remappings = ["@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
-    "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/"]
+ffi = true
+ast = true
+build_info = true
+extra_output = ["storageLayout"]
+remappings = [
+    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+    "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
+    "@openzeppelin/foundry-upgrades/=lib/openzeppelin-foundry-upgrades/src/"
+    ]
 
 [rpc_endpoints]
-sepolia = "${SEPOLIA_RPC_URL}"
+sepolia = "${API_KEY_ALCHEMY_SEPOLIA}"
+sepolia_infura = "${API_KEY_INFURA_SEPOLIA}"
+mainnet = "${API_KEY_ALCHEMY_MAINNET}"
+mainnet_infura = "${API_KEY_INFURA_MAINNET}"
 
 [etherscan]
-sepolia = { key = "${ETHERSCAN_API_KEY}" }
+sepolia = { key = "${API_KEY_ETHERSCAN_SEPOLIA}" }
+mainnet = { key = "${API_KEY_ETHERSCAN_MAINNET}" }
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

@@ -1,59 +1,94 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-contract LiquidityPool is ERC20, ERC20Burnable {
-    ERC20 public gensToken;
-    uint256 public ethReserve;
-    uint256 public gensReserve;
+contract LiquidityPool is ReentrancyGuard {
+    using Math for uint256;
 
-    constructor(address _gensTokenAddress) ERC20("LiquidityPoolToken", "LPT") {
-        gensToken = ERC20(_gensTokenAddress);
+    address public token0;
+    address public token1;
+
+    uint256 public reserve0;
+    uint256 public reserve1;
+
+    uint256 public totalSupply;
+    mapping(address => uint256) public balanceOf;
+
+    event Mint(address indexed sender, uint256 amount0, uint256 amount1);
+    event Burn(address indexed sender, uint256 amount0, uint256 amount1, address indexed to);
+    event Swap(address indexed sender, uint256 amount0Out, uint256 amount1Out, address indexed to);
+    event Sync(uint256 reserve0, uint256 reserve1);
+
+    constructor(address _token0, address _token1) {
+        token0 = _token0;
+        token1 = _token1;
     }
 
-    function addLiquidity(uint256 _gensAmount) external payable {
-        uint256 ethInput = msg.value;
-        uint256 gensInput = _gensAmount;
+    function _update(uint256 balance0, uint256 balance1) private {
+        reserve0 = balance0;
+        reserve1 = balance1;
+        emit Sync(reserve0, reserve1);
+    }
 
-        if (ethReserve > 0 && gensReserve > 0) {
-            uint256 ethOutput = (ethReserve * gensInput) / gensReserve;
-            uint256 gensOutput = (gensReserve * ethInput) / ethReserve;
-            require(gensOutput <= gensInput, "Slippage limit reached");
-            require(ethOutput <= ethInput, "Slippage limit reached");
+    function addLiquidity(uint256 amount0, uint256 amount1) external nonReentrant returns (uint256 liquidity) {
+        IERC20(token0).transferFrom(msg.sender, address(this), amount0);
+        IERC20(token1).transferFrom(msg.sender, address(this), amount1);
+
+        uint256 balance0 = IERC20(token0).balanceOf(address(this));
+        uint256 balance1 = IERC20(token1).balanceOf(address(this));
+
+        uint256 _totalSupply = totalSupply;
+        if (_totalSupply == 0) {
+            liquidity = Math.sqrt(amount0 * amount1);
+        } else {
+            liquidity = Math.min(amount0 * _totalSupply / reserve0, amount1 * _totalSupply / reserve1);
         }
+        require(liquidity > 0, "INSUFFICIENT_LIQUIDITY_MINTED");
 
-        gensToken.transferFrom(msg.sender, address(this), gensInput);
+        balanceOf[msg.sender] += liquidity;
+        totalSupply += liquidity;
 
-        uint256 liquidityMinted = totalSupply() == 0
-            ? Math.sqrt(ethInput * gensInput)
-            : Math.min((ethInput * totalSupply()) / ethReserve, (gensInput * totalSupply()) / gensReserve);
-
-        _mint(msg.sender, liquidityMinted);
-
-        ethReserve += ethInput;
-        gensReserve += gensInput;
+        _update(balance0, balance1);
+        emit Mint(msg.sender, amount0, amount1);
     }
 
-    function removeLiquidity(uint256 _liquidityAmount) external {
-        uint256 ethAmount = (ethReserve * _liquidityAmount) / totalSupply();
-        uint256 gensAmount = (gensReserve * _liquidityAmount) / totalSupply();
-        require(ethAmount > 0 && gensAmount > 0, "Insufficient liquidity");
+    function removeLiquidity(uint256 liquidity) external nonReentrant returns (uint256 amount0, uint256 amount1) {
+        uint256 _totalSupply = totalSupply;
+        require(_totalSupply > 0, "NO_LIQUIDITY");
 
-        _burn(msg.sender, _liquidityAmount);
+        amount0 = liquidity * reserve0 / _totalSupply;
+        amount1 = liquidity * reserve1 / _totalSupply;
+        require(amount0 > 0 && amount1 > 0, "INSUFFICIENT_LIQUIDITY_BURNED");
 
-        ethReserve -= ethAmount;
-        gensReserve -= gensAmount;
+        balanceOf[msg.sender] -= liquidity;
+        totalSupply -= liquidity;
 
-        (bool successEth,) = payable(msg.sender).call{value: ethAmount}("");
-        require(successEth, "ETH Transfer failed");
+        IERC20(token0).transfer(msg.sender, amount0);
+        IERC20(token1).transfer(msg.sender, amount1);
 
-        require(gensToken.transfer(msg.sender, gensAmount), "GENS Transfer failed");
+        uint256 balance0 = IERC20(token0).balanceOf(address(this));
+        uint256 balance1 = IERC20(token1).balanceOf(address(this));
+
+        _update(balance0, balance1);
+        emit Burn(msg.sender, amount0, amount1, msg.sender);
     }
 
-    function getReserves() external view returns (uint256, uint256) {
-        return (ethReserve, gensReserve);
+    function swap(uint256 amount0Out, uint256 amount1Out, address to) external nonReentrant {
+        require(amount0Out > 0 || amount1Out > 0, "INSUFFICIENT_OUTPUT_AMOUNT");
+        uint256 balance0 = IERC20(token0).balanceOf(address(this));
+        uint256 balance1 = IERC20(token1).balanceOf(address(this));
+        require(amount0Out < balance0 && amount1Out < balance1, "INSUFFICIENT_LIQUIDITY");
+
+        if (amount0Out > 0) IERC20(token0).transfer(to, amount0Out);
+        if (amount1Out > 0) IERC20(token1).transfer(to, amount1Out);
+
+        uint256 balance0Adjusted = balance0 - amount0Out;
+        uint256 balance1Adjusted = balance1 - amount1Out;
+
+        _update(balance0Adjusted, balance1Adjusted);
+        emit Swap(msg.sender, amount0Out, amount1Out, to);
     }
 }
