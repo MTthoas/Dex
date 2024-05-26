@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradeable.sol";
-import "@openzeppelin/contracts/proxy/Clones.sol";
-import "./LiquidityPoolV2.sol";
+import '@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradeable.sol';
+import '@openzeppelin/contracts/proxy/Clones.sol';
+import './LiquidityPoolV2.sol';
 
 contract LiquidityPoolFactoryV2 is AccessManagedUpgradeable {
     using Clones for address;
@@ -22,7 +22,7 @@ contract LiquidityPoolFactoryV2 is AccessManagedUpgradeable {
 
     // Initializer function (replaces constructor)
     function initialize(address _liquidityPoolImplementation, address _initialAuthority) public initializer {
-        require(_liquidityPoolImplementation != address(0), "LiquidityPoolFactory: invalid implementation address");
+        require(_liquidityPoolImplementation != address(0), 'LiquidityPoolFactory: invalid implementation address');
         liquidityPoolImplementation = _liquidityPoolImplementation;
 
         __AccessManaged_init(_initialAuthority);
@@ -30,9 +30,9 @@ contract LiquidityPoolFactoryV2 is AccessManagedUpgradeable {
 
     // Function to create a new liquidity pool
     function createLiquidityPool(address tokenA, address tokenB, address admin) external restricted returns (address) {
-        require(tokenA != tokenB, "LiquidityPoolFactory: identical token addresses");
-        require(tokenA != address(0) && tokenB != address(0), "LiquidityPoolFactory: invalid token addresses");
-        require(getPool[tokenA][tokenB] == address(0), "LiquidityPoolFactory: pool already exists");
+        require(tokenA != tokenB, 'LiquidityPoolFactory: identical token addresses');
+        require(tokenA != address(0) && tokenB != address(0), 'LiquidityPoolFactory: invalid token addresses');
+        require(getPool[tokenA][tokenB] == address(0), 'LiquidityPoolFactory: pool already exists');
 
         // Create a new liquidity pool using the implementation
         address pool = liquidityPoolImplementation.clone();

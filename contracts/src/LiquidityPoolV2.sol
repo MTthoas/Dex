@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/utils/math/Math.sol";
-import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradeable.sol";
+import '@openzeppelin/contracts/utils/math/Math.sol';
+import '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradeable.sol';
 
 contract LiquidityPoolV2 is ReentrancyGuardUpgradeable, AccessManagedUpgradeable {
     using Math for uint256;
@@ -31,17 +31,19 @@ contract LiquidityPoolV2 is ReentrancyGuardUpgradeable, AccessManagedUpgradeable
 
     // Initializer function (replaces constructor)
     function initialize(address _tokenA, address _tokenB, address _initialAuthority) public initializer {
-        require(_tokenA != address(0) && _tokenB != address(0), "LiquidityPool: invalid token addresses");
+        require(_tokenA != address(0) && _tokenB != address(0), 'LiquidityPool: invalid token addresses');
         tokenA = _tokenA;
         tokenB = _tokenB;
 
         __ReentrancyGuard_init();
         __AccessManaged_init(_initialAuthority);
+
+        platformFee = 30; // Default platform fee is 0.3%
     }
 
     // Function to add liquidity to the pool
     function addLiquidity(uint256 tokenAAmount, uint256 tokenBAmount) external restricted nonReentrant {
-        require(tokenAAmount > 0 && tokenBAmount > 0, "LiquidityPool: amounts must be greater than zero");
+        require(tokenAAmount > 0 && tokenBAmount > 0, 'LiquidityPool: amounts must be greater than zero');
 
         // Transfer tokens from sender to the contract
         ERC20Upgradeable(tokenA).transferFrom(msg.sender, address(this), tokenAAmount);
@@ -57,7 +59,7 @@ contract LiquidityPoolV2 is ReentrancyGuardUpgradeable, AccessManagedUpgradeable
                 (tokenBAmount * totalLiquidity) / reserveB
             );
         }
-        require(liquidity > 0, "LiquidityPool: insufficient liquidity minted");
+        require(liquidity > 0, 'LiquidityPool: insufficient liquidity minted');
 
         // Update reserves and mint liquidity tokens
         _updateReserves();
@@ -69,14 +71,14 @@ contract LiquidityPoolV2 is ReentrancyGuardUpgradeable, AccessManagedUpgradeable
 
     // Function to remove liquidity from the pool
     function removeLiquidity(uint256 liquidityTokens) external restricted nonReentrant {
-        require(liquidityTokens > 0, "LiquidityPool: amount must be greater than zero");
-        require(liquidityBalances[msg.sender] >= liquidityTokens, "LiquidityPool: insufficient liquidity balance");
+        require(liquidityTokens > 0, 'LiquidityPool: amount must be greater than zero');
+        require(liquidityBalances[msg.sender] >= liquidityTokens, 'LiquidityPool: insufficient liquidity balance');
 
         // Calculate amounts of tokens to return to the user
         uint256 tokenAAmount = (liquidityTokens * reserveA) / totalLiquidity;
         uint256 tokenBAmount = (liquidityTokens * reserveB) / totalLiquidity;
 
-        require(tokenAAmount > 0 && tokenBAmount > 0, "LiquidityPool: insufficient token amounts");
+        require(tokenAAmount > 0 && tokenBAmount > 0, 'LiquidityPool: insufficient token amounts');
 
         // Update reserves and burn liquidity tokens
         _updateReserves();
@@ -90,10 +92,15 @@ contract LiquidityPoolV2 is ReentrancyGuardUpgradeable, AccessManagedUpgradeable
         emit LiquidityRemoved(msg.sender, tokenAAmount, tokenBAmount);
     }
 
-// Function to execute a swap
-    function swap(address tokenIn, uint256 amountIn, uint256 minAmountOut, address recipient) external restricted nonReentrant {
-        require(amountIn > 0, "LiquidityPool: amount must be greater than zero");
-        require(tokenIn == tokenA || tokenIn == tokenB, "LiquidityPool: invalid token address");
+    // Function to execute a swap
+    function swap(
+        address tokenIn,
+        uint256 amountIn,
+        uint256 minAmountOut,
+        address recipient
+    ) external restricted nonReentrant {
+        require(amountIn > 0, 'LiquidityPool: amount must be greater than zero');
+        require(tokenIn == tokenA || tokenIn == tokenB, 'LiquidityPool: invalid token address');
 
         address tokenOut = (tokenIn == tokenA) ? tokenB : tokenA;
         uint256 reserveIn = (tokenIn == tokenA) ? reserveA : reserveB;
@@ -103,10 +110,10 @@ contract LiquidityPoolV2 is ReentrancyGuardUpgradeable, AccessManagedUpgradeable
         ERC20Upgradeable(tokenIn).transferFrom(msg.sender, address(this), amountIn);
 
         // Calculate the output amount using the constant product formula
-        uint256 amountInWithFee = amountIn * (10000 - platformFee) / 10000;
+        uint256 amountInWithFee = (amountIn * (10000 - platformFee)) / 10000;
         uint256 amountOut = (reserveOut * amountInWithFee) / (reserveIn + amountInWithFee);
 
-        require(amountOut >= minAmountOut, "LiquidityPool: insufficient output amount");
+        require(amountOut >= minAmountOut, 'LiquidityPool: insufficient output amount');
 
         // Update reserves
         _updateReserves();
@@ -124,12 +131,12 @@ contract LiquidityPoolV2 is ReentrancyGuardUpgradeable, AccessManagedUpgradeable
 
     // Function to get the price of a token amount in the other token
     function getPrice(address tokenIn, uint256 amountIn) external view returns (uint256) {
-        require(tokenIn == tokenA || tokenIn == tokenB, "LiquidityPool: invalid token address");
+        require(tokenIn == tokenA || tokenIn == tokenB, 'LiquidityPool: invalid token address');
 
         uint256 reserveIn = (tokenIn == tokenA) ? reserveA : reserveB;
         uint256 reserveOut = (tokenIn == tokenA) ? reserveB : reserveA;
 
-        uint256 amountInWithFee = amountIn * (10000 - platformFee) / 10000;
+        uint256 amountInWithFee = (amountIn * (10000 - platformFee)) / 10000;
         uint256 amountOut = (reserveOut * amountInWithFee) / (reserveIn + amountInWithFee);
 
         return amountOut;
