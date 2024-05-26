@@ -4,17 +4,25 @@ pragma solidity ^0.8.0;
 import "./LiquidityPool.sol";
 
 contract LiquidityPoolFactory {
+    address public feeTo;
+    uint256 public feeRate;
+
     address[] public allPools;
     mapping(address => mapping(address => address)) public getPool;
 
     event PoolCreated(address indexed token0, address indexed token1, address pool);
+
+    constructor(address _feeTo, uint256 _feeRate) {
+        feeTo = _feeTo;
+        feeRate = _feeRate;
+    }
 
     function createPool(address token0, address token1) external returns (address pool) {
         require(token0 != token1, "IDENTICAL_ADDRESSES");
         require(token0 != address(0) && token1 != address(0), "ZERO_ADDRESS");
         require(getPool[token0][token1] == address(0), "POOL_EXISTS");
 
-        pool = address(new LiquidityPool(token0, token1));
+        pool = address(new LiquidityPool(token0, token1, feeTo, feeRate));
         getPool[token0][token1] = pool;
         getPool[token1][token0] = pool; // populate mapping in the reverse direction
         allPools.push(pool);
@@ -24,5 +32,14 @@ contract LiquidityPoolFactory {
 
     function allPoolsLength() external view returns (uint256) {
         return allPools.length;
+    }
+
+    function setFeeTo(address _feeTo) external {
+        feeTo = _feeTo;
+    }
+
+    function setFeeRate(uint256 _feeRate) external {
+        require(_feeRate <= 300, "FEE_RATE_TOO_HIGH"); // maximum fee rate of 3%
+        feeRate = _feeRate;
     }
 }

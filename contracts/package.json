@@ -17,8 +17,7 @@
     "sub-modules": "cd ../ && git submodule update --init --recursive",
     "gas-report": "forge test --gas-report",
     "build": "forge build",
-    "test": "forge test -vvvv",
-    "deploy-access-manager": "forge script script/00_deployAccessManager.s.sol --rpc-url $RPC_URL --private-key $ACCOUNT_PRIVATE_KEY --broadcast --verify -vvvv"
+    "test": "forge test -vvvv"
   },
   "dependencies": {
     "dotenv": "16.4.5"

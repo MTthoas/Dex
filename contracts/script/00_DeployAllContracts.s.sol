@@ -6,51 +6,45 @@ import {AccessManagerHelpers} from "./utils/AccessManagerHelpers.s.sol";
 import "forge-std/console.sol";
 import "@openzeppelin/contracts/access/manager/AccessManager.sol";
 import "../src/libraries/Roles.sol";
-
-import "../src/LiquidityPoolFactoryV2.sol";
-import "../src/LiquidityPoolV2.sol";
+import "../src/LiquidityPoolFactory.sol";
+import "../src/UserRegistry.sol";
 
 contract DeployAllContractsScript is BaseScript, AccessManagerHelpers {
-    /// @dev Instance of contracts
-    AccessManager manager;
-    LiquidityPoolV2 liquidityPool;
-    LiquidityPoolFactoryV2 liquidityPoolFactory;
+    AccessManager accessManagerInstance;
+    LiquidityPoolFactory liquidityPoolFactoryInstance;
+    UserRegistry userRegistryInstance;
 
     address private testRes;
     bool private forTest;
 
     function run() public broadcast {
         if (forTest) {
-            manager = new AccessManager(broadcaster);
+            accessManagerInstance = new AccessManager(broadcaster);
             console.log(
                 "AccessManager instance deployed at",
-                address(manager),
+                address(accessManagerInstance),
                 "with the next temporary super admin",
                 broadcaster
             );
-            testRes = address(manager);
+            testRes = address(accessManagerInstance);
         } else {
-            manager = new AccessManager(broadcaster);
-            liquidityPool = new LiquidityPoolV2();
-            liquidityPoolFactory = new LiquidityPoolFactoryV2();
-            liquidityPoolFactory.initialize(address(liquidityPool), msg.sender);
+            console.log("---Start of the deployment---");
+            accessManagerInstance = new AccessManager(broadcaster);
+            console.log("AccessManager instance deployed at", address(accessManagerInstance), "with super admin", broadcaster);
 
-            console.log("AccessManager instance deployed at", address(manager), "with super admin", broadcaster);
-            console.log("LiquidityPoolFactory instance deployed at", address(liquidityPoolFactory));
-            console.log("LiquidityPool instance deployed at", address(liquidityPool));
+            liquidityPoolFactoryInstance = new LiquidityPoolFactory(broadcaster, 300); // temporary feeTo and feeRate
+            console.log("LiquidityPoolFactory instance deployed at", address(liquidityPoolFactoryInstance));
 
-            // Restrict functions
-            // manager.setTargetFunctionRole(
-            //     address(liquidityPoolFactory),
-            //     _asSingletonArray("createLiquidityPool"),
-            //     Roles.ADMIN_ROLE
-            // );
+            userRegistryInstance = new UserRegistry();
+            console.log("UserRegistry instance deployed at", address(userRegistryInstance));
+
+            console.log("---End of the deployment---");
         }
     }
 
-    function deployForTest(address _deployer) public returns (address _testRes) {
+    function deployForTest(address _initialSuperAdmin) public returns (address _testRes) {
         forTest = true;
-        broadcaster = _deployer;
+        broadcaster = _initialSuperAdmin;
         run();
         _testRes = testRes;
         // Reset the variables for the next test

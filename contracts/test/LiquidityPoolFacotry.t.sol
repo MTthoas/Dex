@@ -13,11 +13,17 @@ contract LiquidityPoolFactoryTest is Test {
     Token token2;
     LiquidityPoolFactory factory;
 
+    address feeTo;
+    uint256 feeRate;
+
     function setUp() public {
         token0 = new Token("Token0", "TK0");
         token1 = new Token("Token1", "TK1");
         token2 = new Token("Token2", "TK2");
-        factory = new LiquidityPoolFactory();
+
+        feeTo = address(this);
+        feeRate = 30;
+        factory = new LiquidityPoolFactory(feeTo, feeRate);
     }
 
     function testCreatePool() public {
@@ -51,5 +57,22 @@ contract LiquidityPoolFactoryTest is Test {
         assertEq(factory.allPoolsLength(), 2);
         assertEq(factory.getPool(address(token0), address(token1)) != address(0), true);
         assertEq(factory.getPool(address(token1), address(token2)) != address(0), true);
+    }
+
+    function testSetFeeTo() public {
+        address newFeeTo = address(0x123);
+        factory.setFeeTo(newFeeTo);
+        assertEq(factory.feeTo(), newFeeTo);
+    }
+
+    function testSetFeeRate() public {
+        uint256 newFeeRate = 50;
+        factory.setFeeRate(newFeeRate);
+        assertEq(factory.feeRate(), newFeeRate);
+    }
+
+    function testSetFeeRateTooHigh() public {
+        vm.expectRevert("FEE_RATE_TOO_HIGH");
+        factory.setFeeRate(301);
     }
 }
