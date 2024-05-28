@@ -8,8 +8,8 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 contract LiquidityPool is ReentrancyGuard {
     using Math for uint256;
 
-    address public token0;
-    address public token1;
+    address public immutable token0;
+    address public immutable token1;
     address public feeTo; // Address to which fees will be sent
     uint256 public feeRate; // (1 basis point = 0.01%)
 
@@ -26,6 +26,7 @@ contract LiquidityPool is ReentrancyGuard {
     event FeeUpdated(address indexed newFeeTo, uint256 newFeeRate);
 
     constructor(address _token0, address _token1, address _feeTo, uint256 _feeRate) {
+        require(_feeRate <= 300, "FEE_RATE_TOO_HIGH"); // <= 3%
         token0 = _token0;
         token1 = _token1;
         feeTo = _feeTo;
@@ -62,7 +63,7 @@ contract LiquidityPool is ReentrancyGuard {
         if (_totalSupply == 0) {
             liquidity = Math.sqrt(amount0 * amount1);
         } else {
-            liquidity = Math.min(amount0 * _totalSupply / reserve0, amount1 * _totalSupply / reserve1);
+            liquidity = Math.min((amount0 * _totalSupply) / reserve0, (amount1 * _totalSupply) / reserve1);
         }
         require(liquidity > 0, "INSUFFICIENT_LIQUIDITY_MINTED");
 
@@ -100,22 +101,22 @@ contract LiquidityPool is ReentrancyGuard {
         uint256 balance0 = IERC20(token0).balanceOf(address(this));
         uint256 balance1 = IERC20(token1).balanceOf(address(this));
 
-        require(amount0Out < balance0 && amount1Out < balance1, "INSUFFICIENT_LIQUIDITY");
+        uint256 fee0 = (amount0Out * feeRate) / 10000;
+        uint256 fee1 = (amount1Out * feeRate) / 10000;
 
-        uint256 amount0In = balance0 - reserve0;
-        uint256 amount1In = balance1 - reserve1;
+        require(amount0Out + fee0 <= balance0 && amount1Out + fee1 <= balance1, "INSUFFICIENT_LIQUIDITY");
 
-        uint256 balance0Adjusted = balance0 - amount0Out + (amount0In * (10000 - feeRate) / 10000);
-        uint256 balance1Adjusted = balance1 - amount1Out + (amount1In * (10000 - feeRate) / 10000);
+        if (amount0Out > 0) {
+            IERC20(token0).transfer(feeTo, fee0);
+            IERC20(token0).transfer(to, amount0Out - fee0);
+        }
+        if (amount1Out > 0) {
+            IERC20(token1).transfer(feeTo, fee1);
+            IERC20(token1).transfer(to, amount1Out - fee1);
+        }
 
-        if (amount0Out > 0) IERC20(token0).transfer(to, amount0Out);
-        if (amount1Out > 0) IERC20(token1).transfer(to, amount1Out);
-
-        uint256 fee0 = (amount0In * feeRate) / 10000;
-        uint256 fee1 = (amount1In * feeRate) / 10000;
-
-        if (fee0 > 0) IERC20(token0).transfer(feeTo, fee0);
-        if (fee1 > 0) IERC20(token1).transfer(feeTo, fee1);
+        uint256 balance0Adjusted = IERC20(token0).balanceOf(address(this));
+        uint256 balance1Adjusted = IERC20(token1).balanceOf(address(this));
 
         _update(balance0Adjusted, balance1Adjusted);
         emit Swap(msg.sender, amount0Out, amount1Out, to);
