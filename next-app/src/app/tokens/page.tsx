@@ -14,17 +14,17 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useAccount, useReadContract } from "wagmi";
-import { abi } from "../../abi/Token.json";
+import { abi } from "@/abi/Token.json";
 import { ethers } from "ethers";
 import { useWriteContract } from 'wagmi'
-import { Button } from "../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu";
-import { Input } from "../../components/ui/input";
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -32,7 +32,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
+} from "@/components/ui/table";
 import { Token } from "./token.model";
 import { columns } from "./ColumnDef";
 import { useQuery } from "@tanstack/react-query";
@@ -47,7 +47,7 @@ export default function TokenPage() {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const [amountToBuy, setAmountToBuy] = React.useState('');
+  const [amountToBuy, setAmountToBuy] = React.useState<string>('');
 
   const { data: tokens } = useQuery<Token[]>({
     queryKey: ["tokens"],
