@@ -13,15 +13,18 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
-import { Button } from "../../components/ui/button";
+import { useAccount, useReadContract } from "wagmi";
+import { abi } from "@/abi/Token.json";
+import { ethers } from "ethers";
+import { useWriteContract } from 'wagmi'
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu";
-import { Input } from "../../components/ui/input";
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -29,7 +32,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
+} from "@/components/ui/table";
 import { Token } from "./token.model";
 import { columns } from "./ColumnDef";
 import { useQuery } from "@tanstack/react-query";
@@ -43,6 +46,8 @@ export default function TokenPage() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const [amountToBuy, setAmountToBuy] = React.useState<string>('');
 
   const { data: tokens } = useQuery<Token[]>({
     queryKey: ["tokens"],
@@ -189,6 +194,32 @@ export default function TokenPage() {
               Next
             </Button>
           </div>
+        </div>
+        <div className="flex w-full max-w-sm items-center space-x-2 py-4">
+          <Input
+            type="number"
+            min="0"
+            placeholder="Amount in ETH to buy tokens"
+            value={amountToBuy}
+            onChange={(e) => setAmountToBuy(e.target.value)}
+            className="max-w-sm"
+          />
+          <Button
+            onClick={() => 
+              writeContract({ 
+                abi,
+                address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+                functionName: 'buyToken',
+                args: [
+                  walletUser,
+                  '0x6b175474e89094c44da98b954eedeac495271d0f',
+                  123,
+                ],
+             })
+            }
+          >
+            Buy Our Token
+          </Button>
         </div>
       </div>
     </div>

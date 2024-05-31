@@ -6,7 +6,7 @@ import { Combobox } from "./Combobox"
 
 export default function SwapCard() {
   return (
-    <Card className="w-[376px] bg-[#1E1E2D] text-white rounded-lg shadow-lg">
+    <Card className="w-[376px] bg-secondary text-white rounded-lg shadow-lg">
       <CardHeader>
         <CardTitle className="text-lg font-bold">Swap</CardTitle>
         <CardDescription className="text-sm">Trade tokens in an instant</CardDescription>
