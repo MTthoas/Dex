@@ -1,13 +1,5 @@
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
-import {
-  mainnet,
-  polygon,
-  optimism,
-  arbitrum,
-  base,
-  zora,
-  sepolia,
-} from "wagmi/chains";
+import { sepolia } from "wagmi/chains";
 
 // Get projectId at https://cloud.walletconnect.com
 export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;

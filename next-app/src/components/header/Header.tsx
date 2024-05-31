@@ -10,16 +10,20 @@ import { useAccount } from "wagmi";
 
 const HeaderLinks: NavLink[] = [
   {
-    name: "Swap",
-    href: "/swap",
-  },
-  {
     name: "Dashboard",
     href: "/dashboard",
   },
   {
     name: "Tokens",
     href: "/tokens",
+  },
+  {
+    name: "Swap",
+    href: "/swap",
+  },
+  {
+    name: "Stake",
+    href: "/staking",
   },
   {
     name: "Pools",
