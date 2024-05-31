@@ -14,17 +14,17 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useAccount, useReadContract } from "wagmi";
-import { abi } from "../../abi/Token.json";
+import { abi } from "@/abi/Token.json";
 import { ethers } from "ethers";
 import { useWriteContract } from 'wagmi'
-import { Button } from "../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu";
-import { Input } from "../../components/ui/input";
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -32,15 +32,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
+} from "@/components/ui/table";
 import { Token } from "./token.model";
-import axios from "axios";
 import { columns } from "./ColumnDef";
-
-const contractConfig = {
-  address: "0xcF8fB3da3f2E622D14f8a61d2D7361B7f94E75eB",
-  abi: abi,
-} as const;
+import { useQuery } from "@tanstack/react-query";
+import { getCoins } from "@/hook/coins.hook";
 
 export default function TokenPage() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -51,50 +47,16 @@ export default function TokenPage() {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const [amountToBuy, setAmountToBuy] = React.useState('');
+  const [amountToBuy, setAmountToBuy] = React.useState<string>('');
 
-  const [data, setData] = React.useState<Token[]>([]);
-
-  const { data: balance } = useReadContract({
-    ...contractConfig,
-    args: [useAccount().address],
-    functionName: "balanceOf",
+  const { data: tokens } = useQuery<Token[]>({
+    queryKey: ["tokens"],
+    queryFn: getCoins,
   });
-  
-  const { data: totalSupply } = useReadContract({
-    ...contractConfig,
-    functionName: "totalSupply",
-  });
-
-  const walletUser = useAccount().address;
-  
-  const { writeContract } = useWriteContract();
-
-  console.log("TotalSupply :", totalSupply);
-  console.log("Balance of :", balance);
-
-  React.useEffect(() => {
-    axios
-      .get("http://localhost:5002/api/v1/coins", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        const indexedData = response.data.map((item: any, index: any): any => ({
-          ...item,
-          index: index + 1,
-        }));
-        setData(indexedData);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
 
   const table = useReactTable({
-    data,
-    columns,
+    data: tokens ?? [],
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
