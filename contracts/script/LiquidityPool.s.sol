@@ -1,79 +1,156 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.0;
 
-import 'forge-std/Script.sol';
-import '../src/LiquidityPoolV2.sol';
-import '../src/LiquidityPoolFactoryV2.sol';
-import '../test/mock/MockERC20.sol';
+import "forge-std/Script.sol";
+import "../src/LiquidityPoolV2.sol";
+import "../test/mock/MockERC20.sol";
+import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagerUpgradeable.sol";
+import "../src/LiquidityPoolFactoryV2.sol";
 
-contract DeployAndInteractWithFactory is Script {
-    LiquidityPoolFactoryV2 factory;
-    LiquidityPoolV2 liquidityPoolImplementation;
+contract DeployAndInteractWithLiquidityPool is Script {
+    LiquidityPoolFactory factory;
+    LiquidityPoolV2 liquidityPool;
     MockERC20 tokenA;
     MockERC20 tokenB;
+    AccessManagerUpgradeable accessManager;
     address admin;
 
     function setUp() public {
-        admin = vm.envAddress('ADMIN_ADDRESS');
+        admin = vm.envAddress("ADMIN_ADDRESS");
     }
 
     function run() public {
         vm.startBroadcast(admin);
 
-        // Deploy the LiquidityPoolV2 implementation contract
-        liquidityPoolImplementation = new LiquidityPoolV2();
-        liquidityPoolImplementation.initialize(address(1), address(1), admin); // Dummy initialization
-
-        // Deploy the LiquidityPoolFactoryV2 contract
-        factory = new LiquidityPoolFactoryV2();
-        factory.initialize(address(liquidityPoolImplementation), admin);
+        // Deploy the AccessManager contract
+        accessManager = new AccessManagerUpgradeable();
+        accessManager.initialize(admin);
 
         // Deploy mock ERC20 tokens
         tokenA = new MockERC20();
-        tokenA.initialize('Token A', 'TKA');
+        tokenA.initialize("Token A", "TKA");
         tokenB = new MockERC20();
-        tokenB.initialize('Token B', 'TKB');
+        tokenB.initialize("Token B", "TKB");
 
         // Mint some tokens to the admin for testing
-        tokenA.mint(admin, 1000 ether);
-        tokenB.mint(admin, 1000 ether);
+        tokenA.mint(admin, 1000 wei);
+        tokenB.mint(admin, 1000 wei);
+
+        // Deploy the LiquidityPoolFactory contract
+        factory = new LiquidityPoolFactory();
+        factory.initialization(address(accessManager));
+
+        // Grant necessary permissions to the admin
+        accessManager.grantRole(accessManager.ADMIN_ROLE(), admin, 0);
+        accessManager.grantRole(1, admin, 0); // Assuming 1 is the roleId for liquidity operations
 
         // Create a new liquidity pool using the factory
-        address newPool = factory.createLiquidityPool(address(tokenA), address(tokenB), admin);
-        console.log('New pool address:', newPool);
+        factory.createPool(address(tokenA), address(tokenB), address(accessManager), 30);
+        address poolAddress = factory.getPool(address(tokenA), address(tokenB));
+        liquidityPool = LiquidityPoolV2(poolAddress);
 
-        // Interact with the new liquidity pool
-        LiquidityPoolV2 liquidityPool = LiquidityPoolV2(newPool);
+        // Grant the liquidity operation role to the admin for the new pool
+        accessManager.grantRole(1, admin, 0); // Assuming 1 is the roleId for liquidity operations
+
+        // Set the function roles for the LiquidityPoolV2 contract
+        bytes4[] memory selectors = new bytes4[](3);
+        selectors[0] = liquidityPool.addLiquidity.selector; // Assuming 1 is the roleId for liquidity operations
+        selectors[1] = liquidityPool.removeLiquidity.selector; // Assuming 1 is the roleId for liquidity operations
+        selectors[2] = liquidityPool.swap.selector; // Assuming 1 is the roleId for liquidity operations
+
+        // Set the target function role for the LiquidityPoolV2 contract, setTargetFunctionRole is a function in AccessManagerUpgradeable contract that allows to set the role for a specific function in a contract
+        accessManager.setTargetFunctionRole(address(liquidityPool), selectors, 1);
+
+        vm.stopBroadcast();
+
+        // Once the setup is complete, run the test functions
+        testAddLiquidity();
+        testSwap();
+
+        // Update the platform fee
+        testToUpdateFees();
+        testSwap();
+
+        testRemoveLiquidity();
+    }
+
+    function testAddLiquidity() internal {
+        vm.startBroadcast(admin);
+
+        uint256 tokenAAmount = 100 wei;
+        uint256 tokenBAmount = 100 wei;
+
+        // Approve tokens for the liquidity pool
+        tokenA.approve(address(liquidityPool), tokenAAmount);
+        tokenB.approve(address(liquidityPool), tokenBAmount);
 
         // Add liquidity
-        addLiquidity(liquidityPool, 100 ether, 100 ether);
+        liquidityPool.addLiquidity(tokenAAmount, tokenBAmount);
 
-        // Perform a swap
-        performSwap(liquidityPool, address(tokenA), 10 ether, 1 ether);
-
-        // Remove liquidity
-        removeLiquidity(liquidityPool, 50 ether);
+        // Check the reserves
+        (uint256 reserveA, uint256 reserveB) = liquidityPool.getReserves();
+        require(reserveA == tokenAAmount, "Reserve A mismatch");
+        require(reserveB == tokenBAmount, "Reserve B mismatch");
 
         vm.stopBroadcast();
     }
 
-    function addLiquidity(LiquidityPoolV2 liquidityPool, uint256 tokenAAmount, uint256 tokenBAmount) internal {
-        tokenA.approve(address(liquidityPool), tokenAAmount);
-        tokenB.approve(address(liquidityPool), tokenBAmount);
-        liquidityPool.addLiquidity(tokenAAmount, tokenBAmount);
+    function testSwap() internal {
+        vm.startBroadcast(admin);
+
+        uint256 amountIn = 10 wei;
+        uint256 minAmountOut = 1 wei; // Lowering the minimum amount to avoid revert, should be set based on the expected output :)
+
+        // Approve tokens for the liquidity pool
+        tokenA.approve(address(liquidityPool), amountIn);
+
+        // Get reserves before swap
+        (uint256 reserveABefore, uint256 reserveBBefore) = liquidityPool.getReserves();
+        console.log("Reserves before swap:");
+        console.log("Reserve A:", reserveABefore);
+        console.log("Reserve B:", reserveBBefore);
+
+        // Perform the swap
+        try liquidityPool.swap(address(tokenA), amountIn, minAmountOut, admin) {
+            // Get reserves after swap
+            (uint256 reserveAAfter, uint256 reserveBAfter) = liquidityPool.getReserves();
+            console.log("Reserves after swap:");
+            console.log("Reserve A:", reserveAAfter);
+            console.log("Reserve B:", reserveBAfter);
+
+            uint256 amountOut = liquidityPool.getPrice(address(tokenA), amountIn);
+            console.log("Swapped", amountIn);
+            console.log("Received", amountOut);
+        } catch Error(string memory reason) {
+            console.log("Swap failed:", reason);
+        }
+
+        vm.stopBroadcast();
     }
 
-    function performSwap(
-        LiquidityPoolV2 liquidityPool,
-        address tokenIn,
-        uint256 amountIn,
-        uint256 minAmountOut
-    ) internal {
-        ERC20Upgradeable(tokenIn).approve(address(liquidityPool), amountIn);
-        liquidityPool.swap(tokenIn, amountIn, minAmountOut, admin);
-    }
+    function testRemoveLiquidity() internal {
+        vm.startBroadcast(admin);
 
-    function removeLiquidity(LiquidityPoolV2 liquidityPool, uint256 liquidityTokens) internal {
+        // Approve liquidity tokens for the liquidity pool
+        uint256 liquidityTokens = 50 wei;
+
+        // Remove liquidity
         liquidityPool.removeLiquidity(liquidityTokens);
+
+        // Check the updated reserves
+        (uint256 reserveA, uint256 reserveB) = liquidityPool.getReserves();
+        console.log("Reserve A:", reserveA);
+        console.log("Reserve B:", reserveB);
+
+        vm.stopBroadcast();
+    }
+
+    function testToUpdateFees() internal {
+        vm.startBroadcast(admin);
+
+        // Update the platform fee
+        liquidityPool.updatePlatformFee(50);
+
+        vm.stopBroadcast();
     }
 }

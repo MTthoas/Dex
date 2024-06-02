@@ -1,60 +1,73 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import '@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradeable.sol';
-import '@openzeppelin/contracts/proxy/Clones.sol';
-import './LiquidityPoolV2.sol';
+import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagerUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "./LiquidityPoolV2.sol";
 
-contract LiquidityPoolFactoryV2 is AccessManagedUpgradeable {
-    using Clones for address;
+contract LiquidityPoolFactory is Initializable, ReentrancyGuardUpgradeable, AccessManagerUpgradeable {
+    // Event emitted when a new pool is created
+    event PoolCreated(address indexed tokenA, address indexed tokenB, address poolAddress);
 
-    // Address of the liquidity pool implementation
-    address public liquidityPoolImplementation;
-
-    // List of all deployed liquidity pools
-    address[] public allPools;
-
-    // Mapping from pair (tokenA, tokenB) to the liquidity pool address
+    // Mapping from tokens to pool address
     mapping(address => mapping(address => address)) public getPool;
 
-    // Events
-    event LiquidityPoolCreated(address indexed tokenA, address indexed tokenB, address pool);
+    // All address of pools
+    address[] public allPools;
 
-    // Initializer function (replaces constructor)
-    function initialize(address _liquidityPoolImplementation, address _initialAuthority) public initializer {
-        require(_liquidityPoolImplementation != address(0), 'LiquidityPoolFactory: invalid implementation address');
-        liquidityPoolImplementation = _liquidityPoolImplementation;
-
-        __AccessManaged_init(_initialAuthority);
+    /** Initializer function (replaces constructor by OpenZeppelin standards) */
+    function initialization(address _accessManager) public initializer {
+        require(_accessManager != address(0), "Factory: invalid access manager address");
+        __AccessManager_init(_accessManager);
+        __ReentrancyGuard_init();
     }
 
-    // Function to create a new liquidity pool
-    function createLiquidityPool(address tokenA, address tokenB, address admin) external restricted returns (address) {
-        require(tokenA != tokenB, 'LiquidityPoolFactory: identical token addresses');
-        require(tokenA != address(0) && tokenB != address(0), 'LiquidityPoolFactory: invalid token addresses');
-        require(getPool[tokenA][tokenB] == address(0), 'LiquidityPoolFactory: pool already exists');
+    /**
+     *  @notice Function to create a new liquidity pool
+     *  @param tokenA Address of the first token
+     *  @param tokenB Address of the second token
+     *  @param accessManager Address of the access manager contract
+     *  @param platformFee Platform fee in basis points
+     */
+    function createPool(
+        address tokenA,
+        address tokenB,
+        address accessManager,
+        uint256 platformFee
+    ) external nonReentrant returns (address pool) {
+        require(tokenA != address(0) && tokenB != address(0), "Factory: invalid token addresses");
+        require(tokenA != tokenB, "Factory: identical token addresses");
+        require(
+            getPool[tokenA][tokenB] == address(0) && getPool[tokenB][tokenA] == address(0),
+            "Factory: pool already exists"
+        );
 
-        // Create a new liquidity pool using the implementation
-        address pool = liquidityPoolImplementation.clone();
-        LiquidityPoolV2(pool).initialize(tokenA, tokenB, admin);
+        // The bytecode of the LiquidityPoolV2 contract
+        bytes memory bytecode = type(LiquidityPoolV2).creationCode;
+        bytes32 salt = keccak256(abi.encodePacked(tokenA, tokenB));
+        assembly {
+            pool := create2(0, add(bytecode, 32), mload(bytecode), salt)
+        }
 
-        // Store the new pool's address
+        require(pool != address(0), "Factory: pool creation failed");
+
+        // Call Initialize methods of LiquidityPoolV2 Contract
+        LiquidityPoolV2(pool).initialize(tokenA, tokenB, accessManager, platformFee);
+
+        // Store the pool address in the mapping and array
         getPool[tokenA][tokenB] = pool;
-        getPool[tokenB][tokenA] = pool; // Handle both orders
+        getPool[tokenB][tokenA] = pool;
         allPools.push(pool);
 
-        emit LiquidityPoolCreated(tokenA, tokenB, pool);
-
-        return pool;
+        emit PoolCreated(tokenA, tokenB, pool);
     }
 
-    // Function to get the number of all deployed pools
-    function getAllPoolsLength() external view returns (uint256) {
+    /**
+     *   @notice Function to get the number of all pools
+     *   @return allPools.length Number of all pools
+     */
+    function allPoolsLength() external view returns (uint256) {
         return allPools.length;
-    }
-
-    // Function to retrieve all deployed pools
-    function getAllPools() external view returns (address[] memory) {
-        return allPools;
     }
 }
