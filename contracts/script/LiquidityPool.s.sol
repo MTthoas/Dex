@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import 'forge-std/Script.sol';
-import '../src/LiquidityPoolV2.sol';
-import '../test/mock/MockERC20.sol';
-import '@openzeppelin/contracts-upgradeable/access/manager/AccessManagerUpgradeable.sol';
-import '../src/LiquidityPoolFactoryV2.sol';
+import "forge-std/Script.sol";
+import "../src/LiquidityPoolV2.sol";
+import "../test/mock/MockERC20.sol";
+import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagerUpgradeable.sol";
+import "../src/LiquidityPoolFactoryV2.sol";
 
 contract DeployAndInteractWithLiquidityPool is Script {
     LiquidityPoolFactory factory;
@@ -16,7 +16,7 @@ contract DeployAndInteractWithLiquidityPool is Script {
     address admin;
 
     function setUp() public {
-        admin = vm.envAddress('ADMIN_ADDRESS');
+        admin = vm.envAddress("ADMIN_ADDRESS");
     }
 
     function run() public {
@@ -28,9 +28,9 @@ contract DeployAndInteractWithLiquidityPool is Script {
 
         // Deploy mock ERC20 tokens
         tokenA = new MockERC20();
-        tokenA.initialize('Token A', 'TKA');
+        tokenA.initialize("Token A", "TKA");
         tokenB = new MockERC20();
-        tokenB.initialize('Token B', 'TKB');
+        tokenB.initialize("Token B", "TKB");
 
         // Mint some tokens to the admin for testing
         tokenA.mint(admin, 1000 wei);
@@ -38,14 +38,14 @@ contract DeployAndInteractWithLiquidityPool is Script {
 
         // Deploy the LiquidityPoolFactory contract
         factory = new LiquidityPoolFactory();
-        factory.initialize(address(accessManager));
+        factory.initialization(address(accessManager));
 
         // Grant necessary permissions to the admin
         accessManager.grantRole(accessManager.ADMIN_ROLE(), admin, 0);
         accessManager.grantRole(1, admin, 0); // Assuming 1 is the roleId for liquidity operations
 
         // Create a new liquidity pool using the factory
-        factory.createPool(address(tokenA), address(tokenB), address(accessManager));
+        factory.createPool(address(tokenA), address(tokenB), address(accessManager), 30);
         address poolAddress = factory.getPool(address(tokenA), address(tokenB));
         liquidityPool = LiquidityPoolV2(poolAddress);
 
@@ -66,6 +66,11 @@ contract DeployAndInteractWithLiquidityPool is Script {
         // Once the setup is complete, run the test functions
         testAddLiquidity();
         testSwap();
+
+        // Update the platform fee
+        testToUpdateFees();
+        testSwap();
+
         testRemoveLiquidity();
     }
 
@@ -84,8 +89,8 @@ contract DeployAndInteractWithLiquidityPool is Script {
 
         // Check the reserves
         (uint256 reserveA, uint256 reserveB) = liquidityPool.getReserves();
-        require(reserveA == tokenAAmount, 'Reserve A mismatch');
-        require(reserveB == tokenBAmount, 'Reserve B mismatch');
+        require(reserveA == tokenAAmount, "Reserve A mismatch");
+        require(reserveB == tokenBAmount, "Reserve B mismatch");
 
         vm.stopBroadcast();
     }
@@ -101,22 +106,23 @@ contract DeployAndInteractWithLiquidityPool is Script {
 
         // Get reserves before swap
         (uint256 reserveABefore, uint256 reserveBBefore) = liquidityPool.getReserves();
-        console.log('Reserves before swap:');
-        console.log('Reserve A:', reserveABefore);
-        console.log('Reserve B:', reserveBBefore);
+        console.log("Reserves before swap:");
+        console.log("Reserve A:", reserveABefore);
+        console.log("Reserve B:", reserveBBefore);
 
         // Perform the swap
         try liquidityPool.swap(address(tokenA), amountIn, minAmountOut, admin) {
             // Get reserves after swap
             (uint256 reserveAAfter, uint256 reserveBAfter) = liquidityPool.getReserves();
-            console.log('Reserves after swap:');
-            console.log('Reserve A:', reserveAAfter);
-            console.log('Reserve B:', reserveBAfter);
+            console.log("Reserves after swap:");
+            console.log("Reserve A:", reserveAAfter);
+            console.log("Reserve B:", reserveBAfter);
 
-            console.log('Swapped', amountIn);
-            console.log('Received', minAmountOut);
+            uint256 amountOut = liquidityPool.getPrice(address(tokenA), amountIn);
+            console.log("Swapped", amountIn);
+            console.log("Received", amountOut);
         } catch Error(string memory reason) {
-            console.log('Swap failed:', reason);
+            console.log("Swap failed:", reason);
         }
 
         vm.stopBroadcast();
@@ -133,8 +139,17 @@ contract DeployAndInteractWithLiquidityPool is Script {
 
         // Check the updated reserves
         (uint256 reserveA, uint256 reserveB) = liquidityPool.getReserves();
-        console.log('Reserve A:', reserveA);
-        console.log('Reserve B:', reserveB);
+        console.log("Reserve A:", reserveA);
+        console.log("Reserve B:", reserveB);
+
+        vm.stopBroadcast();
+    }
+
+    function testToUpdateFees() internal {
+        vm.startBroadcast(admin);
+
+        // Update the platform fee
+        liquidityPool.updatePlatformFee(50);
 
         vm.stopBroadcast();
     }
