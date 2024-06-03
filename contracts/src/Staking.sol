@@ -19,7 +19,6 @@ contract Staking is ReentrancyGuardUpgradeable {
 
     event Staked(address indexed user, uint256 amount);
     event Unstaked(address indexed user, uint256 amount);
-    event RewardsClaimed(address indexed user, uint256 reward);
 
     constructor(GensToken _token) {
         token = _token;
