@@ -34,4 +34,11 @@ func PublicRoutes(a *fiber.App) {
 	route.Post("/pools", controllers.CreatePool)
 	route.Put("/pools", controllers.UpdatePool)
 	route.Delete("/pools/:id", controllers.DeletePool)
+
+	route.Get("/staking", controllers.GetStaking)
+	route.Get("/staking/:id", controllers.GetStakingByID)
+	route.Get("/staking/user/:userId", controllers.GetStakingByUserID)
+	route.Post("/staking", controllers.CreateStaking)
+	route.Put("/staking", controllers.UpdateStaking)
+	route.Delete("/staking/:id", controllers.DeleteStaking)
 }
