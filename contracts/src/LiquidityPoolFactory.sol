@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/access/manager/AccessManagerUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "./LiquidityPoolV2.sol";
+import "./LiquidityPool.sol";
 
-contract LiquidityPoolFactory is Initializable, ReentrancyGuardUpgradeable, AccessManagerUpgradeable {
+contract LiquidityPoolFactory is Initializable, ReentrancyGuardUpgradeable, OwnableUpgradeable {
     // Event emitted when a new pool is created
     event PoolCreated(address indexed tokenA, address indexed tokenB, address poolAddress);
 
@@ -17,9 +17,8 @@ contract LiquidityPoolFactory is Initializable, ReentrancyGuardUpgradeable, Acce
     address[] public allPools;
 
     /** Initializer function (replaces constructor by OpenZeppelin standards) */
-    function initialization(address _accessManager) public initializer {
-        require(_accessManager != address(0), "Factory: invalid access manager address");
-        __AccessManager_init(_accessManager);
+    function initialize(address owner) public initializer {
+        __Ownable_init(owner);
         __ReentrancyGuard_init();
     }
 
@@ -27,15 +26,14 @@ contract LiquidityPoolFactory is Initializable, ReentrancyGuardUpgradeable, Acce
      *  @notice Function to create a new liquidity pool
      *  @param tokenA Address of the first token
      *  @param tokenB Address of the second token
-     *  @param accessManager Address of the access manager contract
      *  @param platformFee Platform fee in basis points
      */
     function createPool(
         address tokenA,
         address tokenB,
-        address accessManager,
+        address owner,
         uint256 platformFee
-    ) external nonReentrant returns (address pool) {
+    ) external onlyOwner nonReentrant returns (address pool) {
         require(tokenA != address(0) && tokenB != address(0), "Factory: invalid token addresses");
         require(tokenA != tokenB, "Factory: identical token addresses");
         require(
@@ -43,17 +41,11 @@ contract LiquidityPoolFactory is Initializable, ReentrancyGuardUpgradeable, Acce
             "Factory: pool already exists"
         );
 
-        // The bytecode of the LiquidityPoolV2 contract
-        bytes memory bytecode = type(LiquidityPoolV2).creationCode;
-        bytes32 salt = keccak256(abi.encodePacked(tokenA, tokenB));
-        assembly {
-            pool := create2(0, add(bytecode, 32), mload(bytecode), salt)
-        }
+        // Deploy a new LiquidityPool contract
+        pool = address(new LiquidityPool());
 
-        require(pool != address(0), "Factory: pool creation failed");
-
-        // Call Initialize methods of LiquidityPoolV2 Contract
-        LiquidityPoolV2(pool).initialize(tokenA, tokenB, accessManager, platformFee);
+        // Call Initialize methods of LiquidityPool Contract
+        LiquidityPool(pool).initialize(tokenA, tokenB, owner, platformFee, 10);
 
         // Store the pool address in the mapping and array
         getPool[tokenA][tokenB] = pool;

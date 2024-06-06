@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
-contract GensToken is ERC20 {
-    // Initializes the contract and mints all tokens to the deployer
-    constructor() ERC20("Geness", "GEN") {
-        _mint(msg.sender, 1_000_000_000 * (10 ** uint256(decimals())));
+contract GensToken is ERC20Upgradeable {
+    function initialize(string memory name, string memory symbol) public initializer {
+        __ERC20_init(name, symbol);
+    }
+
+    function mint(address to, uint256 amount) external {
+        _mint(to, amount);
     }
 }

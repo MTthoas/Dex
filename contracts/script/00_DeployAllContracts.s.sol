@@ -7,8 +7,8 @@ import "forge-std/console.sol";
 import "@openzeppelin/contracts/access/manager/AccessManager.sol";
 import "../src/libraries/Roles.sol";
 
-import "../src/LiquidityPoolFactoryV2.sol";
-import "../src/LiquidityPoolV2.sol";
+import "../src/LiquidityPoolFactory.sol";
+import "../src/LiquidityPool.sol";
 
 contract DeployAllContractsScript is BaseScript, AccessManagerHelpers {
     /// @dev Instance of contracts

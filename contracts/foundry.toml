@@ -20,7 +20,6 @@ mainnet = "${API_KEY_ALCHEMY_MAINNET}"
 mainnet_infura = "${API_KEY_INFURA_MAINNET}"
 
 [etherscan]
-sepolia = { key = "${API_KEY_ETHERSCAN_SEPOLIA}" }
-mainnet = { key = "${API_KEY_ETHERSCAN_MAINNET}" }
+polygon-amoy = { key = "${AMOY_API_KEY}", url = "https://www.oklink.com/api/explorer/v1/contract/verify/async/api/polygonAmoy" }
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
