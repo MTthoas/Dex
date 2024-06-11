@@ -1,10 +1,10 @@
 // app/pages/dashboard/transactions/page.tsx
 "use client";
+import TransactionsTable from "@/components/administration/transactions/TransactionsTable";
+import { getTransactions } from "@/hook/users.hook";
+import { Hook, Transaction } from "@/types/hookResponse.type";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { Hook, Transaction } from "@/types/hookResponse.type";
-import TransactionsTable from "@/components/dashboard/transactions/TransactionsTable";
-import { getTransactions } from "@/hook/users.hook";
 
 const TransactionsPage: React.FC = () => {
   const {

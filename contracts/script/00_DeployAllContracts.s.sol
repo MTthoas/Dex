@@ -7,8 +7,8 @@ import "forge-std/console.sol";
 import "@openzeppelin/contracts/access/manager/AccessManager.sol";
 import "../src/libraries/Roles.sol";
 
-import "../src/LiquidityPoolFactoryV2.sol";
-import "../src/LiquidityPoolV2.sol";
+import "../src/LiquidityPoolFactory.sol";
+import "../src/LiquidityPool.sol";
 
 contract DeployAllContractsScript is BaseScript, AccessManagerHelpers {
     /// @dev Instance of contracts
@@ -38,13 +38,6 @@ contract DeployAllContractsScript is BaseScript, AccessManagerHelpers {
             console.log("AccessManager instance deployed at", address(manager), "with super admin", broadcaster);
             console.log("LiquidityPoolFactory instance deployed at", address(liquidityPoolFactory));
             console.log("LiquidityPool instance deployed at", address(liquidityPool));
-
-            // Restrict functions
-            // manager.setTargetFunctionRole(
-            //     address(liquidityPoolFactory),
-            //     _asSingletonArray("createLiquidityPool"),
-            //     Roles.ADMIN_ROLE
-            // );
         }
     }
 
