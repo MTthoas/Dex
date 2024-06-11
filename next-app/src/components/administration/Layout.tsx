@@ -1,6 +1,6 @@
 // components/Layout.js
 "use client";
-import Sidebar from "@/components/dashboard/Sidebar";
+import Sidebar from "@/components/administration/Sidebar";
 import { ReactNode } from "react";
 
 interface LayoutProps {

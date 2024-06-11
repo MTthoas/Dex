@@ -38,13 +38,6 @@ contract DeployAllContractsScript is BaseScript, AccessManagerHelpers {
             console.log("AccessManager instance deployed at", address(manager), "with super admin", broadcaster);
             console.log("LiquidityPoolFactory instance deployed at", address(liquidityPoolFactory));
             console.log("LiquidityPool instance deployed at", address(liquidityPool));
-
-            // Restrict functions
-            // manager.setTargetFunctionRole(
-            //     address(liquidityPoolFactory),
-            //     _asSingletonArray("createLiquidityPool"),
-            //     Roles.ADMIN_ROLE
-            // );
         }
     }
 

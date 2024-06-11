@@ -42,22 +42,6 @@ contract DeployAndInteractWithLiquidityPool is Script {
         liquidityPool = LiquidityPool(poolAddress);
 
         vm.stopBroadcast();
-
-        // // Once the setup is complete, run the test functions
-        // testAddLiquidity();
-        // testSwap();
-
-        // // Update the platform fee
-        // testToUpdateFees();
-        // testSwap();
-
-        // testRemoveLiquidity();
-
-        // console.log("Tests passed successfully! \n");
-        // console.log("Address of the Factory Liquidity Pool:", address(factory));
-        // console.log("Address of the Liquidity Pool:", address(liquidityPool));
-        // console.log("Address of the Token GENX:", address(tokenA));
-        // console.log("Address of the Token GENS:", address(tokenB));
     }
 
     function testAddLiquidity() internal {

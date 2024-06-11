@@ -1,10 +1,10 @@
 // app/pages/dashboard/users/page.tsx
 "use client";
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Hook, User } from "@/types/hookResponse.type";
-import UsersTable from "@/components/dashboard/users/UsersTable";
+import UsersTable from "@/components/administration/users/UsersTable";
 import { getUsers } from "@/hook/users.hook";
+import { Hook, User } from "@/types/hookResponse.type";
+import { useQuery } from "@tanstack/react-query";
+import React from "react";
 
 const UsersPage: React.FC = () => {
   const {
