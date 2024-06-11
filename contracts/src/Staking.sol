@@ -3,9 +3,11 @@ pragma solidity ^0.8.0;
 
 import "./GensToken.sol"; 
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
-contract Staking is ReentrancyGuardUpgradeable {
-    GensToken public token;
+contract Staking is ReentrancyGuardUpgradeable, ERC20, ERC20Burnable {
+    ERC20 public gensToken;
 
     struct Stake {
         uint256 amount;
@@ -20,8 +22,8 @@ contract Staking is ReentrancyGuardUpgradeable {
     event Staked(address indexed user, uint256 amount);
     event Unstaked(address indexed user, uint256 amount);
 
-    constructor(GensToken _token) {
-        token = _token;
+    constructor(address _gensTokenAddress) ERC20("LiquidityPoolToken", "LPT") {
+        gensToken = ERC20(_gensTokenAddress);
     }
 
     // Stake tokens
@@ -31,7 +33,7 @@ contract Staking is ReentrancyGuardUpgradeable {
         Stake storage userStake = stakes[msg.sender];
         _updateRewards(msg.sender);
 
-        token.transferFrom(msg.sender, address(this), _amount);
+        gensToken.transferFrom(msg.sender, address(this), _amount);
 
         userStake.amount += _amount;
         userStake.lastStakedTime = block.timestamp;
@@ -48,7 +50,7 @@ contract Staking is ReentrancyGuardUpgradeable {
         _updateRewards(msg.sender);
 
         userStake.amount -= _amount;
-        token.transfer(msg.sender, _amount);
+        gensToken.transfer(msg.sender, _amount);
         totalStaked -= _amount;
 
         emit Unstaked(msg.sender, _amount);

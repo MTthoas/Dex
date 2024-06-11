@@ -5,6 +5,7 @@ import "forge-std/Script.sol";
 import "../src/GensToken.sol";
 import "../src/LiquidityPool.sol";
 import "../src/LiquidityPoolFactory.sol";
+import "../src/Staking.sol";
 
 contract DeployContracts is Script {
     function run() external {
@@ -25,6 +26,10 @@ contract DeployContracts is Script {
         // Optionally, create a LiquidityPool through the factory
         liquidityPoolFactory.createLiquidityPool();
         console.log("LiquidityPool created via factory at index 0:", liquidityPoolFactory.allPools(0));
+
+        // Deploy Staking
+        Staking staking = new Staking(address(gensToken));
+        console.log("Staking deployed at:", address(staking));
 
         vm.stopBroadcast();
     }
