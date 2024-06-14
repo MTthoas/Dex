@@ -22,7 +22,7 @@ contract Staking is ReentrancyGuardUpgradeable, ERC20, ERC20Burnable {
     event Staked(address indexed user, uint256 amount);
     event Unstaked(address indexed user, uint256 amount);
 
-    constructor(address _gensTokenAddress) {
+    constructor(address _gensTokenAddress) ERC20("StakingToken", "STK") {
         gensToken = ERC20(_gensTokenAddress);
     }
 

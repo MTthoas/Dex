@@ -12,7 +12,7 @@ contract StakingTest is Test {
 
     function setUp() public {
         token = new GensToken(); 
-        staking = new Staking(token);
+        staking = new Staking(address(token));
         token.transfer(user, 100 ether); 
     }
 
