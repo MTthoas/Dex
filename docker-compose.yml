@@ -1,17 +1,6 @@
 version: '3.8'
 
 services:
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    depends_on:
-      - db
-    networks:
-      - dex-network
-
   db:
     image: postgres:latest
     volumes:
@@ -51,10 +40,17 @@ services:
     networks:
       - dex-network
 
+  next-app:
+    build:
+      context: ./next-app
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    networks:
+      - dex-network
+
 volumes:
   db-data:
-  
-  api:
 
 networks:
   dex-network:

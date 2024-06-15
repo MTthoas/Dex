@@ -1,6 +1,7 @@
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
 
+import Image from "next/image";
 import { Button } from "../../components/ui/button";
 import {
   DropdownMenu,
@@ -37,10 +38,11 @@ export const columns: ColumnDef<Token>[] = [
     header: "Logo",
     cell: ({ row }) => (
       <div className="">
-        <img
+        <Image
           src={row.getValue("image")}
           alt={row.getValue("name")}
-          style={{ width: 25, height: 25 }}
+          width={25}
+          height={25}
         />
       </div>
     ),
