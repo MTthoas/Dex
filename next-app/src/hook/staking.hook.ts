@@ -1,4 +1,4 @@
-import { CreateUserRequest, apiUrl } from "@/hook/index";
+import { apiUrl } from "@/hook/index";
 
 export async function getStaking() {
     const response = await fetch(apiUrl + "staking");
