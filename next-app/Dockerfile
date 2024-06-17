@@ -5,7 +5,7 @@ FROM node:20-alpine
 RUN apk add --no-cache python3 make g++
 
 # Set the working directory
-WORKDIR /app
+WORKDIR /next-app
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
