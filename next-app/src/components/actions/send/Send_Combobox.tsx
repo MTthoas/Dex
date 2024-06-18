@@ -19,15 +19,18 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { Chain } from "../actions.type";
 
-export function Combobox({
-  tokens,
+export function Send_Combobox({
+  chains,
   cryptoSelected,
   setCryptoSelected,
+  chainId,
 }: {
-  tokens: any;
+  chains: Chain[];
   cryptoSelected: any;
   setCryptoSelected: any;
+  chainId: number;
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -40,10 +43,23 @@ export function Combobox({
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {cryptoSelected
-            ? tokens &&
-              tokens.find((token) => token.value === cryptoSelected)?.label
-            : "Select crypto..."}
+          <>
+            <div>
+              {chains.find((chain) => chain.value === cryptoSelected)?.label}
+              {chainId !==
+              chains.find((chain) => chain.value === cryptoSelected)
+                ?.chainId ? (
+                <span className="text-xs bg-red-500 text-white rounded-full h-2 w-2 inline-block ml-2">
+                  {" "}
+                </span>
+              ) : (
+                <span className="text-xs bg-green-500 text-red-500 rounded-full h-2 w-2 inline-block ml-2">
+                  {" "}
+                </span>
+              )}
+            </div>
+          </>
+
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -53,11 +69,11 @@ export function Combobox({
           <CommandList>
             <CommandEmpty> Select crypto </CommandEmpty>
             <CommandGroup>
-              {tokens &&
-                tokens.map((token) => (
+              {chains &&
+                chains.map((chain) => (
                   <CommandItem
-                    key={token.value}
-                    value={token.value}
+                    key={chain.value}
+                    value={chain.value}
                     onSelect={(currentValue) => {
                       setCryptoSelected(
                         currentValue === cryptoSelected ? "" : currentValue
@@ -68,12 +84,23 @@ export function Combobox({
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        cryptoSelected === token.value
+                        cryptoSelected === chain.value
                           ? "opacity-100"
                           : "opacity-0"
                       )}
                     />
-                    {token.label}
+                    {chain.label}
+                    <div className="pl-3">
+                      {chainId !== chain.chainId ? (
+                        <span className="text-xs bg-red-500 text-white rounded-full h-2 w-2 inline-block">
+                          {" "}
+                        </span>
+                      ) : (
+                        <span className="text-xs bg-green-500 text-red-500 rounded-full h-2 w-2 inline-block">
+                          {" "}
+                        </span>
+                      )}
+                    </div>
                   </CommandItem>
                 ))}
             </CommandGroup>
