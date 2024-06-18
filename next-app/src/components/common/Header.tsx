@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Button } from "../ui/button";
 import { NavLink } from "@/types/header.type";
-import { ModeToggle } from "../ModeToggle";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { UserRound } from "lucide-react";
+import Link from "next/link";
 import { useAccount } from "wagmi";
+import { ModeToggle } from "../ModeToggle";
+import { Button } from "../ui/button";
 
 const HeaderLinks: NavLink[] = [
   {
@@ -18,8 +18,8 @@ const HeaderLinks: NavLink[] = [
     href: "/tokens",
   },
   {
-    name: "Swap",
-    href: "/swap",
+    name: "Actions",
+    href: "/actions",
   },
   {
     name: "Stake",
