@@ -1,5 +1,4 @@
-{
-    "abi": [
+export const liquidityPoolFactoryABI = [
         {
             "type": "function",
             "name": "allPools",
@@ -231,4 +230,3 @@
             "inputs": []
         }
     ]
-}
