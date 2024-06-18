@@ -20,6 +20,36 @@ import {
 
 const queryClient = new QueryClient();
 
+// const chains = [mainnet, sepolia, polygonAmoy];
+
+export const chains = [
+  {
+    value: "ethereum",
+    label: "Ethereum",
+    chainId: 1,
+  },
+  {
+    value: "sepolia",
+    label: "Sepolia",
+    chainId: 11155111,
+  },
+  {
+    value: "polygon",
+    label: "Polygon",
+    chainId: 137,
+  },
+  {
+    value: "arbitrum",
+    label: "Arbitrum",
+    chainId: 42161,
+  },
+  {
+    value: "Amoy",
+    label: "Amoy",
+    chainId: 80002,
+  },
+];
+
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 
 const config = getDefaultConfig({
