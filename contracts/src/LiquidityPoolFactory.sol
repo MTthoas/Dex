@@ -62,4 +62,28 @@ contract LiquidityPoolFactory is Initializable, ReentrancyGuardUpgradeable, Owna
     function allPoolsLength() external view returns (uint256) {
         return allPools.length;
     }
+
+    /**
+     *   @notice Function to get the address of all pools
+     *   @return allPools Address of all pools
+     */
+    function allPoolsAddress() external view returns (address[] memory) {
+        return allPools;
+    }
+
+    /**
+     *   @notice Function to get the address of all pools
+     *   @return allPools Address of all pools
+     */
+    function getPoolAddress(address tokenA, address tokenB) external view returns (address) {
+        return getPool[tokenA][tokenB];
+    }
+
+    /**
+     *   @notice Function to get the address of all pools
+     *   @return allPools Address of all pools
+     */
+    function getPoolAddressByIndex(uint256 index) external view returns (address) {
+        return allPools[index];
+    }
 }

@@ -1,124 +1,186 @@
 "use client";
 
+import { ERC20UpgradeableABI } from "@/abi/ERC20Upgradeable";
+import {
+  GensAddress,
+  GenxAddress,
+  liquidityFactoryAddress,
+} from "@/abi/address";
+import { LiquidityPoolABI } from "@/abi/liquidityPool";
+import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
+import { usePools } from "@/hook/usePools";
+import { ethers } from "ethers";
 import { useState } from "react";
-import { Address, parseEther } from "viem";
 import {
   useAccount,
   useReadContract,
-  useSendTransaction,
+  useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
-import { prepareTransactionRequest } from '@wagmi/core'
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { abi as LiquidityPoolABI } from "@/abi/LiquidityPool.json";
-import { abi as GenxABI } from "@/abi/abi";
-import { GenxAddress, liquidityFactoryAddress } from "@/abi/address";
-import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
+import {
+  getSigner,
+  useERC20UpgradeableContract,
+  useFactoryContract,
+  useLiquidityPoolContract,
+} from "./Contracts";
 
-export default function ClientComponent() {
-  const { address } = useAccount();
-  const [liquidityAmountA, setLiquidityAmountA] = useState("");
-  const [liquidityAmountB, setLiquidityAmountB] = useState("");
-  const [transactionAddress, setTransactionAddress] = useState("");
-  const [amountToSend, setAmountToSend] = useState("");
+const liquidityPoolAddress = "0x9aB20aFE125409869393E72Ab297b8375daCd550";
 
-  const { writeContract: approveTokenA } = useWriteContract({
-    abi: GenxABI,
-    address: GenxAddress, // Address of Token A
-    functionName: "approve",
-    args: [liquidityFactoryAddress, parseEther(liquidityAmountA)],
-  });
-
-  const { writeContract: approveTokenB } = useWriteContract({
-    abi: GenxABI,
-    address: GenxAddress, // Address of Token B
-    functionName: "approve",
-    args: [liquidityFactoryAddress, parseEther(liquidityAmountB)],
-  });
-
-  const { writeContract: addLiquidity } = useWriteContract ({
-    abi: LiquidityPoolABI,
-    address: liquidityFactoryAddress,
-    functionName: "addLiquidity",
-    args: [parseEther(liquidityAmountA), parseEther(liquidityAmountB)],
-  });
-
-  const { sendTransaction } = useSendTransaction();
+const ClientComponent = () => {
+  const { address, chainId } = useAccount();
+  const [liquidityAmountA, setLiquidityAmountA] = useState<string>("");
+  const [liquidityAmountB, setLiquidityAmountB] = useState<string>("");
+  const pools = usePools(); // Utiliser le hook personnalisé pour obtenir les adresses des pools
+  const signer = getSigner();
 
   const { data: balance, isLoading: isBalanceLoading } = useReadContract({
-    abi: GenxABI,
+    abi: ERC20UpgradeableABI,
     functionName: "balanceOf",
     address: GenxAddress,
     args: [address],
   });
 
   const { data: symbol, isLoading: isSymbolLoading } = useReadContract({
-    abi: GenxABI,
+    abi: ERC20UpgradeableABI,
     functionName: "symbol",
     address: GenxAddress,
   });
 
-  const { data: allPoolsLength, isLoading: isPoolsLengthLoading } = useReadContract({
-    abi: liquidityPoolFactoryABI,
-    functionName: "allPoolsLength",
+  const FactoryContract = useFactoryContract({
     address: liquidityFactoryAddress,
   });
 
-  const { data: poolAddress, isLoading: isPoolAddressLoading } = useReadContract({
-    abi: liquidityPoolFactoryABI,
-    functionName: "allPools",
-    address: liquidityFactoryAddress,
-    args: [0],
+  const GenxContract = useERC20UpgradeableContract({
+    address: GensAddress,
   });
 
-  const { data: poolSymbol, isLoading: isPoolSymbolLoading } = useReadContract({
-    abi: LiquidityPoolABI,
-    functionName: "symbol",
-    address: poolAddress as Address,
+  const GensContract = useERC20UpgradeableContract({
+    address: GenxAddress,
   });
 
-  const { data: balancePool, isLoading: isBalancePoolLoading } = useReadContract({
-    abi: LiquidityPoolABI,
-    functionName: "balanceOf",
-    address: poolAddress as Address,
-    args: [address],
+  const LiquidityPoolContract = useLiquidityPoolContract({
+    address: "0x1556C55cc5F20eC768eEf61D08226d954520257A",
   });
 
-  const { data: totalSupply, isLoading: isTotalSupplyLoading } = useReadContract({
-    abi: LiquidityPoolABI,
-    functionName: "totalSupply",
-    address: poolAddress as Address,
-  });
-
-  const { data: getReserves, isLoading: isGetReservesLoading } = useReadContract({
-    abi: LiquidityPoolABI,
-    functionName: "getReserves",
-    address: poolAddress as Address,
-  });
-
-  if (isBalanceLoading || isSymbolLoading || isPoolsLengthLoading || isPoolAddressLoading || isPoolSymbolLoading || isBalancePoolLoading || isTotalSupplyLoading || isGetReservesLoading) {
-    return <div>Loading...</div>;
-  }
-
-  const handleSendTransaction = () => {
-    sendTransaction({
-      to: transactionAddress as Address,
-      value: parseEther(amountToSend),
-    });
-  };
-
-  const handleAddLiquidity = async () => {
+  const handleCreatePool = async () => {
     try {
-      await approveTokenA();
-      await approveTokenB();
-      await addLiquidity();
-      alert("Liquidity added successfully!");
+      const tx = await FactoryContract.createPool(
+        GenxAddress,
+        "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+        address,
+        30
+      );
+      await tx.wait();
     } catch (error) {
-      console.error("Error adding liquidity:", error);
-      alert("Failed to add liquidity. Please try again.");
+      console.log(error);
     }
   };
+
+  const {
+    data: hash,
+    error: errorWrite,
+    isPending,
+    writeContract,
+  } = useWriteContract();
+
+  const { data: poolsData, isLoading: isPoolsLoading } = useReadContract({
+    abi: liquidityPoolFactoryABI,
+    functionName: "getPool",
+    address: "0x7101734f6178c68a242ab3b9506fb52f5afac955",
+    args: [GenxAddress, "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619"],
+  });
+
+  console.log("Pools data:", poolsData);
+
+  const { data: reserves, isLoading: isReservesLoading } = useReadContract({
+    abi: LiquidityPoolABI,
+    functionName: "platformFee",
+    address: "0x1556C55cc5F20eC768eEf61D08226d954520257A",
+    args: [],
+  });
+
+  console.log("get platform fee:", reserves);
+
+  const handleAddLiquidity = async () => {
+    if (!signer || !address) return;
+
+    if (
+      !liquidityAmountA ||
+      isNaN(Number(liquidityAmountA)) ||
+      !liquidityAmountB ||
+      isNaN(Number(liquidityAmountB))
+    ) {
+      alert("Please enter valid amounts for both tokens.");
+      return;
+    }
+
+    const amountA = ethers.parseUnits(liquidityAmountA, "ether");
+    const amountB = ethers.parseUnits(liquidityAmountB, "ether");
+
+    console.log("Amount A:", amountA);
+    console.log("Amount B:", amountB);
+
+    const token = new ethers.Contract(GensAddress, ERC20UpgradeableABI, signer);
+
+    const tx = await token.approve(
+      "0x1556C55cc5F20eC768eEf61D08226d954520257A",
+      ethers.MaxUint256
+    );
+    await tx.wait();
+
+    // writeContract({
+    //   abi: LiquidityPoolABI,
+    //   functionName: "addLiquidity",
+    //   address: "0x1556C55cc5F20eC768eEf61D08226d954520257A",
+    //   args: [liquidityAmountA, liquidityAmountB],
+    // });
+
+    //   const amountA = ethers.parseUnits(liquidityAmountA, "ether");
+    //   const amountB = ethers.parseUnits(liquidityAmountB, "ether");
+
+    try {
+      // Approve tokens for the liquidity pool
+      // const approveTxA = await GenxContract.approve(
+      //   liquidityPoolAddress,
+      //   amountA,
+      //   { gasLimit: 1000000 }
+      // );
+      // await approveTxA.wait();
+      // const approveTxB = await GensContract.approve(
+      //   liquidityPoolAddress,
+      //   amountB,
+      //   { gasLimit: 1000000 }
+      // );
+      // await approveTxB.wait();
+      // const gasFee = await LiquidityPoolContract.addLiquidity.estimateGas(
+      //   parseEther(liquidityAmountA),
+      //   parseEther(liquidityAmountB)
+      // );
+      // console.log("Gas fee:", gasFee);
+      //     // const gasEstimate = await LiquidityPoolContract.addLiquidity.estimateGas(
+      //     //   amountA,
+      //     //   amountB
+      //     // );
+      //     // console.log("Gas estimate:", gasEstimate.toString());
+      //     // Add liquidity
+      //     const tx = await LiquidityPoolContract.addLiquidity(amountA, amountB, {
+      //       gazLimit: 100,
+      //     });
+      //     // await tx.wait();
+    } catch (error) {
+      console.error("Error adding liquidity:", error);
+      if (error.data && error.data.message) {
+        console.error("Error data:", error.data.message);
+      }
+    }
+  };
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
 
   return (
     <div>
@@ -129,30 +191,32 @@ export default function ClientComponent() {
       <div className="my-5">
         <h1 className="mt-1 text-lg">LiquidityPool</h1>
         <div>
-          <h3>Number of Pools: {allPoolsLength?.toString()}</h3>
-          <h3>Pool Address: {poolAddress?.toString()}</h3>
-          <h3>Pool Symbol: {poolSymbol?.toString()}</h3>
-          <h3>Pool Balance: {balancePool?.toString()} {poolSymbol?.toString()}</h3>
-          <p>Pool Reserves: {getReserves?.toString()}</p>
-          <div className="my-2 w-1/2 flex">
-            <Input
-              type="text"
-              placeholder="Address of sender"
-              value={transactionAddress}
-              onChange={(e) => setTransactionAddress(e.target.value)}
-            />
-            <Input
-              type="text"
-              placeholder="Amount to send"
-              className="ml-4 w-1/2"
-              value={amountToSend}
-              onChange={(e) => setAmountToSend(e.target.value)}
-            />
-            <Button className="ml-4" onClick={handleSendTransaction}>
-              Send transaction
+          <h3>Number of Pools: {pools.allPoolsLength?.toString()}</h3>
+
+          <div>
+            {pools.allPoolsAddress?.map((pool, index) => (
+              <div key={index}>
+                <p>Pool {index + 1}</p>
+                <p>Address: {pool}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="my-5">
+            <h2> Create a pool </h2>
+            <Button className="bg-accent text-white" onClick={handleCreatePool}>
+              Create Pool
             </Button>
           </div>
-          <div className="w-1/4 mt-3 flex">
+
+          {/* <div>
+            <Input type="text" placeholder="Amount of GENX to send" />
+            <Button className="bg-accent text-white" onClick={handleSendGenx}>
+              Send GENX
+            </Button>
+          </div> */}
+
+          <div className="w-3/4 mt-3 flex">
             <Input
               type="text"
               placeholder="Amount of Token A"
@@ -161,12 +225,13 @@ export default function ClientComponent() {
             />
             <Input
               type="text"
+              className="ml-4"
               placeholder="Amount of Token B"
               value={liquidityAmountB}
               onChange={(e) => setLiquidityAmountB(e.target.value)}
             />
             <Button className="ml-4" onClick={handleAddLiquidity}>
-              Add liquidity
+              Add Liquidity
             </Button>
           </div>
           <div className="w-1/4 mt-3 flex">
@@ -177,4 +242,6 @@ export default function ClientComponent() {
       </div>
     </div>
   );
-}
+};
+
+export default ClientComponent;
