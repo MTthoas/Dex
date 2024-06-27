@@ -24,6 +24,7 @@ contract Staking is ReentrancyGuardUpgradeable {
 
     function initialize(address _stakingToken) external initializer {
         stakingToken = ERC20BurnableUpgradeable(_stakingToken);
+        rewardRatePerDay = 100;
         __ReentrancyGuard_init();
     }
 
@@ -97,7 +98,7 @@ contract Staking is ReentrancyGuardUpgradeable {
 
     // Internal function to calculate reward based on staked amount and time duration
     function _calculateReward(uint256 _amount, uint256 _duration) internal view returns (uint256) {
-        return (_amount * rewardRatePerDay * _duration) / (24 * 60 * 60 * 10000); // 10000 basis points in 1%
+        return (_amount * rewardRatePerDay * _duration) / (24 * 60 * 60) / 10000; // 10000 basis points in 1%
     }
 
     // View function to see staking stats
