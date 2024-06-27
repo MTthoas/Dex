@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./GensToken.sol"; 
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 
-contract Staking is ReentrancyGuardUpgradeable, ERC20, ERC20Burnable {
-    ERC20 public gensToken;
+contract Staking is ReentrancyGuardUpgradeable {
+    ERC20BurnableUpgradeable public stakingToken;
 
     struct Stake {
         uint256 amount;
@@ -21,9 +19,12 @@ contract Staking is ReentrancyGuardUpgradeable, ERC20, ERC20Burnable {
 
     event Staked(address indexed user, uint256 amount);
     event Unstaked(address indexed user, uint256 amount);
+    event RewardsUpdated(address indexed user, uint256 rewardDebt, uint256 accumulatedReward);
+    event RewardsClaimed(address indexed user, uint256 rewardAmount);
 
-    constructor(address _gensTokenAddress) ERC20("StakingToken", "STK") {
-        gensToken = ERC20(_gensTokenAddress);
+    function initialize(address _stakingToken) external initializer {
+        stakingToken = ERC20BurnableUpgradeable(_stakingToken);
+        __ReentrancyGuard_init();
     }
 
     // Stake tokens
@@ -33,7 +34,7 @@ contract Staking is ReentrancyGuardUpgradeable, ERC20, ERC20Burnable {
         Stake storage userStake = stakes[msg.sender];
         _updateRewards(msg.sender);
 
-        gensToken.transferFrom(msg.sender, address(this), _amount);
+        stakingToken.transferFrom(msg.sender, address(this), _amount);
 
         userStake.amount += _amount;
         userStake.lastStakedTime = block.timestamp;
@@ -50,10 +51,24 @@ contract Staking is ReentrancyGuardUpgradeable, ERC20, ERC20Burnable {
         _updateRewards(msg.sender);
 
         userStake.amount -= _amount;
-        gensToken.transfer(msg.sender, _amount);
+        stakingToken.transfer(msg.sender, _amount);
         totalStaked -= _amount;
 
         emit Unstaked(msg.sender, _amount);
+    }
+
+    // Claim rewards
+    function claimRewards() external nonReentrant {
+        Stake storage userStake = stakes[msg.sender];
+        _updateRewards(msg.sender);
+
+        uint256 accumulatedReward = userStake.rewardDebt;
+        require(accumulatedReward > 0, "No rewards to claim");
+
+        userStake.rewardDebt = 0;
+        stakingToken.transfer(msg.sender, accumulatedReward);
+
+        emit RewardsClaimed(msg.sender, accumulatedReward);
     }
 
     // View function to see pending rewards for a user
@@ -64,7 +79,7 @@ contract Staking is ReentrancyGuardUpgradeable, ERC20, ERC20Burnable {
     }
 
     // View function to see staked amount for a user
-    function stakedAmount(address _user) external view returns (uint256) {
+    function getStakedAmount(address _user) external view returns (uint256) {
         return stakes[_user].amount;
     }
 
@@ -75,11 +90,20 @@ contract Staking is ReentrancyGuardUpgradeable, ERC20, ERC20Burnable {
             uint256 accumulatedReward = _calculateReward(userStake.amount, block.timestamp - userStake.lastStakedTime);
             userStake.rewardDebt += accumulatedReward;
             userStake.lastStakedTime = block.timestamp;
+
+            emit RewardsUpdated(_user, userStake.rewardDebt, accumulatedReward);
         }
     }
 
     // Internal function to calculate reward based on staked amount and time duration
     function _calculateReward(uint256 _amount, uint256 _duration) internal view returns (uint256) {
         return (_amount * rewardRatePerDay * _duration) / (24 * 60 * 60 * 10000); // 10000 basis points in 1%
+    }
+
+    // View function to see staking stats
+    function getStakingStats() public view returns (uint256 stakedAmount, uint256 rewardRate) {
+        stakedAmount = totalStaked;
+        rewardRate = rewardRatePerDay;
+        return (stakedAmount, rewardRate);
     }
 }
