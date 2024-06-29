@@ -1,5 +1,4 @@
-import Footer from "@/components/footer/Footer";
-import Header from "@/components/header/Header";
+import Header from "@/components/common/Header";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import Web3ModalProvider from "@/context/index";
 import type { Metadata } from "next";
@@ -27,7 +26,7 @@ export default function RootLayout({
           >
             <Header />
             {[children]}
-            <Footer />
+            {/* <Footer /> */}
           </ThemeProvider>
         </Web3ModalProvider>
       </body>

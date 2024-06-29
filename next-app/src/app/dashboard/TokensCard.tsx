@@ -4,6 +4,7 @@
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
 import { Button } from "@/components/ui/button";
+import { JSX, SVGProps } from "react";
 
 export default function TokensCard() {
   return (
@@ -45,7 +46,7 @@ export default function TokensCard() {
   );
 }
 
-function HexagonIcon(props) {
+function HexagonIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
