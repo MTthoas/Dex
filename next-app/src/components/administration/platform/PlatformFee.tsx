@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { JSX, SVGProps, useState } from "react";
 import {
   Card,
   CardHeader,
@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 const PlatformFee = () => {
   const [feePercentage, setFeePercentage] = useState(3);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const handleFeePercentageChange = (e) => {
+  const handleFeePercentageChange = (e: { target: { value: string; }; }) => {
     const value = parseFloat(e.target.value);
     if (isNaN(value) || value < 0 || value > 10) {
       return;
@@ -70,7 +70,7 @@ const PlatformFee = () => {
   );
 };
 
-function CircleCheckIcon(props) {
+function CircleCheckIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}

@@ -8,6 +8,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { ResponsiveLine } from "@nivo/line";
+import { JSX, ClassAttributes, HTMLAttributes } from "react";
 
 const NewUsersGraph = () => {
   return (
@@ -27,7 +28,7 @@ const NewUsersGraph = () => {
   );
 };
 
-function LineChart(props) {
+function LineChart(props: JSX.IntrinsicAttributes & ClassAttributes<HTMLDivElement> & HTMLAttributes<HTMLDivElement>) {
   return (
     <div {...props}>
       <ResponsiveLine

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { JSX, SVGProps, useState } from "react";
 import {
   Card,
   CardHeader,
@@ -72,7 +72,7 @@ const BanUserAddress = () => {
   );
 };
 
-function CircleCheckIcon(props) {
+function CircleCheckIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}

@@ -34,7 +34,7 @@ const PlatformPage: React.FC = () => {
   );
 };
 
-function SearchIcon(props) {
+function SearchIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}

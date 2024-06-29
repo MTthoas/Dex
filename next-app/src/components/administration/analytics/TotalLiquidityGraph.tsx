@@ -8,6 +8,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { ResponsiveBar } from "@nivo/bar";
+import { JSX, ClassAttributes, HTMLAttributes } from "react";
 
 const TotalLiquidityGraph = () => {
   return (
@@ -27,7 +28,7 @@ const TotalLiquidityGraph = () => {
   );
 };
 
-function BarChart(props) {
+function BarChart(props: JSX.IntrinsicAttributes & ClassAttributes<HTMLDivElement> & HTMLAttributes<HTMLDivElement>) {
   return (
     <div {...props}>
       <ResponsiveBar

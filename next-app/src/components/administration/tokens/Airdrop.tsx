@@ -9,14 +9,23 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { JSX, SVGProps, useState } from "react";
 
 const Airdrop = () => {
+  const [address, setAddress] = useState("");
+  const [error, setError] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const handleSaveChanges = () => {
+    const addressRegex = /^0x[a-fA-F0-9]{40}$/g;
+    if (!addressRegex.test(address)) {
+      setError("Please enter a valid address.");
+      return;
+    }
+    setShowConfirmation(true);
+    setTimeout(() => setShowConfirmation(false), 3000);
+    setTimeout(() => setAddress(""), 3000);
+  };
+
   return (
     <div>
       <Card>
@@ -32,16 +41,20 @@ const Airdrop = () => {
               <Label htmlFor="address">Recipient Address</Label>
               <Input
                 id="address"
-                placeholder="Enter recipient's address"
+                type="text"
+                placeholder="Enter user's address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className={error ? "border-red-500" : ""}
                 required
               />
+              {error && <p className="text-red-500 text-sm">{error}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="amount">Amount</Label>
               <Input
                 id="amount"
                 type="number"
-                min="1"
                 placeholder="Enter amount of tokens"
                 required
               />
@@ -49,32 +62,33 @@ const Airdrop = () => {
           </form>
         </CardContent>
         <CardFooter>
-          <Button type="submit" className="ml-auto" disabled={false}>
+          <Button onClick={handleSaveChanges} className="ml-auto">
             Donate Tokens
           </Button>
         </CardFooter>
-        <Dialog>
-          <DialogTrigger asChild />
-          <DialogContent className="sm:max-w-[425px]">
-            <div className="flex flex-col items-center justify-center gap-4 py-8">
-              <CircleCheckIcon className="size-12 text-green-500" />
-              <p className="text-lg font-medium">
-                Tokens Donated Successfully!
-              </p>
-            </div>
-            <DialogFooter>
-              <div>
-                <Button type="button">OK</Button>
-              </div>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {showConfirmation && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+            <Card className="w-full max-w-xs p-6 text-center">
+              <CardContent>
+                <CircleCheckIcon className="mx-auto mb-4 h-8 w-8 text-green-500" />
+                <p className="font-medium">Tokens Donated Successfully!</p>
+                <p className="font-light mt-2">
+                  {address.slice(0, 5)}
+                  ...
+                  {address.slice(address.length - 5, address.length)}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </Card>
     </div>
   );
 };
 
-function CircleCheckIcon(props) {
+function CircleCheckIcon(
+  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
+) {
   return (
     <svg
       {...props}
