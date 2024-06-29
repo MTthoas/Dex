@@ -1,4 +1,4 @@
-import { ERC20UpgradeableABI } from "@/abi/ERC20Upgradeable";
+import { ERC2O } from "@/abi/ERC20";
 import { LiquidityPoolABI } from "@/abi/liquidityPool";
 import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
 import { useEthersSigner } from "@/context/Provider";
@@ -27,7 +27,7 @@ export function useERC20UpgradeableContract({ chainId, address }: { chainId?: nu
   const signer = useEthersSigner(chainId ? { chainId } : {});
 
   return useMemo(() => {
-    return new ethers.Contract(address, ERC20UpgradeableABI, signer);
+    return new ethers.Contract(address, ERC2O, signer);
   }, [signer]);
 }
 

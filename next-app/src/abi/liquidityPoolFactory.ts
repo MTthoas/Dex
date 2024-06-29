@@ -1,5 +1,47 @@
 export const liquidityPoolFactoryABI = [
     {
+        "type": "constructor",
+        "inputs": [
+            {
+                "name": "_liquidityToken",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "admin",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "ADMIN_ROLE",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "DEFAULT_ADMIN_ROLE",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
         "type": "function",
         "name": "allPools",
         "inputs": [
@@ -59,7 +101,7 @@ export const liquidityPoolFactoryABI = [
                 "internalType": "address"
             },
             {
-                "name": "owner",
+                "name": "poolOwner",
                 "type": "address",
                 "internalType": "address"
             },
@@ -104,21 +146,19 @@ export const liquidityPoolFactoryABI = [
     },
     {
         "type": "function",
-        "name": "initialize",
+        "name": "getPoolAddress",
         "inputs": [
             {
-                "name": "owner",
+                "name": "tokenA",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "tokenB",
                 "type": "address",
                 "internalType": "address"
             }
         ],
-        "outputs": [],
-        "stateMutability": "nonpayable"
-    },
-    {
-        "type": "function",
-        "name": "owner",
-        "inputs": [],
         "outputs": [
             {
                 "name": "",
@@ -130,17 +170,108 @@ export const liquidityPoolFactoryABI = [
     },
     {
         "type": "function",
-        "name": "renounceOwnership",
-        "inputs": [],
+        "name": "getPoolAddressByIndex",
+        "inputs": [
+            {
+                "name": "index",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "getRoleAdmin",
+        "inputs": [
+            {
+                "name": "role",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "grantRole",
+        "inputs": [
+            {
+                "name": "role",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            },
+            {
+                "name": "account",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
         "outputs": [],
         "stateMutability": "nonpayable"
     },
     {
         "type": "function",
-        "name": "transferOwnership",
+        "name": "hasRole",
         "inputs": [
             {
-                "name": "newOwner",
+                "name": "role",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            },
+            {
+                "name": "account",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool",
+                "internalType": "bool"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "liquidityToken",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "contract LiquidityToken"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "renounceRole",
+        "inputs": [
+            {
+                "name": "role",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            },
+            {
+                "name": "callerConfirmation",
                 "type": "address",
                 "internalType": "address"
             }
@@ -149,36 +280,41 @@ export const liquidityPoolFactoryABI = [
         "stateMutability": "nonpayable"
     },
     {
-        "type": "event",
-        "name": "Initialized",
+        "type": "function",
+        "name": "revokeRole",
         "inputs": [
             {
-                "name": "version",
-                "type": "uint64",
-                "indexed": false,
-                "internalType": "uint64"
-            }
-        ],
-        "anonymous": false
-    },
-    {
-        "type": "event",
-        "name": "OwnershipTransferred",
-        "inputs": [
-            {
-                "name": "previousOwner",
-                "type": "address",
-                "indexed": true,
-                "internalType": "address"
+                "name": "role",
+                "type": "bytes32",
+                "internalType": "bytes32"
             },
             {
-                "name": "newOwner",
+                "name": "account",
                 "type": "address",
-                "indexed": true,
                 "internalType": "address"
             }
         ],
-        "anonymous": false
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "supportsInterface",
+        "inputs": [
+            {
+                "name": "interfaceId",
+                "type": "bytes4",
+                "internalType": "bytes4"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool",
+                "internalType": "bool"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
         "type": "event",
@@ -206,34 +342,98 @@ export const liquidityPoolFactoryABI = [
         "anonymous": false
     },
     {
-        "type": "error",
-        "name": "InvalidInitialization",
-        "inputs": []
-    },
-    {
-        "type": "error",
-        "name": "NotInitializing",
-        "inputs": []
-    },
-    {
-        "type": "error",
-        "name": "OwnableInvalidOwner",
+        "type": "event",
+        "name": "RoleAdminChanged",
         "inputs": [
             {
-                "name": "owner",
+                "name": "role",
+                "type": "bytes32",
+                "indexed": true,
+                "internalType": "bytes32"
+            },
+            {
+                "name": "previousAdminRole",
+                "type": "bytes32",
+                "indexed": true,
+                "internalType": "bytes32"
+            },
+            {
+                "name": "newAdminRole",
+                "type": "bytes32",
+                "indexed": true,
+                "internalType": "bytes32"
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "RoleGranted",
+        "inputs": [
+            {
+                "name": "role",
+                "type": "bytes32",
+                "indexed": true,
+                "internalType": "bytes32"
+            },
+            {
+                "name": "account",
                 "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "sender",
+                "type": "address",
+                "indexed": true,
                 "internalType": "address"
             }
-        ]
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "RoleRevoked",
+        "inputs": [
+            {
+                "name": "role",
+                "type": "bytes32",
+                "indexed": true,
+                "internalType": "bytes32"
+            },
+            {
+                "name": "account",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "sender",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            }
+        ],
+        "anonymous": false
     },
     {
         "type": "error",
-        "name": "OwnableUnauthorizedAccount",
+        "name": "AccessControlBadConfirmation",
+        "inputs": []
+    },
+    {
+        "type": "error",
+        "name": "AccessControlUnauthorizedAccount",
         "inputs": [
             {
                 "name": "account",
                 "type": "address",
                 "internalType": "address"
+            },
+            {
+                "name": "neededRole",
+                "type": "bytes32",
+                "internalType": "bytes32"
             }
         ]
     },

@@ -1,22 +1,18 @@
 "use client";
 
-import { ERC20UpgradeableABI } from "@/abi/ERC20Upgradeable";
+import { ERC2O } from "@/abi/ERC20";
 import {
   GensAddress,
   GenxAddress,
+  LiquidityPoolAddress,
   liquidityFactoryAddress,
 } from "@/abi/address";
 import { LiquidityPoolABI } from "@/abi/liquidityPool";
-import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
 import { usePools } from "@/hook/usePools";
 import { ethers } from "ethers";
 import { useState } from "react";
-import {
-  useAccount,
-  useReadContract,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from "wagmi";
+import { Address } from "viem";
+import { useAccount, useReadContract } from "wagmi";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import {
@@ -26,49 +22,70 @@ import {
   useLiquidityPoolContract,
 } from "./Contracts";
 
-const liquidityPoolAddress = "0x9aB20aFE125409869393E72Ab297b8375daCd550";
-
 const ClientComponent = () => {
   const { address, chainId } = useAccount();
-  const [liquidityAmountA, setLiquidityAmountA] = useState<string>("");
-  const [liquidityAmountB, setLiquidityAmountB] = useState<string>("");
+  const [liquidityAmountA, setLiquidityAmountA] = useState<string>("0");
+  const [liquidityAmountB, setLiquidityAmountB] = useState<string>("0");
   const pools = usePools(); // Utiliser le hook personnalisé pour obtenir les adresses des pools
-  const signer = getSigner();
+  const signer = getSigner({ chainId });
 
   const { data: balance, isLoading: isBalanceLoading } = useReadContract({
-    abi: ERC20UpgradeableABI,
+    abi: ERC2O,
     functionName: "balanceOf",
     address: GenxAddress,
     args: [address],
   });
 
+  const { data: balance2, isLoading: isBalanceLoading2 } = useReadContract({
+    abi: ERC2O,
+    functionName: "balanceOf",
+    address: GensAddress,
+    args: [address],
+  });
+
   const { data: symbol, isLoading: isSymbolLoading } = useReadContract({
-    abi: ERC20UpgradeableABI,
+    abi: ERC2O,
     functionName: "symbol",
     address: GenxAddress,
   });
 
-  const FactoryContract = useFactoryContract({
-    address: liquidityFactoryAddress,
-  });
-
-  const GenxContract = useERC20UpgradeableContract({
+  const { data: symbol2, isLoading: isSymbolLoading2 } = useReadContract({
+    abi: ERC2O,
+    functionName: "symbol",
     address: GensAddress,
   });
 
-  const GensContract = useERC20UpgradeableContract({
+  const { data: reserves, isLoading: isReservesLoading } = useReadContract({
+    abi: LiquidityPoolABI,
+    functionName: "getReserves",
+    address: LiquidityPoolAddress,
+  });
+
+  const FactoryContract = useFactoryContract({
+    address: liquidityFactoryAddress,
+    chainId,
+  });
+
+  const GenxContract = useERC20UpgradeableContract({
     address: GenxAddress,
+    chainId,
+  });
+
+  const GensContract = useERC20UpgradeableContract({
+    address: GensAddress,
+    chainId,
   });
 
   const LiquidityPoolContract = useLiquidityPoolContract({
-    address: "0x1556C55cc5F20eC768eEf61D08226d954520257A",
+    address: LiquidityPoolAddress,
+    chainId,
   });
 
   const handleCreatePool = async () => {
     try {
       const tx = await FactoryContract.createPool(
-        GenxAddress,
-        "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+        GenxAddress as Address,
+        GensAddress as Address,
         address,
         30
       );
@@ -77,31 +94,6 @@ const ClientComponent = () => {
       console.log(error);
     }
   };
-
-  const {
-    data: hash,
-    error: errorWrite,
-    isPending,
-    writeContract,
-  } = useWriteContract();
-
-  const { data: poolsData, isLoading: isPoolsLoading } = useReadContract({
-    abi: liquidityPoolFactoryABI,
-    functionName: "getPool",
-    address: "0x7101734f6178c68a242ab3b9506fb52f5afac955",
-    args: [GenxAddress, "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619"],
-  });
-
-  console.log("Pools data:", poolsData);
-
-  const { data: reserves, isLoading: isReservesLoading } = useReadContract({
-    abi: LiquidityPoolABI,
-    functionName: "platformFee",
-    address: "0x1556C55cc5F20eC768eEf61D08226d954520257A",
-    args: [],
-  });
-
-  console.log("get platform fee:", reserves);
 
   const handleAddLiquidity = async () => {
     if (!signer || !address) return;
@@ -119,56 +111,34 @@ const ClientComponent = () => {
     const amountA = ethers.parseUnits(liquidityAmountA, "ether");
     const amountB = ethers.parseUnits(liquidityAmountB, "ether");
 
-    console.log("Amount A:", amountA);
-    console.log("Amount B:", amountB);
-
-    const token = new ethers.Contract(GensAddress, ERC20UpgradeableABI, signer);
-
-    const tx = await token.approve(
-      "0x1556C55cc5F20eC768eEf61D08226d954520257A",
-      ethers.MaxUint256
-    );
-    await tx.wait();
-
-    // writeContract({
-    //   abi: LiquidityPoolABI,
-    //   functionName: "addLiquidity",
-    //   address: "0x1556C55cc5F20eC768eEf61D08226d954520257A",
-    //   args: [liquidityAmountA, liquidityAmountB],
-    // });
-
-    //   const amountA = ethers.parseUnits(liquidityAmountA, "ether");
-    //   const amountB = ethers.parseUnits(liquidityAmountB, "ether");
+    console.log("Amounts:", {
+      amountA: amountA.toString(),
+      amountB: amountB.toString(),
+    });
 
     try {
       // Approve tokens for the liquidity pool
-      // const approveTxA = await GenxContract.approve(
-      //   liquidityPoolAddress,
-      //   amountA,
-      //   { gasLimit: 1000000 }
-      // );
-      // await approveTxA.wait();
-      // const approveTxB = await GensContract.approve(
-      //   liquidityPoolAddress,
-      //   amountB,
-      //   { gasLimit: 1000000 }
-      // );
-      // await approveTxB.wait();
-      // const gasFee = await LiquidityPoolContract.addLiquidity.estimateGas(
-      //   parseEther(liquidityAmountA),
-      //   parseEther(liquidityAmountB)
-      // );
-      // console.log("Gas fee:", gasFee);
-      //     // const gasEstimate = await LiquidityPoolContract.addLiquidity.estimateGas(
-      //     //   amountA,
-      //     //   amountB
-      //     // );
-      //     // console.log("Gas estimate:", gasEstimate.toString());
-      //     // Add liquidity
-      //     const tx = await LiquidityPoolContract.addLiquidity(amountA, amountB, {
-      //       gazLimit: 100,
-      //     });
-      //     // await tx.wait();
+      console.log("Approving GENX tokens");
+      const approveTxA = await GenxContract.approve(
+        LiquidityPoolAddress,
+        amountA
+      );
+      await approveTxA.wait();
+      console.log("Approved GENX");
+
+      console.log("Approving GENS tokens");
+      const approveTxB = await GensContract.approve(
+        LiquidityPoolAddress,
+        amountB
+      );
+      await approveTxB.wait();
+      console.log("Approved GENS");
+
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+
+      const tx = await LiquidityPoolContract.addLiquidity(amountB, amountA);
+      await tx.wait();
+      console.log("Liquidity added successfully");
     } catch (error) {
       console.error("Error adding liquidity:", error);
       if (error.data && error.data.message) {
@@ -177,16 +147,25 @@ const ClientComponent = () => {
     }
   };
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash,
-    });
-
   return (
     <div>
       <div>Address: {address}</div>
       <div>
-        Balance: {balance?.toString()} {symbol?.toString()}
+        {isBalanceLoading ? (
+          <div>Loading...</div>
+        ) : (
+          <div>
+            GENX Balance: {balance?.toString()} {symbol}
+          </div>
+        )}
+
+        {isBalanceLoading2 ? (
+          <div>Loading...</div>
+        ) : (
+          <div>
+            GENS Balance: {balance2?.toString()} {symbol2}
+          </div>
+        )}
       </div>
       <div className="my-5">
         <h1 className="mt-1 text-lg">LiquidityPool</h1>
@@ -202,19 +181,22 @@ const ClientComponent = () => {
             ))}
           </div>
 
+          <div>
+            {isReservesLoading ? (
+              <div>Loading...</div>
+            ) : (
+              <div>
+                <p>Reserves: {reserves?.toString()}</p>
+              </div>
+            )}
+          </div>
+
           <div className="my-5">
             <h2> Create a pool </h2>
             <Button className="bg-accent text-white" onClick={handleCreatePool}>
               Create Pool
             </Button>
           </div>
-
-          {/* <div>
-            <Input type="text" placeholder="Amount of GENX to send" />
-            <Button className="bg-accent text-white" onClick={handleSendGenx}>
-              Send GENX
-            </Button>
-          </div> */}
 
           <div className="w-3/4 mt-3 flex">
             <Input
