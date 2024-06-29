@@ -1,60 +1,32 @@
 version: '3.8'
 
 services:
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    depends_on:
-      - db
-    networks:
-      - dex-network
-
-  db:
-    image: postgres:latest
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: DBName
-      POSTGRES_USER: DBUser
-      POSTGRES_PASSWORD: DBPassword
-    ports:
-      - "5432:5432"
-    networks:
-      - dex-network
-
-  # solidity-development:
-  #   build:
-  #     context: ./contracts
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - ./contracts:/app
-  #   command: truffle develop
-  #   networks:
-  #     - dex-network
-
-  api: 
+  api:
     build:
       context: ./api
       dockerfile: Dockerfile
+    container_name: api
+    env_file:
+      - ./api/.env
     ports:
-      - "3000:3000"
-    depends_on:
-      - db
-    environment:
-      DB_HOST: db
-      DB_USER: DBUser
-      DB_PASSWORD: DBPassword
-      DB_NAME: DBName
+      - "5001:5000"
     networks:
       - dex-network
 
-volumes:
-  db-data:
-  
-  api:
+  next-app:
+    build:
+      context: ./next-app
+      dockerfile: Dockerfile
+    container_name: next-app
+    env_file:
+      - ./next-app/.env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./next-app:/next-app
+      - /next-app/node_modules
+    networks:
+      - dex-network
 
 networks:
   dex-network:

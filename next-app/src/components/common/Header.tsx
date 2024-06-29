@@ -3,6 +3,7 @@
 import { NavLink } from "@/types/header.type";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { UserRound } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useAccount } from "wagmi";
 import { ModeToggle } from "../ModeToggle";
@@ -152,10 +153,11 @@ export default function Header(): JSX.Element {
                               }}
                             >
                               {chain.iconUrl && (
-                                <img
+                                <Image
                                   alt={chain.name ?? "Chain icon"}
                                   src={chain.iconUrl}
-                                  style={{ width: 12, height: 12 }}
+                                  height={12}
+                                  width={12}
                                 />
                               )}
                             </div>
