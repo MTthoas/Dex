@@ -1,4 +1,25 @@
-export const abi = [
+export const ERC2O = [
+    {
+        "type": "constructor",
+        "inputs": [
+            {
+                "name": "name",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "symbol",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "initialSupply",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "nonpayable"
+    },
     {
         "type": "function",
         "name": "allowance",
@@ -68,6 +89,24 @@ export const abi = [
     },
     {
         "type": "function",
+        "name": "burn",
+        "inputs": [
+            {
+                "name": "from",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "amount",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
         "name": "decimals",
         "inputs": [],
         "outputs": [
@@ -78,24 +117,6 @@ export const abi = [
             }
         ],
         "stateMutability": "view"
-    },
-    {
-        "type": "function",
-        "name": "initialize",
-        "inputs": [
-            {
-                "name": "name",
-                "type": "string",
-                "internalType": "string"
-            },
-            {
-                "name": "symbol",
-                "type": "string",
-                "internalType": "string"
-            }
-        ],
-        "outputs": [],
-        "stateMutability": "nonpayable"
     },
     {
         "type": "function",
@@ -234,19 +255,6 @@ export const abi = [
     },
     {
         "type": "event",
-        "name": "Initialized",
-        "inputs": [
-            {
-                "name": "version",
-                "type": "uint64",
-                "indexed": false,
-                "internalType": "uint64"
-            }
-        ],
-        "anonymous": false
-    },
-    {
-        "type": "event",
         "name": "Transfer",
         "inputs": [
             {
@@ -355,15 +363,5 @@ export const abi = [
                 "internalType": "address"
             }
         ]
-    },
-    {
-        "type": "error",
-        "name": "InvalidInitialization",
-        "inputs": []
-    },
-    {
-        "type": "error",
-        "name": "NotInitializing",
-        "inputs": []
     }
-];
+]

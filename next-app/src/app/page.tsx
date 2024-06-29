@@ -1,4 +1,6 @@
-import { Badge } from "@/components/ui/badge";
+import { TransactionCard } from "@/components/cards/TransactionsCard";
+import { PriceCards } from "@/components/cards/PriceCards";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
@@ -16,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { Activity, DollarSign } from "lucide-react";
 
 const page = () => {
