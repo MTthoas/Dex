@@ -7,10 +7,8 @@ import Link from "next/link";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { createUser, getUserByAdress } from "@/hook/users.hook";
 import { User } from "@/types/user.type";
-import { Textarea } from "@/components/ui/textarea";
 
 export default function Profil() {
   const { address, isConnected } = useAccount();
@@ -37,7 +35,7 @@ export default function Profil() {
     if (!user && address && isError) {
       mutation.mutate({ address, name: "New User" });
     }
-  }, [address, isError, user]);
+  }, [address, isError, mutation, user]);
 
   return (
     <main className="flex min-h-[calc(90vh_-_theme(spacing.16))] flex-1 flex-col gap-4 md:gap-8 pt-10 mb-12">
@@ -85,7 +83,7 @@ export default function Profil() {
           </Card>
 
           <Card x-chunk="dashboard-04-chunk-1" className="border-0 mt-5">
-            <h1 className="font-bold">URL's</h1>
+            <h1 className="font-bold">URL&apos;s</h1>
             <p className="py-2">
               {" "}
               Add your social media profiles to share with others{" "}

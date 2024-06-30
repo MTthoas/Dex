@@ -1,12 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Button } from "../ui/button";
 import { NavLink } from "@/types/header.type";
-import { ModeToggle } from "../ModeToggle";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { UserRound } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { useAccount } from "wagmi";
+import { ModeToggle } from "../ModeToggle";
+import { Button } from "../ui/button";
 
 const HeaderLinks: NavLink[] = [
   {
@@ -152,10 +153,11 @@ export default function Header(): JSX.Element {
                               }}
                             >
                               {chain.iconUrl && (
-                                <img
+                                <Image
                                   alt={chain.name ?? "Chain icon"}
                                   src={chain.iconUrl}
-                                  style={{ width: 12, height: 12 }}
+                                  height={12}
+                                  width={12}
                                 />
                               )}
                             </div>
