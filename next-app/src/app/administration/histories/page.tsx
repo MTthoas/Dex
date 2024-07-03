@@ -1,12 +1,13 @@
 "use client";
 import React from "react";
 import UsersTable from "@/components/administration/histories/UsersTable";
-import TransactionsTable from "@/components/administration/analytics/TransactionsTable";
+import TransactionsTable from "@/components/administration/histories/TransactionsTable";
 import { getUsers } from "@/hook/users.hook";
 import { getTransactions } from "@/hook/users.hook";
 import { Hook, Transaction, User } from "@/types/hookResponse.type";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
+import { SearchIcon } from "@/components/Icons";
 
 const HistoriesPage: React.FC = () => {
   const users = useQuery<Hook<User[]>>({
@@ -59,25 +60,5 @@ const HistoriesPage: React.FC = () => {
     </>
   );
 };
-
-function SearchIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
-    </svg>
-  );
-}
 
 export default HistoriesPage;
