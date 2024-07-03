@@ -1,29 +1,17 @@
 "use client";
-import React from "react";
+import AddPoolModal from "@/components/liquidityPool/AddPoolModal";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
 import { getPools } from "@/hook/pools.hook";
+import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import { UserRound } from "lucide-react";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import AddPoolModal from "@/components/liquidityPool/AddPoolModal";
 
-export default function page() {
+export default function Page() {
   const { data: pools } = useQuery({
     queryKey: ["pools"],
     queryFn: getPools,
