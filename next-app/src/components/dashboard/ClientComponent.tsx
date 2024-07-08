@@ -26,6 +26,8 @@ const ClientComponent = () => {
   const { address, chainId } = useAccount();
   const [liquidityAmountA, setLiquidityAmountA] = useState<string>("0");
   const [liquidityAmountB, setLiquidityAmountB] = useState<string>("0");
+  const [swapAmount, setSwapAmount] = useState<string>("0");
+  const [swapToken, setSwapToken] = useState<string>(GenxAddress); // Default to GENX for swapping
   const pools = usePools(); // Utiliser le hook personnalisé pour obtenir les adresses des pools
   const signer = getSigner({ chainId });
 
@@ -60,6 +62,13 @@ const ClientComponent = () => {
     functionName: "getReserves",
     address: LiquidityPoolAddress,
   });
+
+  const { data: totalSupply, isLoading: isTotalSupplyLoading } =
+    useReadContract({
+      abi: LiquidityPoolABI,
+      functionName: "totalSupply",
+      address: LiquidityPoolAddress,
+    });
 
   const FactoryContract = useFactoryContract({
     address: liquidityFactoryAddress,
@@ -118,7 +127,7 @@ const ClientComponent = () => {
 
     try {
       // Approve tokens for the liquidity pool
-      console.log("Approving GENX tokens");
+      console.log("Approving GENX tokens...");
       const approveTxA = await GenxContract.approve(
         LiquidityPoolAddress,
         amountA
@@ -126,7 +135,7 @@ const ClientComponent = () => {
       await approveTxA.wait();
       console.log("Approved GENX");
 
-      console.log("Approving GENS tokens");
+      console.log("Approving GENS tokens...");
       const approveTxB = await GensContract.approve(
         LiquidityPoolAddress,
         amountB
@@ -141,6 +150,42 @@ const ClientComponent = () => {
       console.log("Liquidity added successfully");
     } catch (error) {
       console.error("Error adding liquidity:", error);
+      if (error.data && error.data.message) {
+        console.error("Error data:", error.data.message);
+      }
+    }
+  };
+
+  const handleSwap = async () => {
+    if (!signer || !address) return;
+
+    if (!swapAmount || isNaN(Number(swapAmount))) {
+      alert("Please enter a valid swap amount.");
+      return;
+    }
+
+    const amountIn = ethers.parseUnits(swapAmount, "ether");
+
+    try {
+      // Approve token for the swap
+
+      console.log("Approving token for swap...");
+      const approveTx = await (swapToken === GenxAddress
+        ? GenxContract
+        : GensContract
+      ).approve(LiquidityPoolAddress, amountIn);
+      await approveTx.wait();
+      console.log(`Approved ${swapToken}`);
+
+      console.log("Waiting for approval to be confirmed...");
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+
+      console.log("Executing swap...");
+      const tx = await LiquidityPoolContract.swap(swapToken, amountIn, 1); // minAmountOut set to 1 for simplicity
+      await tx.wait();
+      console.log("Swap executed successfully");
+    } catch (error) {
+      console.error("Error executing swap:", error);
       if (error.data && error.data.message) {
         console.error("Error data:", error.data.message);
       }
@@ -217,8 +262,23 @@ const ClientComponent = () => {
             </Button>
           </div>
           <div className="w-1/4 mt-3 flex">
-            <Input type="number" placeholder="Amount to swap" />
-            <Button className="ml-4 bg-accent text-white">Swap</Button>
+            <Input
+              type="number"
+              placeholder="Amount to swap"
+              value={swapAmount}
+              onChange={(e) => setSwapAmount(e.target.value)}
+            />
+            <select
+              value={swapToken}
+              onChange={(e) => setSwapToken(e.target.value)}
+              className="ml-4"
+            >
+              <option value={GenxAddress}>GENX</option>
+              <option value={GensAddress}>GENS</option>
+            </select>
+            <Button className="ml-4 bg-accent text-white" onClick={handleSwap}>
+              Swap
+            </Button>
           </div>
         </div>
       </div>

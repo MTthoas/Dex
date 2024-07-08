@@ -62,4 +62,8 @@ contract LiquidityPoolFactory is ReentrancyGuard, AccessControl {
     function getPoolAddressByIndex(uint256 index) external view returns (address) {
         return allPools[index];
     }
+
+    function isPoolPairAlreadyExists(address tokenA, address tokenB) external view returns (bool) {
+        return getPool[tokenA][tokenB] != address(0);
+    }
 }
