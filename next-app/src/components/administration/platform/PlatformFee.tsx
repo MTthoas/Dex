@@ -13,10 +13,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CircleCheckIcon } from "@/components/Icons";
 
+
 const PlatformFee = () => {
   const [feePercentage, setFeePercentage] = useState(3);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const handleFeePercentageChange = (e: { target: { value: string } }) => {
+
     const value = parseFloat(e.target.value);
     if (isNaN(value) || value < 0 || value > 10) {
       return;

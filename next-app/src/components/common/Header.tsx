@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useAccount } from "wagmi";
 import { ModeToggle } from "../ModeToggle";
 import { Button } from "../ui/button";
+import { ContractsOwnerAddress } from "@/abi/address";
 
 const HeaderLinks: NavLink[] = [
   {
@@ -82,6 +83,11 @@ export default function Header(): JSX.Element {
               {link.name}
             </Link>
           ))}
+          {address === ContractsOwnerAddress && (
+            <Link href="/administration/dashboard" className="text-sm font-medium hover:text-gray-500">
+              Administration
+            </Link>
+          )}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end pt-1 w-1/3">
           <ConnectButton.Custom>
