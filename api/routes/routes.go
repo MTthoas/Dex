@@ -13,8 +13,15 @@ func PublicRoutes(a *fiber.App) {
 	route.Get("/healthCheck", controllers.HealthCheck)
 
 	// Routes for GET method:
-	route.Get("/coins", controllers.GetCoins)
-	route.Get("/coins/:addresses", controllers.GetCoinByAddress)
+	route.Get("/tokens", controllers.GetTokensController)
+	route.Get("/tokens/ethereum", controllers.GetEthereumTokensController)
+	route.Get("/tokens/ethereum/:addresses", controllers.GetEthereumTokenByAddressController)
+	route.Post("/tokens", controllers.CreateTokenController)
+	route.Get("/tokens/:id", controllers.GetTokenByIdController)
+	route.Get("/tokens/address/:address", controllers.GetTokenByAddressController)
+	route.Get("/tokens/symbol/:symbol", controllers.GetTokenBySymbolController)
+	route.Put("/tokens/:id", controllers.UpdateTokenController)
+	route.Delete("/tokens/:id", controllers.DeleteTokenController)
 
 	route.Get("/users", controllers.GetUsers)
 	route.Get("/users/:id", controllers.GetUsers)
