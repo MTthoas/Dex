@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-function AddPoolModal(props) {
+function AddPoolModal() {
   return (
     <Dialog>
       <DialogTrigger>

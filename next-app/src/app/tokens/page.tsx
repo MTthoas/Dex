@@ -1,22 +1,5 @@
 "use client";
 
-import * as React from "react";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
-import {
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import { useAccount, useReadContract } from "wagmi";
-import { abi } from "@/abi/Token.json";
-import { ethers } from "ethers";
-import { useWriteContract } from 'wagmi'
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -33,10 +16,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Token } from "./token.model";
-import { columns } from "./ColumnDef";
-import { useQuery } from "@tanstack/react-query";
 import { getCoins } from "@/hook/coins.hook";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { useQuery } from "@tanstack/react-query";
+import {
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import * as React from "react";
+import { columns } from "./ColumnDef";
+import { Token } from "./token.model";
 
 export default function TokenPage() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -47,7 +43,7 @@ export default function TokenPage() {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const [amountToBuy, setAmountToBuy] = React.useState<string>('');
+  const [amountToBuy, setAmountToBuy] = React.useState<string>("");
 
   const { data: tokens } = useQuery<Token[]>({
     queryKey: ["tokens"],
@@ -205,17 +201,18 @@ export default function TokenPage() {
             className="max-w-sm"
           />
           <Button
-            onClick={() => 
-              writeContract({ 
-                abi,
-                address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-                functionName: 'buyToken',
-                args: [
-                  walletUser,
-                  '0x6b175474e89094c44da98b954eedeac495271d0f',
-                  123,
-                ],
-             })
+            onClick={
+              () => {}
+              //   writeContract({
+              //     abi,
+              //     address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+              //     functionName: 'buyToken',
+              //     args: [
+              //       walletUser,
+              //       '0x6b175474e89094c44da98b954eedeac495271d0f',
+              //       123,
+              //     ],
+              //  })
             }
           >
             Buy Our Token

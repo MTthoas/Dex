@@ -1,26 +1,65 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./LiquidityPool.sol";
+import "./token/LiquidityPoolToken.sol";
 
-contract LiquidityPoolFactory {
-    address public gensTokenAddress;
+contract LiquidityPoolFactory is ReentrancyGuard, AccessControl {
+    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
+
+    event PoolCreated(address indexed tokenA, address indexed tokenB, address poolAddress);
+
+    mapping(address => mapping(address => address)) public getPool;
     address[] public allPools;
 
-    constructor(address _gensTokenAddress) {
-        gensTokenAddress = _gensTokenAddress;
+    LiquidityToken public liquidityToken;
+
+    constructor(address _liquidityToken, address admin) {
+        liquidityToken = LiquidityToken(_liquidityToken);
+        _grantRole(DEFAULT_ADMIN_ROLE, admin);
+        _grantRole(ADMIN_ROLE, admin);
     }
 
-    function createLiquidityPool() external {
-        LiquidityPool newPool = new LiquidityPool(gensTokenAddress);
-        allPools.push(address(newPool));
+    function createPool(
+        address tokenA,
+        address tokenB,
+        address poolOwner,
+        uint256 platformFee
+    ) external nonReentrant returns (address pool) {
+        require(tokenA != address(0) && tokenB != address(0), "Factory: invalid token addresses");
+        require(tokenA != tokenB, "Factory: identical token addresses");
+        require(
+            getPool[tokenA][tokenB] == address(0) && getPool[tokenB][tokenA] == address(0),
+            "Factory: pool already exists"
+        );
+        require(hasRole(ADMIN_ROLE, msg.sender), "Factory: caller is not admin");
+
+        LiquidityPool liquidityPool = new LiquidityPool();
+        liquidityPool.initialize(tokenA, tokenB, address(liquidityToken), platformFee, 10, poolOwner);
+
+        getPool[tokenA][tokenB] = address(liquidityPool);
+        getPool[tokenB][tokenA] = address(liquidityPool);
+        allPools.push(address(liquidityPool));
+
+        emit PoolCreated(tokenA, tokenB, address(liquidityPool));
+        return address(liquidityPool);
     }
 
-    function getNumberOfPools() external view returns (uint256) {
+    function allPoolsLength() external view returns (uint256) {
         return allPools.length;
     }
 
-    function getPoolAddress(uint256 _index) external view returns (address) {
-        return allPools[_index];
+    function allPoolsAddress() external view returns (address[] memory) {
+        return allPools;
+    }
+
+    function getPoolAddress(address tokenA, address tokenB) external view returns (address) {
+        return getPool[tokenA][tokenB];
+    }
+
+    function getPoolAddressByIndex(uint256 index) external view returns (address) {
+        return allPools[index];
     }
 }

@@ -1,37 +1,22 @@
-"use client";
+import { BrowserProvider, JsonRpcSigner } from "ethers";
+import { useMemo } from "react";
+import type { Account, Chain, Client, Transport } from "viem";
+import { useConnectorClient, type Config } from "wagmi";
 
-import React, { ReactNode } from "react";
-import { config, projectId } from "@/config";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { State, WagmiProvider } from "wagmi";
-import "@rainbow-me/rainbowkit/styles.css";
-import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
+export function clientToSigner(client: Client<Transport, Chain, Account>) {
+  const { account, chain, transport } = client;
+  const network = {
+    chainId: chain.id,
+    name: chain.name,
+    ensAddress: chain.contracts?.ensRegistry?.address,
+  };
+  const provider = new BrowserProvider(transport, network);
+  const signer = new JsonRpcSigner(provider, account.address);
+  return signer;
+}
 
-// Setup queryClient
-const queryClient = new QueryClient();
-
-if (!projectId) throw new Error("Project ID is not defined");
-
-export default function Web3ModalProvider({
-  children,
-}: {
-  children: ReactNode;
-  initialState?: State;
-}) {
-  return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          showRecentTransactions={true}
-          theme={darkTheme({
-            accentColor: "#7b3fe4",
-            accentColorForeground: "white",
-            overlayBlur: "small",
-          })}
-        >
-          {children}
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
-  );
+/** Hook to convert a viem Wallet Client to an ethers.js Signer. */
+export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
+  const { data: client } = useConnectorClient<Config>({ chainId });
+  return useMemo(() => (client ? clientToSigner(client) : undefined), [client]);
 }

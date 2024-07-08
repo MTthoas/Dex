@@ -38,3 +38,7 @@ contracts/.DS_Store
 
 # lib
 contracts/lib/*
+
+# Vscode
+.vscode/
+.idea/

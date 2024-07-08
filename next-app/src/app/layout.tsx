@@ -1,9 +1,8 @@
+import Header from "@/components/common/Header";
+import { ThemeProvider } from "@/context/ThemeProvider";
+import Web3ModalProvider from "@/context/index";
 import type { Metadata } from "next";
 import "./globals.css";
-import Header from "@/components/header/Header";
-import Footer from "@/components/footer/Footer";
-import Web3ModalProvider from "@/context/Provider";
-import { ThemeProvider } from "@/context/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "Genx DEX",
@@ -27,7 +26,7 @@ export default function RootLayout({
           >
             <Header />
             {[children]}
-            <Footer />
+            {/* <Footer /> */}
           </ThemeProvider>
         </Web3ModalProvider>
       </body>
