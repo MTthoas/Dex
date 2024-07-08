@@ -147,7 +147,7 @@ func UpdateTransaction(c *fiber.Ctx) error {
 		})
 	}
 
-	transaction.ID = uint(utils.StringToInt(id))
+	transaction.Id = uint(utils.StringToInt(id))
 	// Assurez-vous que l'ID est correctement défini
 	updatedTransaction, err := db.TransactionQueries.UpdateTransaction(*transaction)
 	if err != nil {

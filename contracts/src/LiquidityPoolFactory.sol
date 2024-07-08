@@ -47,6 +47,26 @@ contract LiquidityPoolFactory is ReentrancyGuard, AccessControl {
         return address(liquidityPool);
     }
 
+    // Delete a pool
+    function deletePool(address tokenA, address tokenB) external nonReentrant {
+        require(hasRole(ADMIN_ROLE, msg.sender), "Factory: caller is not admin");
+        require(getPool[tokenA][tokenB] != address(0), "Factory: pool does not exist");
+
+        address poolAddress = getPool[tokenA][tokenB];
+        LiquidityPool(poolAddress).deletePool();
+
+        getPool[tokenA][tokenB] = address(0);
+        getPool[tokenB][tokenA] = address(0);
+
+        for (uint256 i = 0; i < allPools.length; i++) {
+            if (allPools[i] == poolAddress) {
+                allPools[i] = allPools[allPools.length - 1];
+                allPools.pop();
+                break;
+            }
+        }
+    }
+
     function allPoolsLength() external view returns (uint256) {
         return allPools.length;
     }

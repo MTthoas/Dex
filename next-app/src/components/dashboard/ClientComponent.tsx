@@ -21,6 +21,7 @@ import {
   useFactoryContract,
   useLiquidityPoolContract,
 } from "./Contracts";
+import LiquidityPoolList from "../liquidityPool/LiquidityPoolList";
 
 const ClientComponent = () => {
   const { address, chainId } = useAccount();
@@ -63,12 +64,14 @@ const ClientComponent = () => {
     address: LiquidityPoolAddress,
   });
 
-  const { data: totalSupply, isLoading: isTotalSupplyLoading } =
-    useReadContract({
-      abi: LiquidityPoolABI,
-      functionName: "totalSupply",
-      address: LiquidityPoolAddress,
-    });
+  const {
+    data: totalSupply,
+    isLoading: isTotalSupplyLoading,
+  } = useReadContract({
+    abi: LiquidityPoolABI,
+    functionName: "totalSupply",
+    address: LiquidityPoolAddress,
+  });
 
   const FactoryContract = useFactoryContract({
     address: liquidityFactoryAddress,

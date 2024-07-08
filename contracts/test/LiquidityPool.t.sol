@@ -16,15 +16,15 @@ contract LiquidityPoolTest is Test {
     address addr2 = address(0x789);
 
     function setUp() public {
-        tokenA = new Token("TokenA", "TKA");
-        tokenB = new Token("TokenB", "TKB");
+        tokenA = new Token("TokenA", "TKA", 1000 ether);
+        tokenB = new Token("TokenB", "TKB", 1000 ether);
         liquidityToken = new LiquidityToken();
 
-        liquidityPool = new LiquidityPool(owner);
+        liquidityPool = new LiquidityPool();
 
         // Ensure the owner calls the initialize function
         vm.prank(owner);
-        liquidityPool.initialize(address(tokenA), address(tokenB), address(liquidityToken), 30, 10);
+        liquidityPool.initialize(address(tokenA), address(tokenB), address(liquidityToken), 30, 10, owner);
 
         // Mint and approve tokens
         tokenA.mint(addr1, 1000 ether);
@@ -43,7 +43,6 @@ contract LiquidityPoolTest is Test {
     }
 
     function testDeployment() public {
-        assertEq(liquidityPool.owner(), owner);
         assertEq(address(liquidityPool.tokenA()), address(tokenA));
         assertEq(address(liquidityPool.tokenB()), address(tokenB));
         assertEq(address(liquidityPool.liquidityToken()), address(liquidityToken));
@@ -69,7 +68,6 @@ contract LiquidityPoolTest is Test {
         uint256 actualTokenABalance = tokenA.balanceOf(address(liquidityPool));
         uint256 actualTokenBBalance = tokenB.balanceOf(address(liquidityPool));
 
-        // Allow a small margin of error
         uint256 tolerance = 1 wei;
 
         assertTrue(
@@ -93,5 +91,48 @@ contract LiquidityPoolTest is Test {
         liquidityPool.swap(address(tokenA), 10 ether, 1);
 
         assertGt(tokenB.balanceOf(addr2), 0);
+    }
+
+    function testCalculateRewards() public {
+        // Adding liquidity by addr1 and addr2
+        vm.prank(addr1);
+        liquidityPool.addLiquidity(100 ether, 100 ether);
+
+        vm.prank(addr2);
+        liquidityPool.addLiquidity(200 ether, 200 ether);
+
+        (uint256 rewardA1, uint256 rewardB1) = liquidityPool.calculateRewards(addr1);
+        (uint256 rewardA2, uint256 rewardB2) = liquidityPool.calculateRewards(addr2);
+
+        assertGt(rewardA1, 0);
+        assertGt(rewardB1, 0);
+        assertGt(rewardA2, 0);
+        assertGt(rewardB2, 0);
+    }
+
+    function testClaimRewards() public {
+        // Adding liquidity by addr1
+        vm.prank(addr1);
+        liquidityPool.addLiquidity(100 ether, 100 ether);
+
+        // Adding liquidity by addr2
+        vm.prank(addr2);
+        liquidityPool.addLiquidity(200 ether, 200 ether);
+
+        // Claim rewards by addr1
+        vm.prank(addr1);
+        liquidityPool.claimRewards();
+
+        // Claim rewards by addr2
+        vm.prank(addr2);
+        liquidityPool.claimRewards();
+
+        (uint256 rewardA1, uint256 rewardB1) = liquidityPool.calculateRewards(addr1);
+        (uint256 rewardA2, uint256 rewardB2) = liquidityPool.calculateRewards(addr2);
+
+        assertEq(rewardA1, 0);
+        assertEq(rewardB1, 0);
+        assertEq(rewardA2, 0);
+        assertEq(rewardB2, 0);
     }
 }

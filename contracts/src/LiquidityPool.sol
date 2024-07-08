@@ -17,9 +17,21 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
     uint256 public platformFee;
     uint256 private MINIMUM_LIQUIDITY;
 
+    struct LiquidityInfo {
+        uint256 amountTokenA;
+        uint256 amountTokenB;
+        uint256 liquidity;
+        uint256 timestamp;
+    }
+
+    mapping(address => LiquidityInfo[]) public userLiquidity;
+    mapping(address => uint256) public userRewardsA;
+    mapping(address => uint256) public userRewardsB;
+
     event LiquidityAdded(address indexed user, uint256 amountTokenA, uint256 amountTokenB);
     event LiquidityRemoved(address indexed user, uint256 amountTokenA, uint256 amountTokenB);
     event Swap(address indexed user, address tokenIn, uint256 amountIn, address tokenOut, uint256 amountOut);
+    event RewardClaimed(address indexed user, uint256 rewardAmountA, uint256 rewardAmountB);
 
     function initialize(
         address _tokenA,
@@ -43,11 +55,17 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         _grantRole(ADMIN_ROLE, _admin);
     }
 
+    function deletePool() external onlyRole(ADMIN_ROLE) {
+        require(liquidityToken.totalSupply() == 0, "Cannot delete pool with liquidity");
+        selfdestruct(payable(msg.sender));
+    }
+
     function addLiquidity(uint256 tokenAAmount, uint256 tokenBAmount) external nonReentrant {
         require(tokenAAmount > 0 && tokenBAmount > 0, "Invalid amounts");
 
         require(tokenA.transferFrom(msg.sender, address(this), tokenAAmount), "Transfer of tokenA failed");
         require(tokenB.transferFrom(msg.sender, address(this), tokenBAmount), "Transfer of tokenB failed");
+        require(liquidityToken.transferFrom(msg.sender, address(this), MINIMUM_LIQUIDITY), "Transfer of liquidity token failed");
 
         uint256 liquidity;
         if (liquidityToken.totalSupply() == 0) {
@@ -62,6 +80,8 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
 
         reserveA += tokenAAmount;
         reserveB += tokenBAmount;
+
+        userLiquidity[msg.sender].push(LiquidityInfo(tokenAAmount, tokenBAmount, liquidity, block.timestamp));
 
         emit LiquidityAdded(msg.sender, tokenAAmount, tokenBAmount);
     }
@@ -80,6 +100,14 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
 
         reserveA -= tokenAAmount;
         reserveB -= tokenBAmount;
+
+        for (uint256 i = 0; i < userLiquidity[msg.sender].length; i++) {
+            if (userLiquidity[msg.sender][i].liquidity == liquidity) {
+                userLiquidity[msg.sender][i] = userLiquidity[msg.sender][userLiquidity[msg.sender].length - 1];
+                userLiquidity[msg.sender].pop();
+                break;
+            }
+        }
 
         emit LiquidityRemoved(msg.sender, tokenAAmount, tokenBAmount);
     }
@@ -146,12 +174,45 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         return getAmountOut(amountIn, tokenIn);
     }
 
-    function updatePlatformFee(uint256 _platformFee) external onlyRole(ADMIN_ROLE) {
+    function updatePlatformFee(uint256 _platformFee) external onlyRole(ADMIN_ROLE) returns (uint256) {
         require(_platformFee > 0 && _platformFee < 10000, "Invalid platform fee");
         platformFee = _platformFee;
+        return platformFee;
     }
 
     function getPair() external view returns (address, address) {
         return (address(tokenA), address(tokenB));
+    }
+
+      function calculateRewards(address user) public view returns (uint256 rewardA, uint256 rewardB) {
+        uint256 totalLiquidity = liquidityToken.totalSupply();
+        uint256 userLiquidityShare = 0;
+
+        LiquidityInfo[] storage liquidityInfo = userLiquidity[user];
+        for (uint i = 0; i < liquidityInfo.length; i++) {
+            userLiquidityShare += liquidityInfo[i].liquidity;
+        }
+
+        uint256 totalRewardA = (reserveA * userLiquidityShare) / totalLiquidity;
+        uint256 totalRewardB = (reserveB * userLiquidityShare) / totalLiquidity;
+
+        rewardA = totalRewardA > userRewardsA[user] ? totalRewardA - userRewardsA[user] : 0;
+        rewardB = totalRewardB > userRewardsB[user] ? totalRewardB - userRewardsB[user] : 0;
+    }
+
+    function claimRewards() external nonReentrant {
+        (uint256 rewardA, uint256 rewardB) = calculateRewards(msg.sender);
+        require(rewardA > 0 || rewardB > 0, "No rewards available");
+
+        reserveA -= rewardA;
+        reserveB -= rewardB;
+
+        userRewardsA[msg.sender] += rewardA;
+        userRewardsB[msg.sender] += rewardB;
+
+        require(tokenA.transfer(msg.sender, rewardA), "Transfer of rewardA failed");
+        require(tokenB.transfer(msg.sender, rewardB), "Transfer of rewardB failed");
+
+        emit RewardClaimed(msg.sender, rewardA, rewardB);
     }
 }

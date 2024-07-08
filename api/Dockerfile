@@ -41,6 +41,7 @@ COPY --from=builder /api/docs /docs
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 # Exposition du port sur lequel le serveur API s'exécute.
+EXPOSE 5002
 EXPOSE 5000
 
 # Commande pour exécuter le serveur API lors du démarrage du conteneur.

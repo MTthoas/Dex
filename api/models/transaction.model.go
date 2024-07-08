@@ -7,7 +7,3 @@ type Transaction struct {
 	Amount      float64 `json:"amount" example:"99.99"`
 	Transaction string  `json:"transaction" example:"tx_789ghi"`
 }
-
-func (transaction *Transaction) TableName() string {
-	return "transaction"
-}
