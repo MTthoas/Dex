@@ -3,11 +3,12 @@ src = "src"
 out = "out"
 libs = ["lib"]
 solc = "0.8.25"
+evm_version = "cancun"
 remappings = ["@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
     "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/"]
 
 [rpc_endpoints]
-sepolia = "${SEPOLIA_RPC_URL}"
+sepolia = "${AMOY_RPC_URL}"
 
 [etherscan]
 sepolia = { key = "${ETHERSCAN_API_KEY}" }
