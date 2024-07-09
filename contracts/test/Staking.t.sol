@@ -3,12 +3,12 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
 import "../src/Staking.sol";
-import "../src/GensToken.sol";
+import "../src/token/Token.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 contract StakingTest is Test {
-    GensToken token;
+    Token token;
     Staking staking;
     address user = address(0x123);
 

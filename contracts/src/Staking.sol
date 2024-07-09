@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "./token/Token.sol";
 
-contract Staking is ReentrancyGuardUpgradeable {
-    ERC20BurnableUpgradeable public stakingToken;
+contract Staking is ReentrancyGuard {
+    Token public stakingToken;
 
     struct Stake {
         uint256 amount;
@@ -22,10 +22,9 @@ contract Staking is ReentrancyGuardUpgradeable {
     event RewardsUpdated(address indexed user, uint256 rewardDebt, uint256 accumulatedReward);
     event RewardsClaimed(address indexed user, uint256 rewardAmount);
 
-    function initialize(address _stakingToken) external initializer {
-        stakingToken = ERC20BurnableUpgradeable(_stakingToken);
+    constructor(address _stakingToken) {
+        stakingToken = Token(_stakingToken);
         rewardRatePerDay = 100;
-        __ReentrancyGuard_init();
     }
 
     // Stake tokens
