@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useQuery } from "@tanstack/react-query";
-// import { getStaking } from "@/hook/staking.hook";
+import { getStaking } from "@/hook/staking.hook";
 import { useState, useEffect } from "react";
 import { useAccount, useBalance, usePrepareTransactionRequest, useSendTransaction, useWriteContract, useReadContract } from 'wagmi';
 import { parseEther } from 'viem'
@@ -14,10 +14,10 @@ import { ethers } from 'ethers';
 import { polygonAmoy } from "viem/chains";
 
 export default function StakingCard() {
-  // const { data: staking } = useQuery({
-  //   queryKey: ["staking"],
-  //   queryFn: getStaking,
-  // });
+  const { data: staking } = useQuery({
+    queryKey: ["staking"],
+    queryFn: getStaking,
+  });
 
   const tokenAddress = process.env.NEXT_PUBLIC_GENX_ADDRESS as `0x${string}`;
   const stakingAddress = process.env.NEXT_PUBLIC_STAKING_ADDRESS as `0x${string}`;
@@ -26,8 +26,6 @@ export default function StakingCard() {
   const provider = useEthersProvider();
   const signer = useEthersSigner()
   const [amount, setAmount] = useState("");
-  const [pendingAmount, setPendingAmount] = useState(0);
-  const [stakedAmount, setStakedAmount] = useState("");
   const { writeContract } = useWriteContract()
 
   const { data: balance } = useReadContract({
@@ -58,7 +56,6 @@ export default function StakingCard() {
     }
 
     try {
-      const signer = useEthersSigner()
       const stakingContract = new ethers.Contract(stakingAddress, stakingAbi, signer);
   
       // Vérifiez le solde de l'utilisateur
