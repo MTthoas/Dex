@@ -21,6 +21,8 @@
     "deploy-access-manager": "forge script script/00_deployAccessManager.s.sol --rpc-url $RPC_URL --private-key $ACCOUNT_PRIVATE_KEY --broadcast --verify -vvvv"
   },
   "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2",
+    "@openzeppelin/contracts-upgradeable": "^5.0.2",
     "dotenv": "16.4.5"
   }
 }

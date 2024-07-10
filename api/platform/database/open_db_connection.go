@@ -14,6 +14,7 @@ type Queries struct {
 	*queries.TransactionQueries
 	*queries.PoolQueries
 	*queries.TokenQueries
+	*queries.StakingQueries
 }
 
 func OpenDBConnection() (*Queries, error) {
@@ -33,5 +34,6 @@ func OpenDBConnection() (*Queries, error) {
 		TransactionQueries: &queries.TransactionQueries{DB: db},
 		PoolQueries:        &queries.PoolQueries{DB: db},
 		TokenQueries:       &queries.TokenQueries{DB: db},
+		StakingQueries:     &queries.StakingQueries{DB: db},
 	}, nil
 }
