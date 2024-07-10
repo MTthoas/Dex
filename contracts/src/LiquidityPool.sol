@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
@@ -55,17 +54,11 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         _grantRole(ADMIN_ROLE, _admin);
     }
 
-    function deletePool() external onlyRole(ADMIN_ROLE) {
-        require(liquidityToken.totalSupply() == 0, "Cannot delete pool with liquidity");
-        selfdestruct(payable(msg.sender));
-    }
-
     function addLiquidity(uint256 tokenAAmount, uint256 tokenBAmount) external nonReentrant {
         require(tokenAAmount > 0 && tokenBAmount > 0, "Invalid amounts");
 
         require(tokenA.transferFrom(msg.sender, address(this), tokenAAmount), "Transfer of tokenA failed");
         require(tokenB.transferFrom(msg.sender, address(this), tokenBAmount), "Transfer of tokenB failed");
-        require(liquidityToken.transferFrom(msg.sender, address(this), MINIMUM_LIQUIDITY), "Transfer of liquidity token failed");
 
         uint256 liquidity;
         if (liquidityToken.totalSupply() == 0) {
@@ -82,6 +75,9 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         reserveB += tokenBAmount;
 
         userLiquidity[msg.sender].push(LiquidityInfo(tokenAAmount, tokenBAmount, liquidity, block.timestamp));
+
+        // Vérifier les ratios après modification des réserves
+        require(checkReservesRatio(), "Reserve ratios are incorrect");
 
         emit LiquidityAdded(msg.sender, tokenAAmount, tokenBAmount);
     }
@@ -143,10 +139,7 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
 
     function calculateLiquidity(uint256 tokenAAmount, uint256 tokenBAmount) private view returns (uint256) {
         uint256 totalSupply_ = liquidityToken.totalSupply();
-        return
-            totalSupply_ == 0
-                ? sqrt(tokenAAmount * tokenBAmount) - MINIMUM_LIQUIDITY
-                : min((tokenAAmount * totalSupply_) / reserveA, (tokenBAmount * totalSupply_) / reserveB);
+        return min((tokenAAmount * totalSupply_) / reserveA, (tokenBAmount * totalSupply_) / reserveB);
     }
 
     function sqrt(uint y) internal pure returns (uint z) {
@@ -184,7 +177,7 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         return (address(tokenA), address(tokenB));
     }
 
-      function calculateRewards(address user) public view returns (uint256 rewardA, uint256 rewardB) {
+    function calculateRewards(address user) public view returns (uint256 rewardA, uint256 rewardB) {
         uint256 totalLiquidity = liquidityToken.totalSupply();
         uint256 userLiquidityShare = 0;
 
@@ -214,5 +207,15 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         require(tokenB.transfer(msg.sender, rewardB), "Transfer of rewardB failed");
 
         emit RewardClaimed(msg.sender, rewardA, rewardB);
+    }
+
+    function checkReservesRatio() private view returns (bool) {
+        if (reserveA == 0 || reserveB == 0) {
+            return true; // Pas de vérification si l'un des pools est vide
+        }
+        uint256 ratio = reserveA * 1e18 / reserveB;
+        uint256 expectedRatio = tokenA.balanceOf(address(this)) * 1e18 / tokenB.balanceOf(address(this));
+        // Tolérance de 1%
+        return (ratio >= expectedRatio * 99 / 100 && ratio <= expectedRatio * 101 / 100);
     }
 }

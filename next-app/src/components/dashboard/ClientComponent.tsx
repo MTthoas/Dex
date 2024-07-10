@@ -1,18 +1,21 @@
 "use client";
 
-import { ERC2O } from "@/abi/ERC20";
+import { ERC20 } from "@/abi/ERC20";
 import {
+  DonxAddress,
   GensAddress,
   GenxAddress,
   LiquidityPoolAddress,
   liquidityFactoryAddress,
 } from "@/abi/address";
 import { LiquidityPoolABI } from "@/abi/liquidityPool";
+import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
 import { usePools } from "@/hook/usePools";
 import { ethers } from "ethers";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Address } from "viem";
 import { useAccount, useReadContract } from "wagmi";
+import { useFetchTokensPairsByAddressList } from "../../hook/useFetchTokenPairs";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import {
@@ -20,8 +23,8 @@ import {
   useERC20UpgradeableContract,
   useFactoryContract,
   useLiquidityPoolContract,
+  useTokenTotalSupply,
 } from "./Contracts";
-import LiquidityPoolList from "../liquidityPool/LiquidityPoolList";
 
 const ClientComponent = () => {
   const { address, chainId } = useAccount();
@@ -31,47 +34,78 @@ const ClientComponent = () => {
   const [swapToken, setSwapToken] = useState<string>(GenxAddress); // Default to GENX for swapping
   const pools = usePools(); // Utiliser le hook personnalisé pour obtenir les adresses des pools
   const signer = getSigner({ chainId });
+  const [reserves, setReserves] = useState(["0", "0"]);
+  const [ratio, setRatio] = useState("0");
+
+  const [selectedToken, setSelectedToken] = useState("");
+  const [relatedTokens, setRelatedTokens] = useState([]);
+  const [allTokens, setAllTokens] = useState([]);
+
+  const [tokenA, setTokenA] = useState([]);
+  const [tokenB, setTokenB] = useState([]);
+  const MaticAddress = ethers.ZeroAddress;
+  console.log(MaticAddress);
+
+  const { data: symbol, isLoading: isSymbolLoading } = useReadContract({
+    abi: ERC20,
+    functionName: "symbol",
+    address: GenxAddress,
+  });
+
+  const { data: symbol2, isLoading: isSymbolLoading2 } = useReadContract({
+    abi: ERC20,
+    functionName: "symbol",
+    address: GensAddress,
+  });
+
+  const { data: symbol3 } = useReadContract({
+    abi: ERC20,
+    functionName: "symbol",
+    address: DonxAddress,
+  });
+
+  const {
+    data: reservesData,
+    isLoading: isReservesLoading,
+    isSuccess: IsSuccessReserves,
+  } = useReadContract({
+    abi: LiquidityPoolABI,
+    functionName: "getReserves",
+    address: LiquidityPoolAddress,
+  });
+
+  console.log("Address : " + address);
 
   const { data: balance, isLoading: isBalanceLoading } = useReadContract({
-    abi: ERC2O,
+    abi: ERC20,
     functionName: "balanceOf",
     address: GenxAddress,
     args: [address],
   });
 
   const { data: balance2, isLoading: isBalanceLoading2 } = useReadContract({
-    abi: ERC2O,
+    abi: ERC20,
     functionName: "balanceOf",
     address: GensAddress,
     args: [address],
   });
 
-  const { data: symbol, isLoading: isSymbolLoading } = useReadContract({
-    abi: ERC2O,
-    functionName: "symbol",
-    address: GenxAddress,
+  const { data: balance3, isLoading: isBalanceLoading3 } = useReadContract({
+    abi: ERC20,
+    functionName: "balanceOf",
+    address: DonxAddress,
+    args: [address],
   });
 
-  const { data: symbol2, isLoading: isSymbolLoading2 } = useReadContract({
-    abi: ERC2O,
-    functionName: "symbol",
-    address: GensAddress,
-  });
-
-  const { data: reserves, isLoading: isReservesLoading } = useReadContract({
-    abi: LiquidityPoolABI,
-    functionName: "getReserves",
-    address: LiquidityPoolAddress,
-  });
-
-  const {
-    data: totalSupply,
-    isLoading: isTotalSupplyLoading,
-  } = useReadContract({
-    abi: LiquidityPoolABI,
-    functionName: "totalSupply",
-    address: LiquidityPoolAddress,
-  });
+  useEffect(() => {
+    if (reservesData) {
+      const [reserveA, reserveB] = reservesData.map((reserve) =>
+        ethers.toBigInt(reserve).toString()
+      );
+      setReserves([reserveA, reserveB]);
+      console.log(reservesData);
+    }
+  }, [reservesData]);
 
   const FactoryContract = useFactoryContract({
     address: liquidityFactoryAddress,
@@ -93,11 +127,68 @@ const ClientComponent = () => {
     chainId,
   });
 
+  const { data: listOfAddress } = useReadContract({
+    abi: liquidityPoolFactoryABI,
+    functionName: "allPoolsAddress",
+    address: liquidityFactoryAddress as `0x${string}`,
+    chainId,
+  });
+
+  const { tokenPairs } = useFetchTokensPairsByAddressList(
+    listOfAddress,
+    chainId
+  );
+
+  console.log(tokenPairs);
+
+  const { totalSupply: totalSupplyA, isLoading: isTotalSupplyALoading } =
+    useTokenTotalSupply(GenxAddress);
+  const { totalSupply: totalSupplyB, isLoading: isTotalSupplyBLoading } =
+    useTokenTotalSupply(GensAddress);
+
+  const calculateAmountB = (
+    amountA: string,
+    reserveA: string,
+    reserveB: string,
+    totalSupplyA: string,
+    totalSupplyB: string
+  ) => {
+    // si la reserve est nul, la balance est nulle
+    if (Number(reserveA) === 0 || Number(reserveB) === 0) {
+      return amountA;
+    }
+    const ratioA = Number(amountA) / Number(totalSupplyA);
+    const amountB = ratioA * Number(totalSupplyB);
+    return ((amountB * Number(reserveB)) / Number(reserveA)).toString();
+  };
+
+  useEffect(() => {
+    if (!isTotalSupplyALoading && !isTotalSupplyBLoading) {
+      setLiquidityAmountB(
+        calculateAmountB(
+          liquidityAmountA,
+          reserves[0],
+          reserves[1],
+          totalSupplyA.toString(),
+          totalSupplyB.toString()
+        )
+      );
+    }
+    setRatio((Number(reserves[0]) / Number(reserves[1])).toFixed(2).toString());
+  }, [
+    liquidityAmountA,
+    reserves,
+    totalSupplyA,
+    totalSupplyB,
+    isTotalSupplyALoading,
+    isTotalSupplyBLoading,
+  ]);
+
   const handleCreatePool = async () => {
     try {
       const tx = await FactoryContract.createPool(
         GenxAddress as Address,
-        GensAddress as Address,
+        DonxAddress as Address,
         address,
         30
       );
@@ -171,7 +262,6 @@ const ClientComponent = () => {
 
     try {
       // Approve token for the swap
-
       console.log("Approving token for swap...");
       const approveTx = await (swapToken === GenxAddress
         ? GenxContract
@@ -195,25 +285,47 @@ const ClientComponent = () => {
     }
   };
 
+  useEffect(() => {
+    const tokens = new Set();
+    tokenPairs.forEach((pair) => {
+      tokens.add(pair.tokenA);
+      tokens.add(pair.tokenB);
+    });
+    setAllTokens([...tokens]);
+  }, [tokenPairs]);
+
+  useEffect(() => {
+    if (selectedToken) {
+      const related = new Set(
+        tokenPairs
+          .filter(
+            (pair) =>
+              pair.tokenA === selectedToken || pair.tokenB === selectedToken
+          )
+          .flatMap((pair) => [pair.tokenA, pair.tokenB])
+          .filter((token) => token !== selectedToken)
+      );
+      setRelatedTokens([...related]);
+    }
+  }, [selectedToken, tokenPairs]);
+
+  const handleTokenChange = (event) => {
+    setSelectedToken(event.target.value);
+  };
+
   return (
     <div>
       <div>Address: {address}</div>
       <div>
-        {isBalanceLoading ? (
-          <div>Loading...</div>
-        ) : (
-          <div>
-            GENX Balance: {balance?.toString()} {symbol}
-          </div>
-        )}
-
-        {isBalanceLoading2 ? (
-          <div>Loading...</div>
-        ) : (
-          <div>
-            GENS Balance: {balance2?.toString()} {symbol2}
-          </div>
-        )}
+        <div>
+          GENX Balance: {balance?.toString()} {symbol}
+        </div>
+        <div>
+          GENS Balance: {balance2?.toString()} {symbol2}
+        </div>
+        <div>
+          DONX Balance: {balance3?.toString()} {symbol3}
+        </div>
       </div>
       <div className="my-5">
         <h1 className="mt-1 text-lg">LiquidityPool</h1>
@@ -253,6 +365,7 @@ const ClientComponent = () => {
               value={liquidityAmountA}
               onChange={(e) => setLiquidityAmountA(e.target.value)}
             />
+            <p className="w-2/4 mx-3 pt-1"> Ratio: {ratio} </p>
             <Input
               type="text"
               className="ml-4"
@@ -271,14 +384,25 @@ const ClientComponent = () => {
               value={swapAmount}
               onChange={(e) => setSwapAmount(e.target.value)}
             />
-            <select
-              value={swapToken}
-              onChange={(e) => setSwapToken(e.target.value)}
-              className="ml-4"
-            >
-              <option value={GenxAddress}>GENX</option>
-              <option value={GensAddress}>GENS</option>
+            <select value={selectedToken} onChange={handleTokenChange}>
+              <option value="">Select a token</option>
+              {allTokens.map((token) => (
+                <option key={token} value={token}>
+                  {token}
+                </option>
+              ))}
             </select>
+
+            {selectedToken && (
+              <select>
+                <option value="">Select related token</option>
+                {relatedTokens.map((token) => (
+                  <option key={token} value={token}>
+                    {token}
+                  </option>
+                ))}
+              </select>
+            )}
             <Button className="ml-4 bg-accent text-white" onClick={handleSwap}>
               Swap
             </Button>

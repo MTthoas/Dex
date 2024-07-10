@@ -23,8 +23,8 @@ contract DeployLiquidityPool is Script {
 
         LiquidityPoolFactory factory = new LiquidityPoolFactory(address(liquidityToken), admin);
 
-        address pool = factory.createPool(address(tokenA), address(tokenB), admin, 30);
-        console.log("Pool address: %s", pool);
+        // address pool = factory.createPool(address(tokenA), address(tokenB), admin, 30);
+        // console.log("Pool address: %s", pool);
 
         vm.stopBroadcast();
     }

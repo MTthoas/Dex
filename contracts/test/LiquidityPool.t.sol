@@ -135,4 +135,49 @@ contract LiquidityPoolTest is Test {
         assertEq(rewardA2, 0);
         assertEq(rewardB2, 0);
     }
+
+
+function getAmountOut(uint256 amountIn, uint256 reserveIn, uint256 reserveOut) private view returns (uint256) {
+    uint256 amountInWithFee = (amountIn * (10000 - liquidityPool.platformFee())) / 10000;
+    return (amountInWithFee * reserveOut) / (reserveIn + amountInWithFee);
+}
+
+function testSwapAndCheckRatios() public {
+    vm.prank(addr1);
+    liquidityPool.addLiquidity(100 ether, 100 ether);
+
+    // Calculer le ratio initial
+    (uint256 initialReserveA, uint256 initialReserveB) = liquidityPool.getReserves();
+    uint256 initialRatio = (initialReserveA * 1000) / initialReserveB;
+
+    // Effectuer un swap
+    vm.prank(addr2);
+    liquidityPool.swap(address(tokenA), 10 ether, 1);
+
+    // Vérifier les nouvelles réserves
+    (uint256 reserveA, uint256 reserveB) = liquidityPool.getReserves();
+    uint256 newRatio = (reserveA * 1000) / reserveB;
+
+    // Les ratios ne doivent pas nécessairement être égaux mais devraient suivre une certaine logique basée sur la formule du swap
+    // Par exemple, vérifier si les ratios ont changé dans la direction attendue
+    assertTrue(newRatio > initialRatio, "The ratio should have changed due to the swap");
+
+    // Vous pouvez aussi calculer ce que vous attendez comme nouvelles réserves basées sur la formule de swap
+    uint256 expectedReserveA = initialReserveA + 10 ether; // tokenA in
+    uint256 amountOut = getAmountOut(10 ether, initialReserveA, initialReserveB);
+    uint256 expectedReserveB = initialReserveB - amountOut; // tokenB out
+
+    // Appliquer la tolérance pour la vérification
+    uint256 tolerance = 1 wei;
+
+    assertTrue(
+        reserveA >= expectedReserveA - tolerance && reserveA <= expectedReserveA + tolerance,
+        string(abi.encodePacked("Token A reserve mismatch: ", reserveA))
+    );
+
+    assertTrue(
+        reserveB >= expectedReserveB - tolerance && reserveB <= expectedReserveB + tolerance,
+        string(abi.encodePacked("Token B reserve mismatch: ", reserveB))
+    );
+}
 }

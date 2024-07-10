@@ -1,102 +1,158 @@
-"use client";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardHeader,
   CardContent,
   CardFooter,
+  CardHeader,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
-import { getPools } from "@/hook/pools.hook";
+import { ethers } from "ethers";
+import { useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
-export default function LiquidityPoolList() {
-  // Use tanstack/react-query to fetch data from the server
-  const { data: pools } = useQuery({
-    queryKey: ["pools"],
-    queryFn: getPools,
-  });
+export default function LiquidityPoolList({ pairs }) {
+  const [selectedPair, setSelectedPair] = useState(null);
+  const [liquidityAmountA, setLiquidityAmountA] = useState("");
+  const [liquidityAmountB, setLiquidityAmountB] = useState("");
+  const [ratio, setRatio] = useState("");
 
-  console.log(pools);
+  const handleOpenDialog = (pair) => {
+    setSelectedPair(pair);
+    setLiquidityAmountA("");
+    setLiquidityAmountB("");
+  };
 
-  const liquidityPools = [
-    {
-      name: "ETH/USDC",
-      totalLockedVolume: "$10.2M",
-      annualYield: "12.5%",
-    },
-    {
-      name: "BTC/USDT",
-      totalLockedVolume: "$8.7M",
-      annualYield: "10.2%",
-    },
-    {
-      name: "LINK/ETH",
-      totalLockedVolume: "$6.4M",
-      annualYield: "9.8%",
-    },
-    {
-      name: "DAI/USDC",
-      totalLockedVolume: "$5.9M",
-      annualYield: "8.4%",
-    },
-    {
-      name: "AAVE/ETH",
-      totalLockedVolume: "$4.2M",
-      annualYield: "7.6%",
-    },
-    {
-      name: "UNI/ETH",
-      totalLockedVolume: "$3.8M",
-      annualYield: "6.9%",
-    },
-  ];
+  useEffect(() => {
+    if (selectedPair) {
+      const reserveA = Number(ethers.formatEther(selectedPair.reserveA));
+      const reserveB = Number(ethers.formatEther(selectedPair.reserveB));
+      const ratio = reserveA / reserveB;
+      setRatio(ratio.toFixed(2));
+
+      if (liquidityAmountA && liquidityAmountA.trim() !== "") {
+        const amountB = (Number(liquidityAmountA) * ratio).toFixed(0);
+        setLiquidityAmountB(amountB);
+      } else {
+        setLiquidityAmountB("");
+      }
+    }
+  }, [liquidityAmountA, selectedPair]);
+
+  useEffect(() => {
+    if (selectedPair) {
+      const reserveA = Number(ethers.formatEther(selectedPair.reserveA));
+      const reserveB = Number(ethers.formatEther(selectedPair.reserveB));
+      const ratio = reserveA / reserveB;
+
+      if (liquidityAmountB && liquidityAmountB.trim() !== "") {
+        const amountA = (Number(liquidityAmountB) / ratio).toFixed(0);
+        setLiquidityAmountA(amountA);
+      } else {
+        setLiquidityAmountA("");
+      }
+    }
+  }, [liquidityAmountB, selectedPair]);
+
   return (
     <div className="flex flex-col w-full">
       <main className="bg-background text-foreground py-8">
-        <div className="container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3">
-          {pools &&
-            pools.data &&
-            pools.data.map((pool) => (
-              <Card
-                key={pool.name}
-                className="bg-card text-card-foreground rounded-lg shadow-md px-6 "
-              >
-                <CardHeader className="border-b border-card-foreground/20 px-6 py-4">
-                  <h2 className="text-xl font-bold">
-                    {" "}
-                    {pool.first_token_name}/{pool.second_token_name}
-                  </h2>
-                </CardHeader>
-                <CardContent className="px-3 py-4 space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground text-sm">
-                      Total Locked Volume:
-                    </span>
-                    <span className="text-sm">{pool.totalLockedVolume}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground text-sm">
-                      Annual Yield:
-                    </span>
-                    <span>{pool.annualYield}</span>
-                  </div>
-                </CardContent>
-                <CardFooter className="border-t border-card-foreground/20 px-6 py-4">
-                  <Button className="w-full bg-primary text-primary-foreground hover:bg-primary-foreground hover:text-primary">
-                    Join Pool
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-        </div>
+        <Dialog>
+          <div className="container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3">
+            {pairs &&
+              pairs.map((pair) => (
+                <Card
+                  key={pair.id}
+                  className="bg-card text-card-foreground rounded-lg shadow-md px-6"
+                >
+                  <CardHeader className="border-b border-card-foreground/20 px-6 py-4">
+                    <h2 className="text-xl font-bold">
+                      {pair.tokenA}/{pair.tokenB}
+                    </h2>
+                  </CardHeader>
+                  <CardContent className="px-3 py-4 space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground text-sm">
+                        {pair.tokenA} Reserve:{" "}
+                        {Number(ethers.formatEther(pair.reserveA)).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground text-sm">
+                        {pair.tokenB} Reserve:{" "}
+                        {Number(ethers.formatEther(pair.reserveB)).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className=" text-sm">
+                        Ratio Reserves :
+                        {(() => {
+                          const ratio =
+                            Number(ethers.formatEther(pair.reserveA)) /
+                            Number(ethers.formatEther(pair.reserveB));
+                          return isNaN(ratio) ? "0" : ratio.toFixed(2);
+                        })()}
+                      </span>
+                    </div>
+                  </CardContent>
+
+                  <CardFooter className="border-t border-card-foreground/20 px-6 py-4">
+                    <DialogTrigger asChild>
+                      <Button
+                        onClick={() => handleOpenDialog(pair)}
+                        className="w-full bg-primary text-primary-foreground hover:text-gray"
+                      >
+                        Add Liquidity
+                      </Button>
+                    </DialogTrigger>
+                  </CardFooter>
+                </Card>
+              ))}
+          </div>
+          {selectedPair && (
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add Liquidity</DialogTitle>
+                <DialogDescription>
+                  Add liquidity to the pool by depositing both tokens.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <Label htmlFor="tokenA">{selectedPair.tokenA} Amount</Label>
+                <Input
+                  type="number"
+                  id="tokenA"
+                  value={liquidityAmountA}
+                  onChange={(e) => setLiquidityAmountA(e.target.value)}
+                />
+                <Label htmlFor="tokenB">{selectedPair.tokenB} Amount</Label>
+                <Input
+                  type="number"
+                  id="tokenB"
+                  value={liquidityAmountB}
+                  onChange={(e) => setLiquidityAmountB(e.target.value)}
+                />
+              </div>
+              <DialogFooter className="flex justify-between items-center px-4 py-2">
+                <Label
+                  htmlFor="ratio"
+                  className="text-sm font-medium text-gray-700 mr-3"
+                >
+                  Ratio: {ratio}
+                </Label>
+                <Button type="submit">Add liquidity</Button>
+              </DialogFooter>
+            </DialogContent>
+          )}
+        </Dialog>
       </main>
     </div>
   );
