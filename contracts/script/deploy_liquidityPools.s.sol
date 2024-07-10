@@ -9,9 +9,13 @@ import "../src/LiquidityPoolFactory.sol";
 
 contract DeployLiquidityPool is Script {
     address admin;
+    address admin2;
+    address admin3;
 
     function setUp() public {
         admin = vm.envAddress("ADMIN_ADDRESS");
+        admin2 = vm.envAddress("ADMIN_ADDRESS2");
+        admin3 = vm.envAddress("ADMIN_ADDRESS3");
     }
 
     function run() external {
@@ -21,9 +25,9 @@ contract DeployLiquidityPool is Script {
         Token tokenB = new Token("Gens", "GENS", 1000000 * 10 ** 18);
         LiquidityToken liquidityToken = new LiquidityToken();
 
-        LiquidityPoolFactory factory = new LiquidityPoolFactory(address(liquidityToken), admin);
+        LiquidityPoolFactory factory = new LiquidityPoolFactory(address(liquidityToken), admin, admin2, admin3);
 
-        address pool = factory.createPool(address(tokenA), address(tokenB), admin, 30);
+        address pool = factory.createPool(address(tokenA), address(tokenB), admin, 30, admin2, admin3);
         console.log("Pool address: %s", pool);
 
         vm.stopBroadcast();

@@ -12,8 +12,11 @@ contract LiquidityPoolTest is Test {
     LiquidityToken liquidityToken;
     LiquidityPool liquidityPool;
     address owner = address(0x123);
-    address addr1 = address(0x456);
-    address addr2 = address(0x789);
+    address admin1 = address(0x456);
+    address admin2 = address(0x789);
+    address addr1 = address(0x234);
+    address addr2 = address(0x567);
+
 
     function setUp() public {
         tokenA = new Token("TokenA", "TKA", 10000 ether);
@@ -21,7 +24,7 @@ contract LiquidityPoolTest is Test {
         vm.prank(owner);
         liquidityToken = new LiquidityToken();
         vm.prank(owner);
-        liquidityPool = new LiquidityPool(address(tokenA), address(tokenB), address(liquidityToken), 30, 10, owner);
+        liquidityPool = new LiquidityPool(address(tokenA), address(tokenB), address(liquidityToken), 30, 10, owner, admin1, admin2);
 
         // Mint and approve tokens
         tokenA.mint(addr1, 1000 ether);
@@ -90,5 +93,20 @@ contract LiquidityPoolTest is Test {
         liquidityPool.swap(address(tokenA), 10 ether, 1);
 
         assertGt(tokenB.balanceOf(addr2), 0);
+    }
+
+    function testGrantRole() public {
+        vm.prank(owner);
+        liquidityPool.grantRole(keccak256("ADMIN_ROLE"), addr1);
+        assertTrue(liquidityPool.hasRole(keccak256("ADMIN_ROLE"), addr1));
+
+        assertEq(liquidityPool.platformFee(), 30);
+        vm.prank(addr1);
+        liquidityPool.updatePlatformFee(20);
+        assertEq(liquidityPool.platformFee(), 20);
+
+        vm.prank(owner);
+        liquidityPool.revokeRole(keccak256("ADMIN_ROLE"), addr1);
+        assertTrue(!liquidityPool.hasRole(keccak256("ADMIN_ROLE"), addr1));
     }
 }

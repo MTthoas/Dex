@@ -16,16 +16,21 @@ contract LiquidityPoolFactory is ReentrancyGuard, AccessControl {
 
     LiquidityToken public liquidityToken;
 
-    constructor(address _liquidityToken, address admin) {
+    constructor(address _liquidityToken, address admin, address admin2, address admin3) {
         liquidityToken = LiquidityToken(_liquidityToken);
+        _grantRole(DEFAULT_ADMIN_ROLE, admin);
         _grantRole(ADMIN_ROLE, admin);
+        _grantRole(ADMIN_ROLE, admin2);
+        _grantRole(ADMIN_ROLE, admin3);
     }
 
     function createPool(
         address tokenA,
         address tokenB,
         address poolOwner,
-        uint256 platformFee
+        uint256 platformFee,
+        address admin2,
+        address admin3
     ) external nonReentrant returns (address pool) {
         require(tokenA != address(0) && tokenB != address(0), "Factory: invalid token addresses");
         require(tokenA != tokenB, "Factory: identical token addresses");
@@ -35,7 +40,7 @@ contract LiquidityPoolFactory is ReentrancyGuard, AccessControl {
         );
         require(hasRole(ADMIN_ROLE, msg.sender), "Factory: caller is not admin");
 
-        LiquidityPool liquidityPool = new LiquidityPool(tokenA, tokenB, address(liquidityToken), platformFee, 10, poolOwner);
+        LiquidityPool liquidityPool = new LiquidityPool(tokenA, tokenB, address(liquidityToken), platformFee, 10, poolOwner, admin2, admin3);
 
         getPool[tokenA][tokenB] = address(liquidityPool);
         getPool[tokenB][tokenA] = address(liquidityPool);
