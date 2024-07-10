@@ -42,13 +42,19 @@ func (sq *StakingQueries) GetStakingByUserID(userId int) ([]models.Staking, erro
 }
 
 func (sq *StakingQueries) CreateStaking(staking models.Staking) (models.Staking, error) {
-	if err := sq.DB.Create(&staking).Error; err != nil {
-		return models.Staking{}, err
+	if staking.Address != "" {
+		if err := sq.DB.Create(&staking).Error; err != nil {
+			return models.Staking{}, err
+		}
+		return staking, nil
 	}
-	return staking, nil
+	return models.Staking{}, nil
 }
 
 func (sq *StakingQueries) UpdateStaking(staking models.Staking) (models.Staking, error) {
+	if _, err := sq.GetStakingByAddress(staking.Address); err != nil {
+		return models.Staking{}, nil
+	}
 	if err := sq.DB.Save(&staking).Error; err != nil {
 		return models.Staking{}, err
 	}
