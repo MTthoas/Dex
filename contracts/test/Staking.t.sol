@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 import "forge-std/Test.sol";
 import "../src/Staking.sol";
 import "../src/token/Token.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+
 
 contract StakingTest is Test {
     Token token;
@@ -16,9 +16,8 @@ contract StakingTest is Test {
     event RewardsClaimed(address indexed user, uint256 rewardAmount);
 
     function setUp() public {
-        token = new GensToken();
-        staking = new Staking();
-        staking.initialize(address(token)); // Initialisation du staking avec le token ERC20
+        token = new Token("Token1", "TK1", 1000 ether);
+        staking = new Staking(address(token));
         token.transfer(user, 100 ether); 
     }
 
