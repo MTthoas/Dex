@@ -14,10 +14,6 @@ import { ethers } from 'ethers';
 import { polygonAmoy } from "viem/chains";
 
 export default function StakingCard() {
-  const { data: staking } = useQuery({
-    queryKey: ["staking"],
-    queryFn: getStaking,
-  });
 
   const tokenAddress = process.env.NEXT_PUBLIC_GENX_ADDRESS as `0x${string}`;
   const stakingAddress = process.env.NEXT_PUBLIC_STAKING_ADDRESS as `0x${string}`;
@@ -50,39 +46,14 @@ export default function StakingCard() {
   });
 
   const handleStake = async () => {
-    if (!amount || !provider || !isConnected) {
-      alert('Please enter an amount to stake and ensure you are connected.');
-      return;
-    }
-
-    try {
-      const stakingContract = new ethers.Contract(stakingAddress, stakingAbi, signer);
-  
-      // Vérifiez le solde de l'utilisateur
-      const userBalance = await stakingContract.balanceOf(addressUser);
-      if (BigInt(amount) > userBalance) {
-        alert('Insufficient balance to stake the specified amount.');
-        return;
-      }
-  
-      // Vérifiez l'approbation
-      const allowance = await stakingContract.allowance(addressUser, stakingAddress);
-      if (BigInt(amount) > allowance) {
-        alert('Allowance is insufficient, please approve the contract to spend your tokens.');
-        // Vous pouvez également demander l'approbation ici
-        const tokenContract = new ethers.Contract(tokenAddress, tokenAbi, signer);
-        const approveTx = await tokenContract.approve(stakingAddress, ethers.MaxUint256);
-        await approveTx.wait();
-      }
-  
-      // Effectuez le staking
-      const tx = await stakingContract.stake(ethers.parseUnits(amount, 18));
-      await tx.wait();
-      alert('Tokens staked successfully!');
-    } catch (error) {
-      console.error('Staking error:', error);
-      alert('Failed to stake tokens.');
-    }
+    writeContract({
+      abi: stakingAbi,
+      address: stakingAddress,
+      functionName: 'stake',
+      args: [
+        parseEther(amount),
+      ],
+    });
   };
 
   const handleUnstake = () => {
