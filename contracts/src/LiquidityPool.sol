@@ -21,14 +21,14 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
     event LiquidityRemoved(address indexed user, uint256 amountTokenA, uint256 amountTokenB);
     event Swap(address indexed user, address tokenIn, uint256 amountIn, address tokenOut, uint256 amountOut);
 
-    function initialize(
+    constructor(
         address _tokenA,
         address _tokenB,
         address _liquidityToken,
         uint256 _platformFee,
         uint256 _minimumLiquidity,
         address _admin
-    ) external nonReentrant {
+    ){
         require(_tokenA != address(0) && _tokenB != address(0), "Invalid token addresses");
         require(_tokenA != _tokenB, "Identical token addresses");
         require(_liquidityToken != address(0), "Invalid liquidity token address");

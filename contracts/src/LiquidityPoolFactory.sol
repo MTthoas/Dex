@@ -18,7 +18,6 @@ contract LiquidityPoolFactory is ReentrancyGuard, AccessControl {
 
     constructor(address _liquidityToken, address admin) {
         liquidityToken = LiquidityToken(_liquidityToken);
-        _grantRole(DEFAULT_ADMIN_ROLE, admin);
         _grantRole(ADMIN_ROLE, admin);
     }
 
@@ -36,8 +35,7 @@ contract LiquidityPoolFactory is ReentrancyGuard, AccessControl {
         );
         require(hasRole(ADMIN_ROLE, msg.sender), "Factory: caller is not admin");
 
-        LiquidityPool liquidityPool = new LiquidityPool();
-        liquidityPool.initialize(tokenA, tokenB, address(liquidityToken), platformFee, 10, poolOwner);
+        LiquidityPool liquidityPool = new LiquidityPool(tokenA, tokenB, address(liquidityToken), platformFee, 10, poolOwner);
 
         getPool[tokenA][tokenB] = address(liquidityPool);
         getPool[tokenB][tokenA] = address(liquidityPool);
