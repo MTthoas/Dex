@@ -21,14 +21,16 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
     event LiquidityRemoved(address indexed user, uint256 amountTokenA, uint256 amountTokenB);
     event Swap(address indexed user, address tokenIn, uint256 amountIn, address tokenOut, uint256 amountOut);
 
-    function initialize(
+    constructor(
         address _tokenA,
         address _tokenB,
         address _liquidityToken,
         uint256 _platformFee,
         uint256 _minimumLiquidity,
-        address _admin
-    ) external nonReentrant {
+        address _admin,
+        address _admin2,
+        address _admin3
+    ){
         require(_tokenA != address(0) && _tokenB != address(0), "Invalid token addresses");
         require(_tokenA != _tokenB, "Identical token addresses");
         require(_liquidityToken != address(0), "Invalid liquidity token address");
@@ -40,7 +42,10 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         liquidityToken = LiquidityToken(_liquidityToken);
         platformFee = _platformFee;
         MINIMUM_LIQUIDITY = _minimumLiquidity;
+        _grantRole(DEFAULT_ADMIN_ROLE, _admin);
         _grantRole(ADMIN_ROLE, _admin);
+        _grantRole(ADMIN_ROLE, _admin2);
+        _grantRole(ADMIN_ROLE, _admin3);
     }
 
     function addLiquidity(uint256 tokenAAmount, uint256 tokenBAmount) external nonReentrant {
