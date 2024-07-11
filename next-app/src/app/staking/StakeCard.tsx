@@ -67,28 +67,6 @@ export default function StakingCard() {
       args: [amount ? BigInt(amount) : BigInt(0)],
     });
   };
-  
-
-  useEffect(() => {
-    if (balance !== undefined) {
-      console.log("Balance:", balance);
-    }
-    if (addressUser !== undefined) {
-      console.log("Adresse:", addressUser);
-    }
-    if (tokenAddress !== undefined) {
-      console.log("Adresse du token:", tokenAddress);
-    }
-    if (stakingAddress !== undefined) {
-      console.log("Adresse du staking:", stakingAddress);
-    }
-    if (stakedData !== undefined) {
-      console.log("Staked:", stakedData.toString());
-    }
-    if (pendingRewards !== undefined) {
-      console.log("Pending rewards:", pendingRewards.toString());
-    }
-  }, [balance, addressUser, tokenAddress, stakingAddress, stakedData, pendingRewards]);
 
   return (
     <Card className="bg-secondary text-white rounded-lg shadow-lg">
