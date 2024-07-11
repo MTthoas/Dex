@@ -19,8 +19,8 @@ const HeaderLinks: NavLink[] = [
     href: "/tokens",
   },
   {
-    name: "Swap",
-    href: "/swap",
+    name: "Actions",
+    href: "/actions",
   },
   {
     name: "Stake",

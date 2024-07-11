@@ -239,7 +239,10 @@ const ClientComponent = () => {
 
       await new Promise((resolve) => setTimeout(resolve, 10000));
 
-      const tx = await LiquidityPoolContract.addLiquidity(amountB, amountA);
+      const tx = await LiquidityPoolContract.addLiquidity(
+        BigInt(amountA).toString(),
+        BigInt(amountB).toString()
+      );
       await tx.wait();
       console.log("Liquidity added successfully");
     } catch (error) {

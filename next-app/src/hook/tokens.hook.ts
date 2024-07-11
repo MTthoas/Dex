@@ -16,6 +16,14 @@ export async function getTokenByAddress(address: string) {
   return response.json();
 }
 
+export async function getTokenBySymbol(symbol: string) {
+  const response = await fetch(apiUrl + `tokens/symbol/${symbol}`);
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return response.json();
+}
+
 export async function createToken(data: any): Promise<any> {
   const response = await fetch(apiUrl + "tokens", {
     method: "POST",

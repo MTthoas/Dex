@@ -38,12 +38,13 @@ export default function Layout({ tokens }: { tokens: any }) {
     chainId,
   });
 
+  console.log("listOfAddress", listOfAddress);
   const pairs = useFetchTokensPairsByAddressList(listOfAddress, chainId);
 
   return (
-    <div className="w-screen flex h-screen mb-20 mx-12">
-      <div className="w-full">
-        <div className="my-12 flex justify-between items-center">
+    <div className="w-full flex justify-center ">
+      <div className="w-2/3">
+        <div className="my-12 flex justify-between items-center ">
           <h1 className="text-3xl font-semibold">List of Pools</h1>
           <Button
             onClick={() => setShowModal(true)}

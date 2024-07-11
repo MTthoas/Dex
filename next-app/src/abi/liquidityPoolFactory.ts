@@ -11,6 +11,16 @@ export const liquidityPoolFactoryABI = [
                 "name": "admin",
                 "type": "address",
                 "internalType": "address"
+            },
+            {
+                "name": "admin2",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "admin3",
+                "type": "address",
+                "internalType": "address"
             }
         ],
         "stateMutability": "nonpayable"
@@ -109,6 +119,16 @@ export const liquidityPoolFactoryABI = [
                 "name": "platformFee",
                 "type": "uint256",
                 "internalType": "uint256"
+            },
+            {
+                "name": "admin2",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "admin3",
+                "type": "address",
+                "internalType": "address"
             }
         ],
         "outputs": [
@@ -235,6 +255,30 @@ export const liquidityPoolFactoryABI = [
             },
             {
                 "name": "account",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool",
+                "internalType": "bool"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "isPoolPairAlreadyExists",
+        "inputs": [
+            {
+                "name": "tokenA",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "tokenB",
                 "type": "address",
                 "internalType": "address"
             }

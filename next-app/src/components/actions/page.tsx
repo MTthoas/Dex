@@ -1,10 +1,13 @@
 "use client";
+import { liquidityFactoryAddress } from "@/abi/address";
+import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
 import SendCard from "@/components/actions/send/page";
 import SwapCard from "@/components/actions/swap/page";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { chains } from "@/context";
+import { useFetchTokensPairsByAddressList } from "@/hook/useFetchTokenPairs";
 import { useEffect, useState } from "react";
-import { useAccount, useBalance, useChainId } from "wagmi";
+import { useAccount, useBalance, useChainId, useReadContract } from "wagmi";
 
 export function findChainWithStringValue(value: string) {
   return chains.find((token) => token.value === value);
@@ -16,26 +19,17 @@ export default function ActionPage() {
   const [balance, setBalance] = useState<String>("0.00");
 
   const account = useAccount();
-  const chainId = useChainId();
+  const { address, chainId } = useAccount();
 
-  const { data: balanceCrypto } = useBalance({
-    address: account?.address,
-    chainId: findChainWithStringValue(cryptoSelected)?.chainId,
+  const { data: listOfAddress } = useReadContract({
+    abi: liquidityPoolFactoryABI,
+    functionName: "allPoolsAddress",
+    address: liquidityFactoryAddress as `0x${string}`,
+    chainId,
   });
 
-  useEffect(() => {
-    if (balanceCrypto) {
-      setBalance(String(balanceCrypto?.formatted || 0));
-    }
-  }, [balanceCrypto]);
+  const pairs = useFetchTokensPairsByAddressList(listOfAddress, chainId);
 
-  useEffect(() => {
-    if (account.address) {
-      setIsConnected(true);
-    }
-  }, [account.address]);
-
-  console.log(findChainWithStringValue(cryptoSelected));
   return (
     <div>
       <Tabs defaultValue="swap" className="w-[375px]">
@@ -45,8 +39,10 @@ export default function ActionPage() {
         </TabsList>
         <TabsContent value="swap">
           <SwapCard
+            address={address}
             isConnected={isConnected}
             chains={chains}
+            pairs={pairs}
             cryptoSelected={cryptoSelected}
             setCryptoSelected={setCryptoSelected}
             chainId={chainId}
@@ -56,7 +52,7 @@ export default function ActionPage() {
           <SendCard
             isConnected={isConnected}
             chains={chains}
-            balance={balance}
+            balance={[]}
             cryptoSelected={cryptoSelected}
             setCryptoSelected={setCryptoSelected}
             account={account}
