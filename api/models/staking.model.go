@@ -13,5 +13,10 @@ type Staking struct {
     LastStakedTime time.Time `json:"last_staked_time"`
     StartDate   time.Time `json:"start_date"`
     EndDate     *time.Time `json:"end_date"`                 // Nullable
-    Status      string    `json:"status"`                    // See if it's really usefull
 }
+
+/*
+Pour la partie d'affichage de données, peut-être faire l'appel côté api afin
+mettre une variable global cote sc booleen qui passe à 1 si une modif a été faite côté SC
+Appeler une fonction pour mettre à jour
+*/

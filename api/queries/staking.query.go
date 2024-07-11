@@ -10,11 +10,11 @@ type StakingQueries struct {
 }
 
 func (sq *StakingQueries) GetAllStakings() ([]models.Staking, error) {
-	var stakings []models.Staking
-	if err := sq.DB.Find(&stakings).Error; err != nil {
+	var staking []models.Staking
+	if err := sq.DB.Find(&staking).Error; err != nil {
 		return nil, err
 	}
-	return stakings, nil
+	return staking, nil
 }
 
 func (sq *StakingQueries) GetStakingByID(id int) (models.Staking, error) {
