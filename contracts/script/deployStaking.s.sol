@@ -2,9 +2,9 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
-import "../src/token/Token.sol";
+import "../src/Staking.sol";
 
-contract deployERC20 is Script {
+contract deployStaking is Script {
     address admin;
 
     function setUp() public {
@@ -13,7 +13,7 @@ contract deployERC20 is Script {
 
     function run() external {
         vm.startBroadcast(admin);
-        new Token("TKA", "TOKENA", 24000000 * 10 ** 18);
+        new Staking(vm.envAddress("TOKEN_ADDRESS"));
         vm.stopBroadcast();
     }
 }
