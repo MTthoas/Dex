@@ -13,7 +13,8 @@ contract deployStaking is Script {
 
     function run() external {
         vm.startBroadcast(admin);
-        new Staking(vm.envAddress("TOKEN_ADDRESS"));
+        uint256 initialRewardReserve = vm.envUint("INITIAL_REWARD_RESERVE");
+        new Staking(vm.envAddress("TOKEN_ADDRESS"), initialRewardReserve);
         vm.stopBroadcast();
     }
 }
