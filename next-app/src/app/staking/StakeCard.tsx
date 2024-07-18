@@ -15,8 +15,12 @@ import { ethers, parseUnits, formatUnits, formatEther } from "ethers";
 import { stakingAbi } from "../../abi/Staking";
 import { tokenAbi } from "../../abi/ERC20Upgradeable";
 import { useEthersProvider, useEthersSigner } from "../../config/ethers";
-import { useReadStakingContract } from "@/hook/WagmiGenerated";
-import { useReadTokenContractBalanceOf, useReadStakingContractGetStakedAmount, useReadStakingContractPendingRewards } from "@/hook/WagmiGenerated";
+import {
+  useReadTokenContractBalanceOf,
+  useReadStakingContractGetStakedAmount,
+  useReadStakingContractPendingRewards,
+  useWriteStakingContractStake,
+} from "@/hook/WagmiGenerated";
 import { Address } from "viem";
 
 export default function StakingCard() {
@@ -32,24 +36,17 @@ export default function StakingCard() {
   const balanceAbi = useReadTokenContractBalanceOf({
     args: [addressUser as Address],
   });
-  const { data: balance } = balanceAbi;
-  
+  const { data: balance, refetch: refetchBalance } = balanceAbi;
+
   const stakedDataAbi = useReadStakingContractGetStakedAmount({
     args: [addressUser as Address],
   });
-  const { data: stakedData } = stakedDataAbi;
+  const { data: stakedData, refetch: refetchStakedData } = stakedDataAbi;
 
   const pendingRewardsAbi = useReadStakingContractPendingRewards({
     args: [addressUser as Address],
   });
-  const { data: pendingRewards } = pendingRewardsAbi;
-
-  // const { data: pendingRewards } = useReadContract({
-  //   abi: stakingAbi,
-  //   address: stakingAddress,
-  //   functionName: "pendingRewards",
-  //   args: [addressUser as Address],
-  // });
+  const { data: pendingRewards, refetch: refetchPendingRewards } = pendingRewardsAbi;
 
   const handleApprove = async () => {
     const tokenContract = new ethers.Contract(tokenAddress, tokenAbi, signer);
@@ -58,7 +55,6 @@ export default function StakingCard() {
       ethers.parseUnits(amount || "0", 18)
     );
     await tx.wait();
-    console.log("Approved:", tx.hash);
   };
 
   const handleStake = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -92,6 +88,19 @@ export default function StakingCard() {
     });
   };
 
+  // to refresh the data automatically
+  const refreshData = async () => {
+    await refetchBalance();
+    await refetchStakedData();
+    await refetchPendingRewards();
+  };
+
+  useEffect(() => {
+    if (isConnected) {
+      refreshData();
+    }
+  }, [isConnected]);
+
   return (
     <Card className="bg-secondary text-white rounded-lg shadow-lg">
       <CardHeader>
@@ -118,16 +127,16 @@ export default function StakingCard() {
                   Balance: {parseFloat(formatEther(balance)).toFixed(2)} GEN
                 </span>
               )}
-              {stakedData !== undefined &&
+              {stakedData !== undefined && (
                 <span className="text-xs">
                   Staked: {parseFloat(formatEther(stakedData)).toFixed(2)}
                 </span>
-              }
-              {pendingRewards !== undefined &&
+              )}
+              {pendingRewards !== undefined && (
                 <span className="text-xs">
                   Earn: {parseFloat(formatEther(pendingRewards)).toFixed(2)}
                 </span>
-              }
+              )} 
             </div>
           </div>
           <CardFooter className="flex flex-col space-y-2 mt-4">
@@ -137,7 +146,11 @@ export default function StakingCard() {
                   <Button className="w-full" type="submit">
                     Stake Tokens
                   </Button>
-                  <Button className="w-full" type="button" onClick={handleUnstake}>
+                  <Button
+                    className="w-full"
+                    type="button"
+                    onClick={handleUnstake}
+                  >
                     Unstake Tokens
                   </Button>
                 </div>

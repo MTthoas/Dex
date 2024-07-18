@@ -67,6 +67,7 @@ contract StakingTest is Test {
 
         uint256 expectedStakingContractBalance = initialRewardReserve + 50 ether - pendingRewards;
         assertEq(token.balanceOf(address(staking)), expectedStakingContractBalance); // Vérifie que la réserve de récompenses a diminué
+        assertEq(staking.pendingRewards(user), 0); // Vérifie que les récompenses en attente ont été réinitialisées
 
         vm.stopPrank();
     }

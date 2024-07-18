@@ -67,9 +67,13 @@ contract Staking is ReentrancyGuard {
         require(accumulatedReward > 0, "No rewards to claim");
         require(rewardReserve >= accumulatedReward, "Not enough rewards in reserve");
 
+        // Reset rewardDebt to 0 before transferring rewards
         userStake.rewardDebt = 0;
         rewardReserve -= accumulatedReward;
         stakingToken.transfer(msg.sender, accumulatedReward);
+
+        // Update lastStakedTime to avoid recalculating the same rewards
+        userStake.lastStakedTime = block.timestamp;
 
         emit RewardsClaimed(msg.sender, accumulatedReward);
     }
