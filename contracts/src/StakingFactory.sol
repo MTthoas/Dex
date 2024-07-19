@@ -6,16 +6,8 @@ import "./Staking.sol";
 
 contract StakingFactory is ReentrancyGuard{
    address[] public stakingContracts;
-   address public immutable stakingImplementation;
 
    event StakingContractCreated(address indexed stakingContract);
-
-   /**
-   * @notice Constructor to initialize the staking implementation.
-   */
-   constructor(address _stakingToken, uint256 _initialRewardReserve) {
-      stakingImplementation = address(new Staking(_stakingToken, _initialRewardReserve));
-   }
 
    /**
    * @notice Create a new staking contract.
@@ -24,14 +16,14 @@ contract StakingFactory is ReentrancyGuard{
    * @return Address of the new staking contract.
    */
    function createStakingContract(address _stakingToken, uint256 _initialRewardReserve) external nonReentrant returns (address) {
-   require (_stakingToken != address(0), "StakingFactory: invalid staking token address");
-   require (_initialRewardReserve > 0, "StakingFactory: invalid initial reward reserve");
-   
-   Staking staking = new Staking(_stakingToken, _initialRewardReserve);
+      require(_stakingToken != address(0), "StakingFactory: invalid staking token address");
+      require(_initialRewardReserve > 0, "StakingFactory: invalid initial reward reserve");
 
-   stakingContracts.push(address(staking));
-   emit StakingContractCreated(address(staking));
-   return address(staking);
+      Staking staking = new Staking(_stakingToken, _initialRewardReserve);
+
+      stakingContracts.push(address(staking));
+      emit StakingContractCreated(address(staking));
+      return address(staking);
    }
 
    /**

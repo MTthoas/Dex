@@ -13,7 +13,7 @@ contract StakingFactoryTest is Test {
 
     function setUp() public {
         token = new Token("Test Token", "TST", 10000 ether);
-        factory = new StakingFactory(address(token), initialRewardReserve);
+        factory = new StakingFactory();
     }
 
     function testCreateStakingContract() public {
