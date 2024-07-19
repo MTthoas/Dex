@@ -26,7 +26,7 @@ contract DeployLiquidityPool is Script {
         Token tokenB = new Token("Gens", "GENS", 1000000 * 10 ** 18);
         LiquidityPoolFactory factory = new LiquidityPoolFactory();
 
-        address poolAB = factory.createPool(address(tokenA), address(tokenB), ...);
+        address poolAB = factory.createPool(address(tokenA), address(tokenB), admin, 30, admin2, admin3);
 
         // Mint et approbation des tokens pour le swap
         tokenA.mint(address(this), 1000 * 10 ** 18);
@@ -52,7 +52,7 @@ contract DeployLiquidityPool is Script {
     function calculateMinAmountOut(LiquidityPool pool, address tokenIn, uint256 amountIn) internal returns (uint256) {
         uint256 reserveIn = pool.getReserve(tokenIn);
         uint256 reserveOut = pool.getReserve(tokenIn == pool.tokenA() ? pool.tokenB() : pool.tokenA());
-        uint256 amountInWithFee = amountIn.mul(997).div(1000);  // Assuming a 0.3% trading fee
+        uint256 amountInWithFee = amountIn.mul(997).div(1000); // Assuming a 0.3% trading fee
         uint256 amountOut = amountInWithFee.mul(reserveOut).div(reserveIn.add(amountInWithFee));
         return amountOut;
     }
