@@ -14,7 +14,8 @@ import { usePools } from "@/hook/usePools";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { Address } from "viem";
-import { useAccount, useReadContract } from "wagmi";
+import { polygonAmoy } from "viem/chains";
+import { useReadContract } from "wagmi";
 import { useFetchTokensPairsByAddressList } from "../../hook/useFetchTokenPairs";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -26,16 +27,18 @@ import {
   useTokenTotalSupply,
 } from "./Contracts";
 
-const ClientComponent = () => {
-  const { address, chainId } = useAccount();
+const ClientComponent = (chainId: number) => {
+  const [chainIdNumber, setChainId] = useState(chainId ? polygonAmoy.id : 0);
   const [liquidityAmountA, setLiquidityAmountA] = useState<string>("0");
   const [liquidityAmountB, setLiquidityAmountB] = useState<string>("0");
   const [swapAmount, setSwapAmount] = useState<string>("0");
   const [swapToken, setSwapToken] = useState<string>(GenxAddress); // Default to GENX for swapping
   const pools = usePools(); // Utiliser le hook personnalisé pour obtenir les adresses des pools
-  const signer = getSigner({ chainId });
+  const signer = getSigner({ chainId: chainIdNumber });
   const [reserves, setReserves] = useState(["0", "0"]);
   const [ratio, setRatio] = useState("0");
+
+  console.log(chainIdNumber);
 
   const [selectedToken, setSelectedToken] = useState("");
   const [relatedTokens, setRelatedTokens] = useState([]);

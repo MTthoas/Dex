@@ -1,3 +1,5 @@
+import { ERC20 } from "@/abi/ERC20";
+import { LiquidityPoolABI } from "@/abi/liquidityPool";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -5,8 +7,13 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { getTokenBySymbol } from "@/hook/tokens.hook";
+import { useQuery } from "@tanstack/react-query";
 import { ethers } from "ethers";
+import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useAccount, useReadContract } from "wagmi";
+import { getSigner } from "../dashboard/Contracts";
 import {
   Dialog,
   DialogContent,
@@ -18,13 +25,6 @@ import {
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { useQuery } from "@tanstack/react-query";
-import { getTokenBySymbol } from "@/hook/tokens.hook";
-import { useAccount, useReadContract } from "wagmi";
-import { ERC20 } from "@/abi/ERC20";
-import { LiquidityPoolABI } from "@/abi/liquidityPool";
-import { Loader2 } from "lucide-react";
-import { getSigner } from "../dashboard/Contracts";
 
 export default function LiquidityPoolList({ pairs }) {
   const { address, chainId } = useAccount();
@@ -189,13 +189,15 @@ export default function LiquidityPoolList({ pairs }) {
     }
   };
 
+  console.log("pairs :", pairs);
+
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col">
       <main className="bg-background text-foreground py-8">
         <Dialog open={open} onOpenChange={setOpen}>
-          <div className="container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3">
+          <div className=" grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-3">
             {pairs &&
-              pairs.map((pair) => (
+              pairs.pairs.map((pair) => (
                 <Card
                   key={pair.id}
                   className="bg-card text-card-foreground rounded-lg shadow-md px-6"
@@ -230,14 +232,17 @@ export default function LiquidityPoolList({ pairs }) {
                       </span>
                     </div>
                   </CardContent>
-                  <CardFooter className="border-t border-card-foreground/20 px-6 py-4">
+                  <CardFooter className="border-t border-card-foreground/20 py-4 px-1">
                     <DialogTrigger asChild>
-                      <Button
-                        onClick={() => handleOpenDialog(pair)}
-                        className="w-full bg-primary text-primary-foreground hover:text-gray"
-                      >
-                        Add Liquidity
-                      </Button>
+                      <div className="flex gap-3">
+                        <Button
+                          onClick={() => handleOpenDialog(pair)}
+                          className="w-full bg-primary text-primary-foreground hover:text-gray"
+                        >
+                          Add Liquidity
+                        </Button>
+                        <Button className="w-full">Details</Button>
+                      </div>
                     </DialogTrigger>
                   </CardFooter>
                 </Card>

@@ -1,22 +1,13 @@
 "use client";
+import { liquidityFactoryAddress } from "@/abi/address";
+import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
 import AddPoolModal from "@/components/liquidityPool/AddPoolModal";
 import LiquidityPoolList from "@/components/liquidityPool/LiquidityPoolList";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
-import { getPools } from "@/hook/pools.hook";
-import { getTokens } from "@/hook/tokens.hook";
-import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { useFetchTokensPairsByAddressList } from "../../hook/useFetchTokenPairs";
 import { useAccount, useReadContract } from "wagmi";
-import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
-import { liquidityFactoryAddress } from "@/abi/address";
+import { useFetchTokensPairsByAddressList } from "../../hook/useFetchTokenPairs";
 // Connect pools in to doo to display in the UI
 
 export type TokenPair = {
@@ -42,8 +33,8 @@ export default function Layout({ tokens }: { tokens: any }) {
   const pairs = useFetchTokensPairsByAddressList(listOfAddress, chainId);
 
   return (
-    <div className="w-full flex justify-center ">
-      <div className="w-2/3">
+    <div className=" flex justify-center mx-8 ">
+      <div className="">
         <div className="my-12 flex justify-between items-center ">
           <h1 className="text-3xl font-semibold">List of Pools</h1>
           <Button

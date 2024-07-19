@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start:dev": "next dev --turbo",
     "build": "next build",
+    "dev": "next dev",
     "start": "next start",
     "lint": "next lint"
   },
@@ -29,7 +29,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
-    "ethers": "^6.12.0",
+    "ethers": "^6.13.1",
     "lucide-react": "^0.372.0",
     "next": "^14.2.2",
     "next-themes": "^0.3.0",
@@ -38,12 +38,13 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "viem": "^2.9.26",
-    "wagmi": "^2.5.20"
+    "wagmi": "^2.10.10"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@wagmi/cli": "^2.1.15",
     "eslint": "^8",
     "eslint-config-next": "14.2.2",
     "postcss": "^8",

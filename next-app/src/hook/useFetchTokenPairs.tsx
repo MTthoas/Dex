@@ -4,26 +4,19 @@ import { TokenPair } from "@/components/liquidityPool/Layout";
 import { useEffect, useState } from "react";
 import { useReadContracts } from "wagmi";
 
-function transformToPairs(
-  array: Array<unknown>,
-  reserves: Array<unknown>,
-  supply: Array<unknown>,
-  listOfAddress: Array<unknown>
-): Array<TokenPair> {
-  // Assurez-vous que les tableaux sont de la même longueur ou gérez les différences de taille.
-  return array.reduce((acc: TokenPair[], current: unknown, index: number) => {
+function transformToPairs(array, reserves, supply, listOfAddress) {
+  return array.reduce((acc, current, index) => {
     if (index % 2 === 0 && index + 1 < array.length) {
-      // Ajoutez une vérification pour s'assurer que listOfAddress et reserves ont les indices appropriés
       if (index / 2 < listOfAddress.length && index < reserves.length - 1) {
         acc.push({
           id: index / 2 + 1,
-          address: listOfAddress[index / 2], // Assurez-vous que cette valeur est correctement manipulée si nécessaire
+          address: listOfAddress[index / 2],
           tokenA: current,
           tokenB: array[index + 1],
           tokenASupply: supply[index],
           tokenBSupply: supply[index + 1],
-          reserveA: reserves[index], // Récupère la réserve pour le tokenA
-          reserveB: reserves[index + 1], // Récupère la réserve pour le tokenB
+          reserveA: reserves[index],
+          reserveB: reserves[index + 1],
         });
       }
     }
@@ -31,25 +24,24 @@ function transformToPairs(
   }, []);
 }
 
-export function useFetchTokensPairsByAddressList(
-  list: unknown,
-  chainId: number | undefined
-): { tokenPairs: Array<TokenPair> } {
+export function useFetchTokensPairsByAddressList(list, chainId) {
   const [tokenPairs, setTokenPairs] = useState([]);
-  const [pairsContracts, setPairsContracts] = useState<any[]>([]);
-  const [supplyContract, setSupplyContract] = useState<any[]>([]);
-  const [supply, setSupply] = useState<any[]>([]);
-  const [reserves, setReserves] = useState<any[]>([]);
+  const [pairsContracts, setPairsContracts] = useState([]);
+  const [supplyContract, setSupplyContract] = useState([]);
+  const [supply, setSupply] = useState([]);
+  const [reserves, setReserves] = useState([]);
+  const [addresses, setAddresses] = useState([]);
+  const [allTokens, setAllTokens] = useState([]);
 
   const poolContracts =
-    list?.map((address: `0x${string}`) => ({
+    list?.map((address) => ({
       address,
       abi: LiquidityPoolABI,
       functionName: "getPair",
     })) || [];
 
   const ReserveContract =
-    list?.map((address: `0x${string}`) => ({
+    list?.map((address) => ({
       address,
       abi: LiquidityPoolABI,
       functionName: "getReserves",
@@ -70,39 +62,37 @@ export function useFetchTokensPairsByAddressList(
       reservesData &&
       reservesData.length > 0
     ) {
-      const tokenAddresses = pairsData.flatMap((pair: any) => [
+      const tokenAddresses = pairsData.flatMap((pair) => [
         pair.result[0],
         pair.result[1],
       ]);
 
-      const reservesMap = reservesData.flatMap((reserve: any) => [
+      const reservesMap = reservesData.flatMap((reserve) => [
         reserve.result[0],
         reserve.result[1],
       ]);
       setReserves(reservesMap);
 
-      const contracts = tokenAddresses.map((address: `0x${string}`) => ({
+      const contracts = tokenAddresses.map((address) => ({
         address,
         abi: ERC20,
         functionName: "symbol",
         chainId,
       }));
 
-      const contractsTotalSupply = tokenAddresses.map(
-        (address: `0x${string}`) => ({
-          address,
-          abi: ERC20,
-          functionName: "totalSupply",
-          chainId,
-        })
-      );
+      const contractsTotalSupply = tokenAddresses.map((address) => ({
+        address,
+        abi: ERC20,
+        functionName: "totalSupply",
+        chainId,
+      }));
 
+      setAddresses(tokenAddresses);
       setSupplyContract(contractsTotalSupply);
       setPairsContracts(contracts);
     }
   }, [pairsData, reservesData]);
 
-  // Fetch pairs (token addresses) from each pool
   const { data: tokenSymbols } = useReadContracts({
     contracts: pairsContracts,
   });
@@ -113,24 +103,38 @@ export function useFetchTokensPairsByAddressList(
 
   useEffect(() => {
     if (tokenSymbols && tokenSymbols.length > 0) {
-      const pairs = tokenSymbols.map((symbol: any, index: number) => {
-        console.log("symbol :", symbol);
-        return symbol.result;
-      });
+      const pairs = tokenSymbols.map((symbol) => symbol.result);
       setTokenPairs(pairs);
     }
   }, [tokenSymbols]);
 
   useEffect(() => {
     if (totalSupply && totalSupply.length > 0) {
-      const supply = totalSupply.map((supply: any) => supply.result);
+      const supply = totalSupply.map((supply) => supply.result);
       setSupply(supply);
     }
   }, [totalSupply]);
 
-  console.log("Supply", supply);
-
   const pairs = transformToPairs(tokenPairs, reserves, supply, list);
-  console.log(pairs);
-  return pairs;
+
+  useEffect(() => {
+    if (tokenSymbols && totalSupply) {
+      const tokensSet = new Set();
+      const allTokensList = [];
+      for (let i = 0; i < tokenSymbols.length; i++) {
+        const address = addresses[i];
+        if (!tokensSet.has(address)) {
+          tokensSet.add(address);
+          allTokensList.push({
+            token: tokenSymbols[i].result,
+            address: address,
+            totalSupply: totalSupply[i].result,
+          });
+        }
+      }
+      setAllTokens(allTokensList);
+    }
+  }, [tokenSymbols, totalSupply, addresses]);
+
+  return { pairs, allTokens };
 }

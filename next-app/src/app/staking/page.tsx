@@ -1,3 +1,5 @@
+"use client";
+
 import StakingCard from "./StakeCard";
 
 export default function Staking() {

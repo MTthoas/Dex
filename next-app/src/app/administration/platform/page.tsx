@@ -5,6 +5,7 @@ import PlatformFee from "@/components/administration/platform/PlatformFee";
 import BanUserAddress from "@/components/administration/platform/BanUserAddress";
 import { SearchIcon } from "@/components/Icons";
 
+
 const PlatformPage: React.FC = () => {
   return (
     <>

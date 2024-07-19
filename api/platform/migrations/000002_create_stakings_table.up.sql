@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS stakings (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    amount_staked FLOAT NOT NULL,
+    reward_debt FLOAT NOT NULL,
+    last_staked_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    start_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_date TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_stakings_user_id ON stakings (user_id);

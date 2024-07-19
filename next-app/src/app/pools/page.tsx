@@ -1,18 +1,8 @@
 "use client";
-import AddPoolModal from "@/components/liquidityPool/AddPoolModal";
-import LiquidityPoolList from "@/components/liquidityPool/LiquidityPoolList";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
-import { getPools } from "@/hook/pools.hook";
-import { useQuery } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
 import Layout from "@/components/liquidityPool/Layout";
+import { getPools } from "@/hook/pools.hook";
 import { getTokens } from "@/hook/tokens.hook";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Page() {
   // Connect pools in to doo to display in the UI
@@ -31,7 +21,7 @@ export default function Page() {
   console.log(pools);
 
   return (
-    <div className="w-full flex justify-center h-screen mb-20">
+    <div className="w-screen mb-20">
       <Layout tokens />
     </div>
   );

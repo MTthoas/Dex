@@ -2,13 +2,12 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
-import "forge-std/Test.sol";
 import "../src/token/Token.sol";
 import "../src/token/LiquidityPoolToken.sol";
 import "../src/LiquidityPool.sol";
 import "../src/LiquidityPoolFactory.sol";
 
-contract DeployLiquidityPool is Script, Test {
+contract DeployLiquidityPool is Script {
     address admin;
     address admin2;
     address admin3;
@@ -20,63 +19,41 @@ contract DeployLiquidityPool is Script, Test {
     }
 
     function run() external {
-        vm.startBroadcast(admin);
+        vm.startBroadcast();
 
-        // Deploy tokens
+        // Déploiement des tokens et de la factory comme avant
         Token tokenA = new Token("Genx", "GENX", 10000000 * 10 ** 18);
         Token tokenB = new Token("Gens", "GENS", 1000000 * 10 ** 18);
-        Token tokenC = new Token("Donx", "DONX", 1500000 * 10 ** 18);
+        LiquidityPoolFactory factory = new LiquidityPoolFactory();
 
-        // Deploy liquidity token
-        LiquidityToken liquidityToken = new LiquidityToken();
+        address poolAB = factory.createPool(address(tokenA), address(tokenB), ...);
 
-        // Deploy liquidity pool factory
-        LiquidityPoolFactory factory = new LiquidityPoolFactory(address(liquidityToken), admin, admin2, admin3);
+        // Mint et approbation des tokens pour le swap
+        tokenA.mint(address(this), 1000 * 10 ** 18);
+        tokenB.mint(address(this), 500 * 10 ** 18);
+        tokenA.approve(poolAB, 1000 * 10 ** 18);
+        tokenB.approve(poolAB, 500 * 10 ** 18);
 
-        // Create liquidity pools
-        factory.createPool(address(tokenA), address(tokenB), admin, 30, admin2, admin3);
-        address pool = factory.createPool(address(tokenA), address(tokenC), admin, 30, admin2, admin3);
+        // Ajout de liquidité pour initialiser les réserves
+        LiquidityPool(poolAB).addLiquidity(1000 * 10 ** 18, 500 * 10 ** 18);
 
-        // Mint tokens to admin account
-        mintTokens(tokenA, tokenB, tokenC);
-
-        vm.stopBroadcast();
-
-        // Broadcasted transactions with admin as the tx.origin
-        vm.startBroadcast(admin);
-
-        // Approve the pool to spend tokens on behalf of the admin
-        Token(tokenA).approve(pool, 1000 * 10 ** 18);
-        Token(tokenC).approve(pool, 100 * 10 ** 18);
-
-        // Add liquidity to pools
-        addLiquidity(pool, address(tokenA), address(tokenC), 1000 * 10 ** 18, 100 * 10 ** 18);
+        // Effectuer un swap
+        performSwap(poolAB, address(tokenA), address(tokenB), 100 * 10 ** 18);
 
         vm.stopBroadcast();
     }
 
-    function mintTokens(Token tokenA, Token tokenB, Token tokenC) internal {
-        // Mint tokens to the admin account
-        tokenA.mint(admin, 2000 * 10 ** 18); // Mint more than needed for the test
-        tokenB.mint(admin, 2000 * 10 ** 18); // Mint more than needed for the test
-        tokenC.mint(admin, 2000 * 10 ** 18); // Mint more than needed for the test
-    }
-
-    function addLiquidity(
-        address poolAddress,
-        address tokenAAddress,
-        address tokenBAddress,
-        uint256 amountA,
-        uint256 amountB
-    ) internal {
-        // Ensure the admin approves the pool to spend tokens on its behalf
-        Token(tokenAAddress).approve(poolAddress, amountA);
-        Token(tokenBAddress).approve(poolAddress, amountB);
-
-        // Cast the pool address to the LiquidityPool contract
+    function performSwap(address poolAddress, address tokenIn, address tokenOut, uint256 amountIn) internal {
         LiquidityPool pool = LiquidityPool(poolAddress);
+        uint256 minAmountOut = calculateMinAmountOut(pool, tokenIn, amountIn);
+        pool.swap(tokenIn, amountIn, minAmountOut);
+    }
 
-        // Add liquidity to the pool from the admin address
-        pool.addLiquidity(amountA, amountB);
+    function calculateMinAmountOut(LiquidityPool pool, address tokenIn, uint256 amountIn) internal returns (uint256) {
+        uint256 reserveIn = pool.getReserve(tokenIn);
+        uint256 reserveOut = pool.getReserve(tokenIn == pool.tokenA() ? pool.tokenB() : pool.tokenA());
+        uint256 amountInWithFee = amountIn.mul(997).div(1000);  // Assuming a 0.3% trading fee
+        uint256 amountOut = amountInWithFee.mul(reserveOut).div(reserveIn.add(amountInWithFee));
+        return amountOut;
     }
 }
