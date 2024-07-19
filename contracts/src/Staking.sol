@@ -10,6 +10,7 @@ import "./token/Token.sol";
  */
 contract Staking is ReentrancyGuard {
     Token public stakingToken;
+    uint256 public rewardReserve;
 
     struct Stake {
         uint256 amount; // Amount of tokens staked by the user
@@ -26,13 +27,9 @@ contract Staking is ReentrancyGuard {
     event RewardsUpdated(address indexed user, uint256 rewardDebt, uint256 accumulatedReward);
     event RewardsClaimed(address indexed user, uint256 rewardAmount);
 
-    /**
-     * @dev Constructor to initialize the staking contract with the staking token.
-     * @param _stakingToken Address of the token being staked.
-     */
-    constructor(address _stakingToken) {
+    constructor(address _stakingToken, uint256 _initialRewardReserve) {
         stakingToken = Token(_stakingToken);
-        rewardRatePerDay = 100;
+        rewardReserve = _initialRewardReserve;
     }
 
     /**
@@ -80,9 +77,15 @@ contract Staking is ReentrancyGuard {
 
         uint256 accumulatedReward = userStake.rewardDebt;
         require(accumulatedReward > 0, "No rewards to claim");
+        require(rewardReserve >= accumulatedReward, "Not enough rewards in reserve");
 
+        // Reset rewardDebt to 0 before transferring rewards
         userStake.rewardDebt = 0;
+        rewardReserve -= accumulatedReward;
         stakingToken.transfer(msg.sender, accumulatedReward);
+
+        // Update lastStakedTime to avoid recalculating the same rewards
+        userStake.lastStakedTime = block.timestamp;
 
         emit RewardsClaimed(msg.sender, accumulatedReward);
     }
@@ -132,14 +135,11 @@ contract Staking is ReentrancyGuard {
         return (_amount * rewardRatePerDay * _duration) / (24 * 60 * 60) / 10000; // 10000 basis points in 1%
     }
 
-    /**
-     * @notice View function to see staking statistics.
-     * @return stakedAmount Total amount of tokens staked.
-     * @return rewardRate Reward rate per day.
-     */
-    function getStakingStats() public view returns (uint256 stakedAmount, uint256 rewardRate) {
+    // View function to see staking stats
+    function getStakingStats() public view returns (uint256 stakedAmount, uint256 rewardRate, uint256 reserve) {
         stakedAmount = totalStaked;
         rewardRate = rewardRatePerDay;
-        return (stakedAmount, rewardRate);
+        reserve = rewardReserve;
+        return (stakedAmount, rewardRate, reserve);
     }
 }
