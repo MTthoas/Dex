@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
@@ -253,7 +252,7 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         uint256 userLiquidityShare = 0;
 
         LiquidityInfo[] storage liquidityInfo = userLiquidity[user];
-        for (uint256 i = 0; i < liquidityInfo.length; i++) {
+        for (uint i = 0; i < liquidityInfo.length; i++) {
             userLiquidityShare += liquidityInfo[i].liquidity;
         }
 

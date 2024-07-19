@@ -8,42 +8,65 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { parseEther } from "viem";
 import { useSendTransaction, useSwitchChain } from "wagmi";
 import { SendCardProps } from "../actions.type";
 import { findChainWithStringValue } from "../page";
-import { Send_Combobox } from "./Send_Combobox";
+import { ethers } from "ethers";
+import { ERC20 } from "@/abi/ERC20";
+import { getSigner } from "@/components/dashboard/Contracts";
 
 export default function SendCard({
   isConnected,
-  chains,
   balance,
   cryptoSelected,
+  tokens,
+  allTokens, // Ajout de allTokens
   setCryptoSelected,
   account,
-  chaindId,
+  chainId,
 }: SendCardProps) {
   const { switchChain } = useSwitchChain();
   const { sendTransaction, isPending, isSuccess, isError } =
     useSendTransaction();
   const [price, setPrice] = useState<String>("0.0000");
   const [amount, setAmount] = useState<String>("0");
+  const [recipientAddress, setRecipientAddress] = useState("");
+  const [selectedTokenAddress, setSelectedTokenAddress] = useState("");
+  const [tokenBalance, setTokenBalance] = useState<String>("0");
+  const signer = getSigner(chainId);
 
-  const handleSwitchChain = () => {
-    const selectedTokenChain = findChainWithStringValue(cryptoSelected);
-    if (
-      selectedTokenChain &&
-      selectedTokenChain.chainId &&
-      selectedTokenChain.chainId !== chaindId
-    ) {
-      switchChain({ chainId: selectedTokenChain.chainId });
+  useEffect(() => {
+    if (allTokens && cryptoSelected && allTokens.length > 0) {
+      const selectedToken = allTokens.find(
+        (token) => token.token === cryptoSelected
+      );
+      setSelectedTokenAddress(selectedToken ? selectedToken.address : "");
     }
-  };
+  }, [cryptoSelected, allTokens]);
+
+  useEffect(() => {
+    const fetchTokenBalance = async () => {
+      if (selectedTokenAddress && account) {
+        const tokenContract = new ethers.Contract(
+          selectedTokenAddress,
+          ERC20,
+          signer
+        );
+        const balance = await tokenContract.balanceOf(account.address);
+        setTokenBalance(Number(ethers.formatEther(balance)).toFixed(4));
+      }
+    };
+
+    if (selectedTokenAddress) {
+      fetchTokenBalance();
+    }
+  }, [selectedTokenAddress, account]);
 
   const handleTransfer = () => {
     sendTransaction({
-      to: account?.address,
+      to: recipientAddress,
       value: parseEther(amount.toString()),
       chainId: findChainWithStringValue(cryptoSelected)?.chainId,
     });
@@ -51,7 +74,6 @@ export default function SendCard({
 
   const handleInputChange = (value: string) => {
     setAmount(value);
-    console.log(value);
     if (value === "0" || value === "") {
       setPrice("0.00");
       return;
@@ -59,13 +81,10 @@ export default function SendCard({
     // Simuler un taux de conversion ETH en USD (fictif)
     const price = parseFloat(value) * 3500;
     setPrice(price.toFixed(4));
-
-    console.log(amount);
   };
 
-  console.log("CryptoSelected", cryptoSelected);
   return (
-    <Card className="bg-secondary text-primary rounded-lg shadow-lg  h-[510px]">
+    <Card className="bg-secondary text-primary rounded-lg shadow-lg h-[510px]">
       <CardHeader>
         <CardTitle className="text-lg font-bold text-primary">Send</CardTitle>
         <CardDescription className="text-sm">
@@ -75,22 +94,34 @@ export default function SendCard({
       <CardContent>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <Send_Combobox
-              chains={chains}
-              cryptoSelected={cryptoSelected}
-              setCryptoSelected={setCryptoSelected}
-              chainId={chaindId}
-            />
+            <select
+              value={cryptoSelected}
+              onChange={(e) => setCryptoSelected(e.target.value)}
+            >
+              <option value="">Select a token</option>
+              {allTokens &&
+                allTokens.map((token) => (
+                  <option key={token.token} value={token.token}>
+                    {token.token}
+                  </option>
+                ))}
+            </select>
           </div>
-          <span className="text-xs">Balance: {Number(balance).toFixed(4)}</span>
+          <span className="text-xs">Balance: {tokenBalance}</span>
         </div>
-        <div className=" mb-3">
+        <div className="mb-3">
           <div>
             <CardDescription className="text-sm mt-4 mb-2">
               Give an address
             </CardDescription>
             <div>
-              <Input className="" placeholder="0x.." type="text" />
+              <Input
+                className=""
+                placeholder="0x.."
+                type="text"
+                value={recipientAddress}
+                onChange={(e) => setRecipientAddress(e.target.value)}
+              />
             </div>
           </div>
           <CardDescription className="text-sm mt-4 mb-2">
@@ -110,26 +141,13 @@ export default function SendCard({
           <div className="mt-11">
             {isConnected ? (
               <>
-                {chaindId ===
-                  findChainWithStringValue(cryptoSelected)?.chainId && (
-                  <Button
-                    onClick={handleTransfer}
-                    className="w-full"
-                    disabled={isPending}
-                  >
-                    {isPending ? "Sending..." : "Send Transaction"}
-                  </Button>
-                )}
-                {chaindId !==
-                  findChainWithStringValue(cryptoSelected)?.chainId && (
-                  <Button
-                    onClick={handleSwitchChain}
-                    className="w-full"
-                    disabled={isPending}
-                  >
-                    {isPending ? "Switching..." : "Switch Chain"}
-                  </Button>
-                )}
+                <Button
+                  onClick={handleTransfer}
+                  className="w-full"
+                  disabled={isPending}
+                >
+                  {isPending ? "Sending..." : "Send Transaction"}
+                </Button>
               </>
             ) : (
               <CustomConnectButton />

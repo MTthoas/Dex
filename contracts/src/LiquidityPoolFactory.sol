@@ -61,13 +61,12 @@ contract LiquidityPoolFactory is ReentrancyGuard, AccessControl {
         );
         require(hasRole(ADMIN_ROLE, msg.sender), "Factory: caller is not admin");
 
-        // Deploy new LiquidityPool contract
         LiquidityPool liquidityPool = new LiquidityPool(
             tokenA,
             tokenB,
             address(liquidityToken),
             platformFee,
-            10, // Example value for minimum liquidity
+            10,
             poolOwner,
             admin2,
             admin3
@@ -115,5 +114,9 @@ contract LiquidityPoolFactory is ReentrancyGuard, AccessControl {
      */
     function getPoolAddressByIndex(uint256 index) external view returns (address) {
         return allPools[index];
+    }
+
+    function isPoolPairAlreadyExists(address tokenA, address tokenB) external view returns (bool) {
+        return getPool[tokenA][tokenB] != address(0);
     }
 }

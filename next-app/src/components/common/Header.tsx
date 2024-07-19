@@ -12,16 +12,12 @@ import { ContractsOwnerAddress } from "@/abi/address";
 
 const HeaderLinks: NavLink[] = [
   {
-    name: "Dashboard",
-    href: "/dashboard",
-  },
-  {
     name: "Tokens",
     href: "/tokens",
   },
   {
-    name: "Swap",
-    href: "/swap",
+    name: "Actions",
+    href: "/actions",
   },
   {
     name: "Stake",

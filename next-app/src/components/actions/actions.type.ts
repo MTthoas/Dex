@@ -8,9 +8,11 @@ export interface SendCardProps {
     isConnected: boolean;
     chains: Chain[];
     balance: any;
+    tokens: any;
+    allTokens: any;
     cryptoSelected: any;
     setCryptoSelected: any;
     account: any;
-    chaindId: number;
+    chainId: number;
   }
   

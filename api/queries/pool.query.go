@@ -26,6 +26,11 @@ func (pq *PoolQueries) GetPoolByID(id int) (models.Pool, error) {
 }
 
 func (pq *PoolQueries) CreatePool(pool models.Pool) (models.Pool, error) {
+	// verify if the pool already exists with the same address pair
+	var existingPool models.Pool
+	if err := pq.DB.Where("pool_address = ? AND first_token_address = ? AND second_token_address = ?", pool.PoolAddress, pool.FirstTokenAddress, pool.SecondTokenAddress).First(&existingPool).Error; err == nil {
+		return models.Pool{}, gorm.ErrRecordNotFound
+	} 
 	if err := pq.DB.Create(&pool).Error; err != nil {
 		return models.Pool{}, err
 	}
