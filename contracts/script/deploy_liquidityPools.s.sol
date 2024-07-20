@@ -19,13 +19,13 @@ contract DeployLiquidityPool is Script {
     }
 
     function run() external {
-        vm.startBroadcast();
+        vm.startBroadcast(admin);
 
         // Déploiement des tokens et de la factory comme avant
         Token tokenA = new Token("Genx", "GENX", 10000000 * 10 ** 18);
         Token tokenB = new Token("Gens", "GENS", 1000000 * 10 ** 18);
-        LiquidityPoolFactory factory = new LiquidityPoolFactory();
-
+        // Deploy liquidity pool factory
+        LiquidityPoolFactory factory = new LiquidityPoolFactory(address(tokenA), admin, admin2, admin3);
         address poolAB = factory.createPool(address(tokenA), address(tokenB), admin, 30, admin2, admin3);
 
         // Mint et approbation des tokens pour le swap
@@ -38,7 +38,7 @@ contract DeployLiquidityPool is Script {
         LiquidityPool(poolAB).addLiquidity(1000 * 10 ** 18, 500 * 10 ** 18);
 
         // Effectuer un swap
-        performSwap(poolAB, address(tokenA), address(tokenB), 100 * 10 ** 18);
+        //performSwap(poolAB, address(tokenA), address(tokenB), 100 * 10 ** 18); // TODO: Debug
 
         vm.stopBroadcast();
     }
@@ -49,11 +49,12 @@ contract DeployLiquidityPool is Script {
         pool.swap(tokenIn, amountIn, minAmountOut);
     }
 
-    function calculateMinAmountOut(LiquidityPool pool, address tokenIn, uint256 amountIn) internal returns (uint256) {
-        uint256 reserveIn = pool.getReserve(tokenIn);
-        uint256 reserveOut = pool.getReserve(tokenIn == pool.tokenA() ? pool.tokenB() : pool.tokenA());
-        uint256 amountInWithFee = amountIn.mul(997).div(1000); // Assuming a 0.3% trading fee
-        uint256 amountOut = amountInWithFee.mul(reserveOut).div(reserveIn.add(amountInWithFee));
+    function calculateMinAmountOut(LiquidityPool pool, address tokenIn, uint256 amountIn) internal view returns (uint256) {
+        (uint256 reserveA, uint256 reserveB) = pool.getReserves();
+        uint256 reserveOut = tokenIn == address(pool.tokenA()) ? reserveB : reserveA;
+        uint256 reserveIn = tokenIn == address(pool.tokenA()) ? reserveA : reserveB;
+        uint256 amountInWithFee = amountIn * 997 / 1000; // Assuming a 0.3% trading fee
+        uint256 amountOut = amountInWithFee * reserveOut / (reserveIn + amountInWithFee);
         return amountOut;
     }
 }
