@@ -6,7 +6,7 @@ export function middleware(req: NextRequest) {
 
   if (pathname.startsWith("/administration")) {
     const address = wagmiStore(req);
-    if (address !== ContractsOwnerAddress) {
+    if (address.toLowerCase() !== ContractsOwnerAddress.toLowerCase()) {
       return NextResponse.redirect(new URL("/", req.url));
     }
   }
