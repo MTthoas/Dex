@@ -21,8 +21,11 @@ export default function Page() {
   console.log(pools);
 
   return (
-    <div className="w-screen mb-20">
-      <Layout tokens />
+    <div className="container min-h-screen py-32">
+      <div className="mx-auto xl:mx-14">
+        {" "}
+        <Layout tokens />
+      </div>
     </div>
   );
 }

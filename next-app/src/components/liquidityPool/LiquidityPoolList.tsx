@@ -25,6 +25,7 @@ import {
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import ShinyButton from "../ui/shiny-button";
 
 export default function LiquidityPoolList({ pairs }) {
   const { address, chainId } = useAccount();
@@ -193,7 +194,7 @@ export default function LiquidityPoolList({ pairs }) {
 
   return (
     <div className="flex flex-col">
-      <main className="bg-background text-foreground py-8">
+      <main className="text-foreground py-8">
         <Dialog open={open} onOpenChange={setOpen}>
           <div className=" grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-3">
             {pairs &&
@@ -234,14 +235,18 @@ export default function LiquidityPoolList({ pairs }) {
                   </CardContent>
                   <CardFooter className="border-t border-card-foreground/20 py-4 px-1">
                     <DialogTrigger asChild>
-                      <div className="flex gap-3">
-                        <Button
-                          onClick={() => handleOpenDialog(pair)}
-                          className="w-full bg-primary text-primary-foreground hover:text-gray"
-                        >
-                          Add Liquidity
-                        </Button>
-                        <Button className="w-full">Details</Button>
+                      <div className="flex gap-2">
+                        <div>
+                          <Button
+                            size={"sm"}
+                            onClick={() => handleOpenDialog(pair)}
+                            className="w-full bg-primary text-primary-foreground hover:text-gray mb-2"
+                          >
+                            Add Liquidity
+                          </Button>
+                          <Button size={"sm"}>Remove Liquidity</Button>
+                        </div>
+                        <ShinyButton text="Claim rewards (LPT)" />
                       </div>
                     </DialogTrigger>
                   </CardFooter>

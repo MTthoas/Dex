@@ -100,7 +100,7 @@ export default function ActionPage() {
           <TabsTrigger value="swap">Swap</TabsTrigger>
           <TabsTrigger value="send">Send</TabsTrigger>
         </TabsList>
-        <TabsContent value="swap">
+        <TabsContent value="swap" className="">
           {allTokens && allTokens.length > 0 ? (
             <SwapCard
               address={address}

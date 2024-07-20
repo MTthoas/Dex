@@ -32,15 +32,17 @@ const HeaderLinks: NavLink[] = [
 export default function Header(): JSX.Element {
   const { address } = useAccount();
   return (
-    <header className="dark">
+    <header className="dark absolute w-full">
       <nav
-        className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2 lg:px-8 mt-5"
+        className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8"
         aria-label="Global"
       >
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
             <div className="flex flex-col">
-              <span className="text-lg font-semibold leading-5 ">GenX</span>
+              <span className="text-lg font-semibold leading-5 text-white ">
+                GenX
+              </span>
             </div>
           </Link>
         </div>
@@ -80,7 +82,10 @@ export default function Header(): JSX.Element {
             </Link>
           ))}
           {address === ContractsOwnerAddress && (
-            <Link href="/administration/dashboard" className="text-sm font-medium hover:text-gray-500">
+            <Link
+              href="/administration/dashboard"
+              className="text-sm font-medium hover:text-gray-500"
+            >
               Administration
             </Link>
           )}
