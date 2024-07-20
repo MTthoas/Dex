@@ -16,6 +16,13 @@ import { findChainWithStringValue } from "../page";
 import { ethers } from "ethers";
 import { ERC20 } from "@/abi/ERC20";
 import { getSigner } from "@/components/dashboard/Contracts";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function SendCard({
   isConnected,
@@ -94,18 +101,21 @@ export default function SendCard({
       <CardContent>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <select
+            <Select
               value={cryptoSelected}
-              onChange={(e) => setCryptoSelected(e.target.value)}
+              onValueChange={(e) => setCryptoSelected(e)}
             >
-              <option value="">Select a token</option>
-              {allTokens &&
-                allTokens.map((token) => (
-                  <option key={token.token} value={token.token}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue>{cryptoSelected}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {allTokens.map((token) => (
+                  <SelectItem key={token.token} value={token.token}>
                     {token.token}
-                  </option>
+                  </SelectItem>
                 ))}
-            </select>
+              </SelectContent>
+            </Select>
           </div>
           <span className="text-xs">Balance: {tokenBalance}</span>
         </div>

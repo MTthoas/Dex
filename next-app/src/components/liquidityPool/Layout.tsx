@@ -33,24 +33,22 @@ export default function Layout({ tokens }: { tokens: any }) {
   const pairs = useFetchTokensPairsByAddressList(listOfAddress, chainId);
 
   return (
-    <div className=" flex justify-center mx-8 ">
-      <div className="">
-        <div className="my-12 flex justify-between items-center ">
-          <h1 className="text-3xl font-semibold">List of Pools</h1>
-          <Button
-            onClick={() => setShowModal(true)}
-            size="lg"
-            className="flex items-center gap-1"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Add Pool
-          </Button>
-        </div>
-        {showModal && <AddPoolModal />}
+    <div>
+      <div className="my-6 flex justify-between items-center ">
+        <h1 className="text-3xl font-semibold">List of Pools</h1>
+        <Button
+          onClick={() => setShowModal(true)}
+          size="lg"
+          className="flex items-center gap-1"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          Add Pool
+        </Button>
+      </div>
+      {showModal && <AddPoolModal />}
 
-        <div className="grid grid-row gap-4">
-          <LiquidityPoolList pairs={pairs} />
-        </div>
+      <div className="grid grid-row gap-4">
+        <LiquidityPoolList pairs={pairs} />
       </div>
     </div>
   );

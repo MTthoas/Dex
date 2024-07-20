@@ -6,7 +6,7 @@ import { polygonAmoy } from "viem/chains";
 
 const SwapPage = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex justify-center mt-12">
+    <div className="flex justify-center items-center  min-h-screen py-20">
       <ActionPage />
     </div>
   );

@@ -1,4 +1,3 @@
-"use client";
 import { ERC20 } from "@/abi/ERC20";
 import { LiquidityPoolABI } from "@/abi/liquidityPool";
 import { CustomConnectButton } from "@/components/common/ConnectButton";
@@ -16,6 +15,13 @@ import { Input } from "@/components/ui/input";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { Chain } from "../actions.type";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function SwapCard({
   address,
@@ -122,17 +128,20 @@ export default function SwapCard({
 
   useEffect(() => {
     if (cryptoSelected) {
-      setSelectedToken(cryptoSelected);
+      // setSelectedToken(cryptoSelected);
       handleAmountInChange({ target: { value: amountIn } });
     }
   }, [cryptoSelected, relatedToken]);
 
   const handleTokenChange = (event) => {
-    setSelectedToken(event.target.value);
+    setSelectedToken(event);
+    if (!event) {
+      setSelectedToken("");
+    }
   };
 
   const handleRelatedTokenChange = (event) => {
-    setRelatedToken(event.target.value);
+    setRelatedToken(event);
   };
 
   const handleAmountInChange = (event) => {
@@ -146,7 +155,7 @@ export default function SwapCard({
     ) {
       setAmountOut("");
     }
-    if (relatedToken !== "") {
+    if (relatedToken !== "" || amountIn !== "") {
       const amountInWithFee = Number(amountIn) * 0.9;
       const reserveIn = tokenASupply;
       const reserveOut = tokenBSupply;
@@ -212,6 +221,12 @@ export default function SwapCard({
     }
   };
 
+  const handlePercentageClick = (percentage) => {
+    const newAmount = (balanceA * percentage) / 100;
+    setAmountIn(newAmount.toFixed(2));
+    handleAmountInChange({ target: { value: newAmount.toFixed(2) } });
+  };
+
   return (
     <Card className="bg-secondary rounded-lg shadow-lg h-[510px]">
       <CardHeader>
@@ -223,14 +238,18 @@ export default function SwapCard({
       <CardContent>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <select value={selectedToken} onChange={handleTokenChange}>
-              <option value="">Select a token</option>
-              {allTokens.map((token) => (
-                <option key={token.token} value={token.token}>
-                  {token.token}
-                </option>
-              ))}
-            </select>
+            <Select value={selectedToken} onValueChange={handleTokenChange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select a token" />
+              </SelectTrigger>
+              <SelectContent>
+                {allTokens.map((token) => (
+                  <SelectItem key={token.token} value={token.token}>
+                    {token.token}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <span className="text-xs">Balance: {balanceA}</span>
         </div>
@@ -242,16 +261,32 @@ export default function SwapCard({
           />
         </div>
         <div className="flex space-x-2 mb-2">
-          <Button className="bg-[#313140] text-xs h-6" variant="secondary">
+          <Button
+            className="bg-[#313140] text-xs h-6"
+            variant="secondary"
+            onClick={() => handlePercentageClick(25)}
+          >
             25%
           </Button>
-          <Button className="bg-[#313140] text-xs h-6" variant="secondary">
+          <Button
+            className="bg-[#313140] text-xs h-6"
+            variant="secondary"
+            onClick={() => handlePercentageClick(50)}
+          >
             50%
           </Button>
-          <Button className="bg-[#313140] text-xs h-6" variant="secondary">
+          <Button
+            className="bg-[#313140] text-xs h-6"
+            variant="secondary"
+            onClick={() => handlePercentageClick(75)}
+          >
             75%
           </Button>
-          <Button className="bg-[#313140] text-xs h-6" variant="secondary">
+          <Button
+            className="bg-[#313140] text-xs h-6"
+            variant="secondary"
+            onClick={() => handlePercentageClick(100)}
+          >
             MAX
           </Button>
         </div>
@@ -262,17 +297,21 @@ export default function SwapCard({
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               {selectedToken && (
-                <select
+                <Select
                   value={relatedToken}
-                  onChange={handleRelatedTokenChange}
+                  onValueChange={handleRelatedTokenChange}
                 >
-                  <option value="">Select related token</option>
-                  {relatedTokens.map((token) => (
-                    <option key={token} value={token}>
-                      {token}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select a token" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {relatedTokens.map((token) => (
+                      <SelectItem key={token} value={token}>
+                        {token}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
             </div>
             <span className="text-xs">Balance: {balanceB}</span>
