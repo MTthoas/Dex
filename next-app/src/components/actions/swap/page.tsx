@@ -331,7 +331,11 @@ export default function SwapCard({
                 Swap
               </Button>
             ) : (
-              <CustomConnectButton />
+              <CustomConnectButton
+                showChainModal={false}
+                showAccountModal={false}
+                showError={true}
+              />
             )}
           </div>
         </div>

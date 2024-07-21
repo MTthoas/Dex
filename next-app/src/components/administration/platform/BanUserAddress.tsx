@@ -30,8 +30,6 @@ const BanUserAddress = () => {
     setShowError(null);
     setIsUpdating(true);
     if (address && addressToBan) {
-      console.log("Banning user with address:", addressToBan);
-      console.log("Your address:", address);
       if (address !== addressToBan) {
         try {
           await writeUserRegistryBanUser({

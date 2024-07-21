@@ -160,7 +160,11 @@ export default function SendCard({
                 </Button>
               </>
             ) : (
-              <CustomConnectButton />
+              <CustomConnectButton
+                showChainModal={false}
+                showAccountModal={false}
+                showError={true}
+              />
             )}
             {isSuccess && (
               <div className="text-green-500 mt-2">Transaction successful!</div>
