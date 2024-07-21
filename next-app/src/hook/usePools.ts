@@ -1,21 +1,19 @@
-import { liquidityFactoryAddress } from "@/abi/address";
+import { LiquidityFactoryAddress } from "@/abi/address";
 import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
-import { useReadContract } from 'wagmi';
+import { useReadContract } from "wagmi";
 
 export function usePools() {
-
   const { data: allPoolsLength } = useReadContract({
-    address: liquidityFactoryAddress,
+    address: LiquidityFactoryAddress,
     abi: liquidityPoolFactoryABI,
-    functionName: 'allPoolsLength',
+    functionName: "allPoolsLength",
   });
 
-
   const { data: allPoolsAddress } = useReadContract({
-    address: liquidityFactoryAddress,
+    address: LiquidityFactoryAddress,
     abi: liquidityPoolFactoryABI,
-    functionName: 'allPoolsAddress',
-  })
+    functionName: "allPoolsAddress",
+  });
 
-  return {allPoolsAddress, allPoolsLength};
+  return { allPoolsAddress, allPoolsLength };
 }

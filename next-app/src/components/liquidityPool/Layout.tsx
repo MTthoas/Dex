@@ -1,5 +1,5 @@
 "use client";
-import { liquidityFactoryAddress } from "@/abi/address";
+import { LiquidityFactoryAddress } from "@/abi/address";
 import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
 import AddPoolModal from "@/components/liquidityPool/AddPoolModal";
 import LiquidityPoolList from "@/components/liquidityPool/LiquidityPoolList";
@@ -25,7 +25,7 @@ export default function Layout({ tokens }: { tokens: any }) {
   const { data: listOfAddress } = useReadContract({
     abi: liquidityPoolFactoryABI,
     functionName: "allPoolsAddress",
-    address: liquidityFactoryAddress as `0x${string}`,
+    address: LiquidityFactoryAddress as `0x${string}`,
     chainId,
   });
 
