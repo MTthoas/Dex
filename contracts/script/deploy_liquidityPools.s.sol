@@ -2,12 +2,16 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
+import "forge-std/Test.sol";
 import "../src/token/Token.sol";
 import "../src/token/LiquidityPoolToken.sol";
 import "../src/LiquidityPool.sol";
 import "../src/LiquidityPoolFactory.sol";
 
-contract DeployLiquidityPool is Script {
+contract LiquidityPoolTest is Script, Test {
+    Token tokenA;
+    Token tokenB;
+    LiquidityPoolFactory factory;
     address admin;
     address admin2;
     address admin3;
@@ -21,40 +25,96 @@ contract DeployLiquidityPool is Script {
     function run() external {
         vm.startBroadcast(admin);
 
-        // Déploiement des tokens et de la factory comme avant
-        Token tokenA = new Token("Genx", "GENX", 10000000 * 10 ** 18);
-        Token tokenB = new Token("Gens", "GENS", 1000000 * 10 ** 18);
-        // Deploy liquidity pool factory
-        LiquidityPoolFactory factory = new LiquidityPoolFactory(address(tokenA), admin, admin2, admin3);
-        address poolAB = factory.createPool(address(tokenA), address(tokenB), admin, 30, admin2, admin3);
+        tokenA = new Token("GENX", "GENX", 10000000 * 10 ** 18);
+        tokenB = new Token("GENS", "GENS", 10000000 * 10 ** 18);
 
-        // Mint et approbation des tokens pour le swap
-        tokenA.mint(address(this), 1000 * 10 ** 18);
-        tokenB.mint(address(this), 500 * 10 ** 18);
-        tokenA.approve(poolAB, 1000 * 10 ** 18);
-        tokenB.approve(poolAB, 500 * 10 ** 18);
+        // Deploy factory
+        factory = new LiquidityPoolFactory(address(new LiquidityToken()), admin, admin2, admin3);
 
-        // Ajout de liquidité pour initialiser les réserves
-        LiquidityPool(poolAB).addLiquidity(1000 * 10 ** 18, 500 * 10 ** 18);
+        // Create liquidity pool via factory
+        address poolAddress = factory.createPool(address(tokenA), address(tokenB), admin, 30, admin2, admin3);
+        LiquidityPool liquidityPool = LiquidityPool(poolAddress);
 
-        // Effectuer un swap
-        //performSwap(poolAB, address(tokenA), address(tokenB), 100 * 10 ** 18); // TODO: Debug
+        // Mint tokens to admin
+        tokenA.mint(admin, 1000 * 10 ** 18);
+        tokenB.mint(admin, 1000 * 10 ** 18);
+
+        tokenA.approve(address(liquidityPool), 1000 * 10 ** 18);
+        tokenB.approve(address(liquidityPool), 1000 * 10 ** 18);
+
+        liquidityPool.addLiquidity(500 * 10 ** 18, 500 * 10 ** 18);
 
         vm.stopBroadcast();
+
+        // Call the remove liquidity test function
+        testRemoveLiquidity(liquidityPool);
     }
 
-    function performSwap(address poolAddress, address tokenIn, address tokenOut, uint256 amountIn) internal {
-        LiquidityPool pool = LiquidityPool(poolAddress);
-        uint256 minAmountOut = calculateMinAmountOut(pool, tokenIn, amountIn);
-        pool.swap(tokenIn, amountIn, minAmountOut);
-    }
+    function testRemoveLiquidity(LiquidityPool liquidityPool) public {
+        vm.startPrank(admin);
 
-    function calculateMinAmountOut(LiquidityPool pool, address tokenIn, uint256 amountIn) internal view returns (uint256) {
-        (uint256 reserveA, uint256 reserveB) = pool.getReserves();
-        uint256 reserveOut = tokenIn == address(pool.tokenA()) ? reserveB : reserveA;
-        uint256 reserveIn = tokenIn == address(pool.tokenA()) ? reserveA : reserveB;
-        uint256 amountInWithFee = amountIn * 997 / 1000; // Assuming a 0.3% trading fee
-        uint256 amountOut = amountInWithFee * reserveOut / (reserveIn + amountInWithFee);
-        return amountOut;
+        // Get initial balances before removal
+        uint256 initialBalanceA = tokenA.balanceOf(admin);
+        uint256 initialBalanceB = tokenB.balanceOf(admin);
+        uint256 initialLiquidityBalance = liquidityPool.liquidityToken().balanceOf(admin);
+
+        console.log("Initial admin balance of TokenA: ", initialBalanceA);
+        console.log("Initial admin balance of TokenB: ", initialBalanceB);
+        console.log("Initial admin liquidity tokens: ", initialLiquidityBalance);
+
+        // Verify user's total liquidity info
+        (uint256 totalLiquidity, uint256 totalTokenA, uint256 totalTokenB, uint256 timeRemaining) = liquidityPool
+            .getUserLiquidityInfo(admin);
+        console.log("User's total liquidity tokens: ", totalLiquidity);
+        console.log("User's total TokenA deposited: ", totalTokenA);
+        console.log("User's total TokenB deposited: ", totalTokenB);
+        console.log("Time remaining to add/remove liquidity: ", timeRemaining);
+
+        // Attempt to remove liquidity before 2 hours have passed
+        uint256 liquidityToRemove = initialLiquidityBalance / 2; // Remove half the liquidity
+        try liquidityPool.removeLiquidity(totalTokenA / 2, totalTokenB / 2) {
+            revert("User was able to remove liquidity before 2 hours");
+        } catch Error(string memory reason) {
+            console.log("User was unable to remove liquidity before 2 hours: ", reason);
+        }
+
+        // Fast forward time by 2 hours
+        vm.warp(block.timestamp + 2 hours);
+
+        // Get the current liquidity info before removal
+        (totalLiquidity, totalTokenA, totalTokenB, ) = liquidityPool.getUserLiquidityInfo(admin);
+
+        // Reserves
+        (uint256 reserveA, uint256 reserveB) = liquidityPool.getReserves();
+        console.log("Reserves before removal - TokenA: ", reserveA, " TokenB: ", reserveB);
+
+        // Calculate the amounts to remove
+        uint256 amountTokenAtoRemove = totalTokenA / 2;
+        uint256 amountTokenBtoRemove = totalTokenB / 2;
+
+        // Remove liquidity after 2 hours
+        liquidityPool.removeLiquidity(amountTokenAtoRemove, amountTokenBtoRemove);
+
+        // Get balances after removal
+        uint256 finalBalanceA = tokenA.balanceOf(admin);
+        uint256 finalBalanceB = tokenB.balanceOf(admin);
+        uint256 finalLiquidityBalance = liquidityPool.liquidityToken().balanceOf(admin);
+
+        console.log("Final admin balance of TokenA: ", finalBalanceA);
+        console.log("Final admin balance of TokenB: ", finalBalanceB);
+        console.log("Final admin liquidity tokens: ", finalLiquidityBalance);
+
+        // Verify user's total liquidity info after removal
+        (totalLiquidity, totalTokenA, totalTokenB, timeRemaining) = liquidityPool.getUserLiquidityInfo(admin);
+        console.log("User's total liquidity tokens after removal: ", totalLiquidity);
+        console.log("User's total TokenA deposited after removal: ", totalTokenA);
+        console.log("User's total TokenB deposited after removal: ", totalTokenB);
+        console.log("Time remaining to add/remove liquidity: ", timeRemaining);
+
+        // // // Get reserves after removal
+        // (uint256 reserveA, uint256 reserveB) = liquidityPool.getReserves();
+        // console.log("Reserves after removal - TokenA: ", reserveA, " TokenB: ", reserveB);
+
+        vm.stopPrank();
     }
 }
