@@ -1,5 +1,5 @@
 "use client";
-import { liquidityFactoryAddress } from "@/abi/address";
+import { LiquidityFactoryAddress } from "@/abi/address";
 import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
 import SendCard from "@/components/actions/send/page";
 import SwapCard from "@/components/actions/swap/page";
@@ -57,7 +57,7 @@ export default function ActionPage() {
   const { data: listOfAddress } = useReadContract({
     abi: liquidityPoolFactoryABI,
     functionName: "allPoolsAddress",
-    address: liquidityFactoryAddress,
+    address: LiquidityFactoryAddress,
     chainId,
   });
 

@@ -1,4 +1,4 @@
-import { liquidityFactoryAddress } from "@/abi/address";
+import { LiquidityFactoryAddress } from "@/abi/address";
 import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
 import ActionPage from "@/components/actions/page";
 import { useAccount, useReadContract } from "wagmi";
