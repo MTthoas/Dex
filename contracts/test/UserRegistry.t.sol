@@ -25,7 +25,7 @@ contract UserRegistryTest is Test {
         userRegistry = new UserRegistry(admin, admin2, admin3);
     }
 
-    function testAdminRole() view public {
+    function testAdminRole() public view {
         assertTrue(userRegistry.hasRole(userRegistry.DEFAULT_ADMIN_ROLE(), admin));
         assertTrue(userRegistry.hasRole(userRegistry.ADMIN_ROLE(), admin));
         assertTrue(userRegistry.hasRole(userRegistry.ADMIN_ROLE(), admin2));
