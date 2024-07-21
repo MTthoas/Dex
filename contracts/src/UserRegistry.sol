@@ -96,6 +96,7 @@ contract UserRegistry is ReentrancyGuard, AccessControl {
     /**
      * @notice Registers a new user with the provided name.
      * @param _name The name of the user.
+     * @return uint256 The user ID.
      */
     function registerUser(string memory _name) public onlyRole(ADMIN_ROLE) nonReentrant returns (uint256) {
         require(users[msg.sender].id == 0, "User already registered");
@@ -112,6 +113,7 @@ contract UserRegistry is ReentrancyGuard, AccessControl {
     /**
      * @notice Bans the user with the given address.
      * @param _userAddress The address of the user to ban.
+     * @return uint256 The user ID.
      */
     function banUser(address _userAddress) public onlyRole(ADMIN_ROLE) nonReentrant returns (uint256) {
         require(isRegisteredUser(_userAddress), "User not registered");
@@ -125,6 +127,7 @@ contract UserRegistry is ReentrancyGuard, AccessControl {
     /**
      * @notice Unbans the user with the given address.
      * @param _userAddress The address of the user to unban.
+     * @return uint256 The user ID.
      */
     function unbanUser(address _userAddress) public onlyRole(ADMIN_ROLE) nonReentrant returns (uint256) {
         require(isRegisteredUser(_userAddress), "User not registered");
@@ -140,6 +143,7 @@ contract UserRegistry is ReentrancyGuard, AccessControl {
      * @notice Transfers the user ID from the old address to the new address.
      * @param _oldAddress The old address of the user.
      * @param _newAddress The new address of the user.
+     * @return uint256 The user ID.
      */
     function transferUserId(address _oldAddress, address _newAddress) public onlyRole(ADMIN_ROLE) nonReentrant returns (uint256) {
         require(isRegisteredUser(_oldAddress), "Old address not registered");
