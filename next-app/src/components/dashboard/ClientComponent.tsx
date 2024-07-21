@@ -6,7 +6,7 @@ import {
   GensAddress,
   GenxAddress,
   LiquidityPoolAddress,
-  liquidityFactoryAddress,
+  LiquidityFactoryAddress,
 } from "@/abi/address";
 import { LiquidityPoolABI } from "@/abi/liquidityPool";
 import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
@@ -111,7 +111,7 @@ const ClientComponent = (chainId: number) => {
   }, [reservesData]);
 
   const FactoryContract = useFactoryContract({
-    address: liquidityFactoryAddress,
+    address: LiquidityFactoryAddress,
     chainId,
   });
 
@@ -133,7 +133,7 @@ const ClientComponent = (chainId: number) => {
   const { data: listOfAddress } = useReadContract({
     abi: liquidityPoolFactoryABI,
     functionName: "allPoolsAddress",
-    address: liquidityFactoryAddress as `0x${string}`,
+    address: LiquidityFactoryAddress as `0x${string}`,
     chainId,
   });
 
@@ -269,9 +269,8 @@ const ClientComponent = (chainId: number) => {
     try {
       // Approve token for the swap
       console.log("Approving token for swap...");
-      const approveTx = await (swapToken === GenxAddress
-        ? GenxContract
-        : GensContract
+      const approveTx = await (
+        swapToken === GenxAddress ? GenxContract : GensContract
       ).approve(LiquidityPoolAddress, amountIn);
       await approveTx.wait();
       console.log(`Approved ${swapToken}`);

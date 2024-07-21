@@ -1,31 +1,29 @@
-import { useState, useEffect } from "react";
-import { useAccount, useReadContract } from "wagmi";
-import { ethers } from "ethers";
+import { liquidityFactoryAddress } from "@/abi/address";
+import { ERC20 } from "@/abi/ERC20";
+import { LiquidityPoolABI } from "@/abi/liquidityPool";
+import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
+import LiquidityPoolList from "@/components/liquidityPool/LiquidityPoolList";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog";
-import { liquidityFactoryAddress } from "@/abi/address";
-import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
-import { ERC20 } from "@/abi/ERC20";
-import { LiquidityPoolABI } from "@/abi/liquidityPool";
-import { Button } from "@/components/ui/button";
-import { Input } from "../ui/input";
-import { getSigner, useFactoryContract } from "../dashboard/Contracts";
-import { Address } from "viem";
-import { Plus } from "lucide-react";
-import AddPoolModal from "@/components/liquidityPool/AddPoolModal";
-import LiquidityPoolList from "@/components/liquidityPool/LiquidityPoolList";
-import { useFetchTokensPairsByAddressList } from "../../hook/useFetchTokenPairs";
-import { formatBigNumber } from "@/utils/number.utils";
 import { formatTimeRemaining } from "@/utils/time.utils";
+import { ethers } from "ethers";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Address } from "viem";
+import { useAccount, useReadContract } from "wagmi";
+import { useFetchTokensPairsByAddressList } from "../../hook/useFetchTokenPairs";
+import { getSigner, useFactoryContract } from "../dashboard/Contracts";
+import { Input } from "../ui/input";
 
 export type TokenPair = {
   id: number;

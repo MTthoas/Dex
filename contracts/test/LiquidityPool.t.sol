@@ -22,11 +22,10 @@ contract LiquidityPoolTest is Test {
         tokenB = new Token("TokenB", "TKB", 1000 ether);
         liquidityToken = new LiquidityToken();
 
-        liquidityPool = new LiquidityPool();
+        liquidityPool = new LiquidityPool(address(tokenA), address(tokenB), address(liquidityToken), 30, 10, owner, admin1, admin2);
 
         // Ensure the owner calls the initialize function
         vm.prank(owner);
-        liquidityPool.initialize(address(tokenA), address(tokenB), address(liquidityToken), 30, 10, owner);
 
         // Mint and approve tokens
         tokenA.mint(addr1, 1000 ether);
@@ -44,7 +43,7 @@ contract LiquidityPoolTest is Test {
         tokenB.approve(address(liquidityPool), 1000 ether);
     }
 
-    function testDeployment() public {
+    function testDeployment() view public {
         assertEq(address(liquidityPool.tokenA()), address(tokenA));
         assertEq(address(liquidityPool.tokenB()), address(tokenB));
         assertEq(address(liquidityPool.liquidityToken()), address(liquidityToken));

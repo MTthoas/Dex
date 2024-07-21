@@ -5,11 +5,8 @@ import SendCard from "@/components/actions/send/page";
 import SwapCard from "@/components/actions/swap/page";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { chains } from "@/context";
-import {
-  useFetchTokensPairsByAddressList,
-  useFetchTokensSymbol,
-} from "@/hook/useFetchTokenPairs";
-import { useState, useEffect } from "react";
+import { useFetchTokensPairsByAddressList } from "@/hook/useFetchTokenPairs";
+import { useEffect, useState } from "react";
 import { polygonAmoy } from "viem/chains";
 import { useAccount, useReadContract } from "wagmi";
 import { Skeleton } from "../ui/skeleton";
@@ -69,7 +66,7 @@ export default function ActionPage() {
   console.log("pairs", pairs);
 
   return (
-    <div>
+    <div className="flex justify-center py-32">
       <Tabs defaultValue="swap" className="w-[375px]">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="swap">Swap</TabsTrigger>

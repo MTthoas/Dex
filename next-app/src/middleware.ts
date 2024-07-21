@@ -6,7 +6,7 @@ export function middleware(req: NextRequest) {
 
   if (pathname.startsWith("/administration")) {
     const address = wagmiStore(req);
-    if (address !== ContractsOwnerAddress) {
+    if (address.toLowerCase() !== ContractsOwnerAddress.toLowerCase()) {
       return NextResponse.redirect(new URL("/", req.url));
     }
   }
@@ -28,7 +28,7 @@ export const config = {
 
 function wagmiStore(req: NextRequest) {
   const wagmiCookie = req.cookies.get("wagmi.store");
-  let address;
+  let address = "";
 
   if (wagmiCookie?.value) {
     const connections = JSON.parse(wagmiCookie.value).state.connections.value;
