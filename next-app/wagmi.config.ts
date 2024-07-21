@@ -1984,13 +1984,23 @@ export default defineConfig(() => {
       },
       {
         name: "TokenManager",
-        address: TokenManagerAddress,
+        address: TokenManagerAddress as Address,
         abi: [
             {
                 "type": "constructor",
                 "inputs": [
                     {
-                        "name": "accessManager",
+                        "name": "_admin",
+                        "type": "address",
+                        "internalType": "address"
+                    },
+                    {
+                        "name": "_admin2",
+                        "type": "address",
+                        "internalType": "address"
+                    },
+                    {
+                        "name": "_admin3",
                         "type": "address",
                         "internalType": "address"
                     }
@@ -1999,13 +2009,26 @@ export default defineConfig(() => {
             },
             {
                 "type": "function",
-                "name": "authority",
+                "name": "ADMIN_ROLE",
                 "inputs": [],
                 "outputs": [
                     {
                         "name": "",
-                        "type": "address",
-                        "internalType": "address"
+                        "type": "bytes32",
+                        "internalType": "bytes32"
+                    }
+                ],
+                "stateMutability": "view"
+            },
+            {
+                "type": "function",
+                "name": "DEFAULT_ADMIN_ROLE",
+                "inputs": [],
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
                     }
                 ],
                 "stateMutability": "view"
@@ -2032,6 +2055,25 @@ export default defineConfig(() => {
                         "name": "tokens",
                         "type": "address[]",
                         "internalType": "address[]"
+                    }
+                ],
+                "stateMutability": "view"
+            },
+            {
+                "type": "function",
+                "name": "getRoleAdmin",
+                "inputs": [
+                    {
+                        "name": "role",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
                     }
                 ],
                 "stateMutability": "view"
@@ -2067,13 +2109,42 @@ export default defineConfig(() => {
             },
             {
                 "type": "function",
-                "name": "isConsumingScheduledOp",
-                "inputs": [],
+                "name": "grantRole",
+                "inputs": [
+                    {
+                        "name": "role",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "account",
+                        "type": "address",
+                        "internalType": "address"
+                    }
+                ],
+                "outputs": [],
+                "stateMutability": "nonpayable"
+            },
+            {
+                "type": "function",
+                "name": "hasRole",
+                "inputs": [
+                    {
+                        "name": "role",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "account",
+                        "type": "address",
+                        "internalType": "address"
+                    }
+                ],
                 "outputs": [
                     {
                         "name": "",
-                        "type": "bytes4",
-                        "internalType": "bytes4"
+                        "type": "bool",
+                        "internalType": "bool"
                     }
                 ],
                 "stateMutability": "view"
@@ -2108,16 +2179,58 @@ export default defineConfig(() => {
             },
             {
                 "type": "function",
-                "name": "setAuthority",
+                "name": "renounceRole",
                 "inputs": [
                     {
-                        "name": "newAuthority",
+                        "name": "role",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "callerConfirmation",
                         "type": "address",
                         "internalType": "address"
                     }
                 ],
                 "outputs": [],
                 "stateMutability": "nonpayable"
+            },
+            {
+                "type": "function",
+                "name": "revokeRole",
+                "inputs": [
+                    {
+                        "name": "role",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "account",
+                        "type": "address",
+                        "internalType": "address"
+                    }
+                ],
+                "outputs": [],
+                "stateMutability": "nonpayable"
+            },
+            {
+                "type": "function",
+                "name": "supportsInterface",
+                "inputs": [
+                    {
+                        "name": "interfaceId",
+                        "type": "bytes4",
+                        "internalType": "bytes4"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bool",
+                        "internalType": "bool"
+                    }
+                ],
+                "stateMutability": "view"
             },
             {
                 "type": "function",
@@ -2150,12 +2263,74 @@ export default defineConfig(() => {
             },
             {
                 "type": "event",
-                "name": "AuthorityUpdated",
+                "name": "RoleAdminChanged",
                 "inputs": [
                     {
-                        "name": "authority",
+                        "name": "role",
+                        "type": "bytes32",
+                        "indexed": true,
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "previousAdminRole",
+                        "type": "bytes32",
+                        "indexed": true,
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "newAdminRole",
+                        "type": "bytes32",
+                        "indexed": true,
+                        "internalType": "bytes32"
+                    }
+                ],
+                "anonymous": false
+            },
+            {
+                "type": "event",
+                "name": "RoleGranted",
+                "inputs": [
+                    {
+                        "name": "role",
+                        "type": "bytes32",
+                        "indexed": true,
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "account",
                         "type": "address",
-                        "indexed": false,
+                        "indexed": true,
+                        "internalType": "address"
+                    },
+                    {
+                        "name": "sender",
+                        "type": "address",
+                        "indexed": true,
+                        "internalType": "address"
+                    }
+                ],
+                "anonymous": false
+            },
+            {
+                "type": "event",
+                "name": "RoleRevoked",
+                "inputs": [
+                    {
+                        "name": "role",
+                        "type": "bytes32",
+                        "indexed": true,
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "account",
+                        "type": "address",
+                        "indexed": true,
+                        "internalType": "address"
+                    },
+                    {
+                        "name": "sender",
+                        "type": "address",
+                        "indexed": true,
                         "internalType": "address"
                     }
                 ],
@@ -2207,39 +2382,22 @@ export default defineConfig(() => {
             },
             {
                 "type": "error",
-                "name": "AccessManagedInvalidAuthority",
-                "inputs": [
-                    {
-                        "name": "authority",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ]
+                "name": "AccessControlBadConfirmation",
+                "inputs": []
             },
             {
                 "type": "error",
-                "name": "AccessManagedRequiredDelay",
+                "name": "AccessControlUnauthorizedAccount",
                 "inputs": [
                     {
-                        "name": "caller",
+                        "name": "account",
                         "type": "address",
                         "internalType": "address"
                     },
                     {
-                        "name": "delay",
-                        "type": "uint32",
-                        "internalType": "uint32"
-                    }
-                ]
-            },
-            {
-                "type": "error",
-                "name": "AccessManagedUnauthorized",
-                "inputs": [
-                    {
-                        "name": "caller",
-                        "type": "address",
-                        "internalType": "address"
+                        "name": "neededRole",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
                     }
                 ]
             }
@@ -2247,22 +2405,51 @@ export default defineConfig(() => {
       },
       {
         name: "UserRegistry",
-        address: UserRegistryAddress,
+        address: UserRegistryAddress as Address,
         abi: [
             {
                 "type": "constructor",
-                "inputs": [],
+                "inputs": [
+                    {
+                        "name": "_admin",
+                        "type": "address",
+                        "internalType": "address"
+                    },
+                    {
+                        "name": "_admin2",
+                        "type": "address",
+                        "internalType": "address"
+                    },
+                    {
+                        "name": "_admin3",
+                        "type": "address",
+                        "internalType": "address"
+                    }
+                ],
                 "stateMutability": "nonpayable"
             },
             {
                 "type": "function",
-                "name": "authority",
+                "name": "ADMIN_ROLE",
                 "inputs": [],
                 "outputs": [
                     {
                         "name": "",
-                        "type": "address",
-                        "internalType": "address"
+                        "type": "bytes32",
+                        "internalType": "bytes32"
+                    }
+                ],
+                "stateMutability": "view"
+            },
+            {
+                "type": "function",
+                "name": "DEFAULT_ADMIN_ROLE",
+                "inputs": [],
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
                     }
                 ],
                 "stateMutability": "view"
@@ -2277,7 +2464,13 @@ export default defineConfig(() => {
                         "internalType": "address"
                     }
                 ],
-                "outputs": [],
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    }
+                ],
                 "stateMutability": "nonpayable"
             },
             {
@@ -2289,6 +2482,25 @@ export default defineConfig(() => {
                         "name": "",
                         "type": "uint256[]",
                         "internalType": "uint256[]"
+                    }
+                ],
+                "stateMutability": "view"
+            },
+            {
+                "type": "function",
+                "name": "getRoleAdmin",
+                "inputs": [
+                    {
+                        "name": "role",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
                     }
                 ],
                 "stateMutability": "view"
@@ -2314,10 +2526,15 @@ export default defineConfig(() => {
             },
             {
                 "type": "function",
-                "name": "initialize",
+                "name": "grantRole",
                 "inputs": [
                     {
-                        "name": "_initialAuthority",
+                        "name": "role",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "account",
                         "type": "address",
                         "internalType": "address"
                     }
@@ -2327,13 +2544,24 @@ export default defineConfig(() => {
             },
             {
                 "type": "function",
-                "name": "isConsumingScheduledOp",
-                "inputs": [],
+                "name": "hasRole",
+                "inputs": [
+                    {
+                        "name": "role",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "account",
+                        "type": "address",
+                        "internalType": "address"
+                    }
+                ],
                 "outputs": [
                     {
                         "name": "",
-                        "type": "bytes4",
-                        "internalType": "bytes4"
+                        "type": "bool",
+                        "internalType": "bool"
                     }
                 ],
                 "stateMutability": "view"
@@ -2386,21 +2614,69 @@ export default defineConfig(() => {
                         "internalType": "string"
                     }
                 ],
-                "outputs": [],
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    }
+                ],
                 "stateMutability": "nonpayable"
             },
             {
                 "type": "function",
-                "name": "setAuthority",
+                "name": "renounceRole",
                 "inputs": [
                     {
-                        "name": "newAuthority",
+                        "name": "role",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "callerConfirmation",
                         "type": "address",
                         "internalType": "address"
                     }
                 ],
                 "outputs": [],
                 "stateMutability": "nonpayable"
+            },
+            {
+                "type": "function",
+                "name": "revokeRole",
+                "inputs": [
+                    {
+                        "name": "role",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "account",
+                        "type": "address",
+                        "internalType": "address"
+                    }
+                ],
+                "outputs": [],
+                "stateMutability": "nonpayable"
+            },
+            {
+                "type": "function",
+                "name": "supportsInterface",
+                "inputs": [
+                    {
+                        "name": "interfaceId",
+                        "type": "bytes4",
+                        "internalType": "bytes4"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bool",
+                        "internalType": "bool"
+                    }
+                ],
+                "stateMutability": "view"
             },
             {
                 "type": "function",
@@ -2417,7 +2693,13 @@ export default defineConfig(() => {
                         "internalType": "address"
                     }
                 ],
-                "outputs": [],
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    }
+                ],
                 "stateMutability": "nonpayable"
             },
             {
@@ -2430,7 +2712,13 @@ export default defineConfig(() => {
                         "internalType": "address"
                     }
                 ],
-                "outputs": [],
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    }
+                ],
                 "stateMutability": "nonpayable"
             },
             {
@@ -2464,12 +2752,49 @@ export default defineConfig(() => {
             },
             {
                 "type": "event",
-                "name": "AuthorityUpdated",
+                "name": "RoleAdminChanged",
                 "inputs": [
                     {
-                        "name": "authority",
+                        "name": "role",
+                        "type": "bytes32",
+                        "indexed": true,
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "previousAdminRole",
+                        "type": "bytes32",
+                        "indexed": true,
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "newAdminRole",
+                        "type": "bytes32",
+                        "indexed": true,
+                        "internalType": "bytes32"
+                    }
+                ],
+                "anonymous": false
+            },
+            {
+                "type": "event",
+                "name": "RoleGranted",
+                "inputs": [
+                    {
+                        "name": "role",
+                        "type": "bytes32",
+                        "indexed": true,
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "account",
                         "type": "address",
-                        "indexed": false,
+                        "indexed": true,
+                        "internalType": "address"
+                    },
+                    {
+                        "name": "sender",
+                        "type": "address",
+                        "indexed": true,
                         "internalType": "address"
                     }
                 ],
@@ -2477,13 +2802,25 @@ export default defineConfig(() => {
             },
             {
                 "type": "event",
-                "name": "Initialized",
+                "name": "RoleRevoked",
                 "inputs": [
                     {
-                        "name": "version",
-                        "type": "uint64",
-                        "indexed": false,
-                        "internalType": "uint64"
+                        "name": "role",
+                        "type": "bytes32",
+                        "indexed": true,
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "account",
+                        "type": "address",
+                        "indexed": true,
+                        "internalType": "address"
+                    },
+                    {
+                        "name": "sender",
+                        "type": "address",
+                        "indexed": true,
+                        "internalType": "address"
                     }
                 ],
                 "anonymous": false
@@ -2547,50 +2884,28 @@ export default defineConfig(() => {
             },
             {
                 "type": "error",
-                "name": "AccessManagedInvalidAuthority",
-                "inputs": [
-                    {
-                        "name": "authority",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ]
-            },
-            {
-                "type": "error",
-                "name": "AccessManagedRequiredDelay",
-                "inputs": [
-                    {
-                        "name": "caller",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "delay",
-                        "type": "uint32",
-                        "internalType": "uint32"
-                    }
-                ]
-            },
-            {
-                "type": "error",
-                "name": "AccessManagedUnauthorized",
-                "inputs": [
-                    {
-                        "name": "caller",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ]
-            },
-            {
-                "type": "error",
-                "name": "InvalidInitialization",
+                "name": "AccessControlBadConfirmation",
                 "inputs": []
             },
             {
                 "type": "error",
-                "name": "NotInitializing",
+                "name": "AccessControlUnauthorizedAccount",
+                "inputs": [
+                    {
+                        "name": "account",
+                        "type": "address",
+                        "internalType": "address"
+                    },
+                    {
+                        "name": "neededRole",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
+                    }
+                ]
+            },
+            {
+                "type": "error",
+                "name": "ReentrancyGuardReentrantCall",
                 "inputs": []
             }
         ],
