@@ -1,4 +1,6 @@
+import { ERC20 } from "@/abi/ERC20";
 import { CustomConnectButton } from "@/components/common/ConnectButton";
+import { getSigner } from "@/components/dashboard/Contracts";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,13 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useState, useEffect } from "react";
-import { parseEther } from "viem";
-import { SendCardProps } from "../actions.type";
-import { ethers } from "ethers";
-import { ERC20 } from "@/abi/ERC20";
-import { getSigner } from "@/components/dashboard/Contracts";
 import {
   Select,
   SelectContent,
@@ -21,14 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
-} from "@/components/ui/dialog";
+import { ethers } from "ethers";
+import { useEffect, useState } from "react";
+import { parseEther } from "viem";
+import { SendCardProps } from "../actions.type";
 
 export default function SendCard({
   isConnected,

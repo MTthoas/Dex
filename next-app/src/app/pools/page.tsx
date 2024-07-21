@@ -1,15 +1,21 @@
 "use client";
 import Layout from "@/components/liquidityPool/Layout";
-import { getPools } from "@/hook/pools.hook";
-import { getTokens } from "@/hook/tokens.hook";
-import { useQuery } from "@tanstack/react-query";
+import { useAccount } from "wagmi";
 
 export default function Page() {
+  const account = useAccount();
+  const { address } = account;
+
   return (
-    <div className="container min-h-screen py-32">
+    <div className="container min-h-screen">
       <div className="mx-auto xl:mx-14">
-        {" "}
-        <Layout />
+        {address ? (
+          <Layout />
+        ) : (
+          <div className="flex justify-center items-center h-[80vh]">
+            <a className="text-2xl font-bold">Please connect your wallet</a>
+          </div>
+        )}
       </div>
     </div>
   );

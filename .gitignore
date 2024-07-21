@@ -40,5 +40,4 @@ contracts/.DS_Store
 contracts/lib/*
 
 # Vscode
-.vscode/
 .idea/
