@@ -19,8 +19,10 @@ import {
 import { formatUnits } from "viem";
 
 const PlatformFee = () => {
-  const { data, isLoading, error, isSuccess, isError } = useReadLiquidityPoolPlatformFee();
-  const { writeContractAsync: writeLiquidityPoolPlatformFee } = useWriteLiquidityPoolUpdatePlatformFee();
+  const { data, isLoading, error, isSuccess, isError } =
+    useReadLiquidityPoolPlatformFee();
+  const { writeContractAsync: writeLiquidityPoolPlatformFee } =
+    useWriteLiquidityPoolUpdatePlatformFee();
   const [feePercentage, setFeePercentage] = useState<string>("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showError, setShowError] = useState<string | null>(null);
@@ -31,13 +33,17 @@ const PlatformFee = () => {
     setIsUpdating(true); // Set updating state
     try {
       if (feePercentage !== "" && parseFloat(feePercentage) >= 0) {
-        const feePercentageBigInt = BigInt(Math.round(parseFloat(feePercentage) * 100)); // In basis points (0.01% = 1)
+        const feePercentageBigInt = BigInt(
+          Math.round(parseFloat(feePercentage) * 100)
+        ); // In basis points (0.01% = 1)
         console.log("Updating platform fee to:", feePercentageBigInt);
         await writeLiquidityPoolPlatformFee({
           args: [feePercentageBigInt],
+        }).then((hash) => {
+          console.log("Platform fee updated with hash:", hash);
+          setShowConfirmation(true);
+          setTimeout(() => setShowConfirmation(false), 3000);
         });
-        setShowConfirmation(true);
-        setTimeout(() => setShowConfirmation(false), 3000);
       }
     } catch (writeError: any) {
       console.error("Failed to update platform fee:", writeError);
@@ -63,9 +69,7 @@ const PlatformFee = () => {
               <span>Error: {error.message}</span>
             </div>
           )}
-          {isSuccess && data && (
-            <div>Actual fees: {formatUnits(data, 2)}%</div>
-          )}
+          {isSuccess && data && <div>Actual fees: {formatUnits(data, 2)}%</div>}
 
           <div className="grid gap-2">
             <Label htmlFor="fee-percentage">Fee Percentage</Label>
