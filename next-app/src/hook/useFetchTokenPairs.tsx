@@ -1,6 +1,5 @@
 import { ERC20 } from "@/abi/ERC20";
 import { LiquidityPoolABI } from "@/abi/liquidityPool";
-import { TokenPair } from "@/components/liquidityPool/Layout";
 import { useEffect, useState } from "react";
 import { useAccount, useReadContracts } from "wagmi";
 

@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { queryClient } from "@/context";
 import { postTransaction } from "@/hook/transactions.hook";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useMutation } from "@tanstack/react-query";
@@ -36,17 +37,15 @@ export default function SwapCard({
   cryptoSelected,
   setCryptoSelected,
   chainId,
-  queryClient,
 }: {
   address: any;
   isConnected: boolean;
   chains: Chain[];
   pairs: any;
-  allTokens: any; // Add allTokens here
+  allTokens: any;
   cryptoSelected: any;
   setCryptoSelected: any;
   chainId: number;
-  queryClient: any;
 }) {
   const [selectedToken, setSelectedToken] = useState("");
   const [relatedToken, setRelatedToken] = useState("");

@@ -1,5 +1,4 @@
 import Globe from "@/components/magicui/globe";
-import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -9,16 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { darkTheme } from "@rainbow-me/rainbowkit";
 import { Activity, DollarSign } from "lucide-react";
 
 const page = () => {

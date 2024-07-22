@@ -18,7 +18,7 @@ import {
   http,
 } from "wagmi";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 

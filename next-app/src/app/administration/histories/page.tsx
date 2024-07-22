@@ -12,10 +12,11 @@ const HistoriesPage: React.FC = () => {
     queryFn: getUsers,
   });
 
-  const transactions = useQuery<Hook<Transaction[]>>({
+  const { data: transactions, isLoading } = useQuery<Hook<Transaction[]>>({
     queryKey: ["transactions"],
     queryFn: getTransactions,
   });
+
   return (
     <>
       <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
@@ -32,11 +33,15 @@ const HistoriesPage: React.FC = () => {
         )}
         <UsersTable users={users.data ? users.data?.data : []} /> */}
 
-        {transactions.data?.isError && (
+        {transactions?.isError && (
           <p>Error loading transactions: {transactions.data.error?.message}</p>
         )}
+
         <TransactionsTable
-          transactions={transactions.data ? transactions.data?.data : []}
+          transactions={
+            transactions && transactions.data ? transactions.data : []
+          }
+          isLoading={isLoading}
         />
       </main>
     </>

@@ -12,14 +12,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { formatTimeRemaining } from "@/utils/time.utils";
 import { ethers } from "ethers";
-import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Address } from "viem";
 import { useAccount, useReadContract } from "wagmi";
 import { useFetchTokensPairsByAddressList } from "../../hook/useFetchTokenPairs";
 import { getSigner, useFactoryContract } from "../dashboard/Contracts";
@@ -34,9 +31,6 @@ export type TokenPair = {
 
 export default function Layout() {
   const { address, chainId } = useAccount();
-  const [showModal, setShowModal] = useState(false);
-  const [tokenA, setTokenA] = useState("");
-  const [tokenB, setTokenB] = useState("");
   const [errorAddPool, setErrorAddPool] = useState("");
   const [transactionHash, setTransactionHash] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -98,40 +92,7 @@ export default function Layout() {
     chainId
   );
 
-  const handleCreatePool = async () => {
-    if (!ethers.isAddress(tokenA) || !ethers.isAddress(tokenB)) {
-      setErrorAddPool("Invalid address format");
-      toast.error("Invalid address format");
-      return;
-    }
-
-    try {
-      const tx = await FactoryContract.createPool(
-        tokenA as Address,
-        tokenB as Address,
-        address,
-        30,
-        address,
-        address
-      );
-      await tx.wait();
-      setTransactionHash(tx.hash);
-      setIsDialogOpen(true);
-      await refetch(); // Refetch the pool list to update the UI
-      toast.success("Pool created successfully");
-    } catch (error) {
-      const errorMessage = error.message.match(/execution reverted: "([^"]+)"/);
-      if (errorMessage && errorMessage[1]) {
-        console.log("Extracted error:", errorMessage[1]);
-        setErrorAddPool(errorMessage[1]);
-        toast.error(errorMessage[1]);
-      } else {
-        console.log("Full error:", error.message);
-        setErrorAddPool("An error occurred");
-        toast.error("An error occurred");
-      }
-    }
-  };
+  console.log("AllTokens", allTokens);
 
   const handleAddLiquidity = async () => {
     if (!pairsSelected) return;
@@ -402,16 +363,6 @@ export default function Layout() {
       >
         <div className="my-6 flex justify-between items-center">
           <h1 className="text-3xl font-semibold">List of Liquidity Pools</h1>
-          <DialogTrigger asChild>
-            <Button
-              onClick={() => setShowModal(true)}
-              size="lg"
-              className="flex items-center gap-1"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Add Pool
-            </Button>
-          </DialogTrigger>
         </div>
         {addressLPT && balanceLPT && (
           <p>
@@ -421,35 +372,6 @@ export default function Layout() {
             </span>
           </p>
         )}
-
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create a Liquidity Pool</DialogTitle>
-          </DialogHeader>
-          <DialogDescription>
-            Enter the address of the tokenA and tokenB to create a new pool
-            <div className="mt-4 flex flex-col gap-3">
-              <Input
-                type="string"
-                placeholder="0x... Address of the tokenA"
-                onChange={(e) => setTokenA(e.target.value)}
-              />
-              <Input
-                type="string"
-                placeholder="0x... Address of the tokenB"
-                onChange={(e) => setTokenB(e.target.value)}
-              />
-            </div>
-          </DialogDescription>
-          <DialogFooter>
-            <div className="flex justify-between w-full">
-              <p className="text-red-500 self-start">{errorAddPool}</p>
-              <Button type="submit" onClick={handleCreatePool}>
-                Confirm
-              </Button>
-            </div>
-          </DialogFooter>
-        </DialogContent>
 
         <div className="grid grid-row gap-6">
           <LiquidityPoolList

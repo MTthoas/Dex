@@ -1,7 +1,7 @@
 export const liquidityFactoryAddress =
   "0xb8ba85415f872f4c8233e0db3c3852a750315025";
-export const GenxAddress = "0x1D827eA08A539561F2C1911Be96ce187D33ecf0d";
-export const GensAddress = "0xb6C9A3D034F14F3c47c36C9F78a44cc2A5e8CCb1";
+export const GenxAddress = "0x7427f3B01878A8857fC883e8425C623588fEE954";
+export const GensAddress = "0x9f4d9189b9B19e4D87054a9f7be4A3c986e74D91";
 export const DonxAddress = "0x6f187a51f720541c024e72ff0209643b31fef5e1"; 
 export const MaxeAddress = "0x583e5178113ab52d556e05a034cb68e0c3070865"; 
 export const StakingAddress = "0x937cD4Aa88445B27f8eBe6d35A760a4aF18aE682";

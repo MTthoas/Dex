@@ -14,6 +14,5 @@ export interface SendCardProps {
     setCryptoSelected: any;
     account: any;
     chainId: number;
-    queryClient: any;
   }
   
