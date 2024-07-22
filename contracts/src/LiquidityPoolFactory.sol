@@ -52,7 +52,7 @@ contract LiquidityPoolFactory is ReentrancyGuard, AccessControl {
         uint256 platformFee,
         address admin2,
         address admin3
-    ) external nonReentrant returns (address pool) {
+    ) external nonReentrant onlyRole(ADMIN_ROLE) returns (address pool) {
         require(tokenA != address(0) && tokenB != address(0), "Factory: invalid token addresses");
         require(tokenA != tokenB, "Factory: identical token addresses");
         require(
