@@ -6,6 +6,7 @@ import SwapCard from "@/components/actions/swap/page";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { chains } from "@/context";
 import { useFetchTokensPairsByAddressList } from "@/hook/useFetchTokenPairs";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { polygonAmoy } from "viem/chains";
 import { useAccount, useReadContract } from "wagmi";
@@ -24,6 +25,8 @@ export default function ActionPage() {
   const account = useAccount();
   const { address } = account;
   const chainId = account.chainId ? account.chainId : polygonAmoy.id;
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     setIsSSR(false); // Set to false after the first render
@@ -83,6 +86,7 @@ export default function ActionPage() {
               cryptoSelected={cryptoSelected}
               setCryptoSelected={setCryptoSelected}
               chainId={chainId}
+              queryClient={queryClient}
             />
           ) : (
             <Skeleton className="h-[510px] w-full rounded-xl" />
@@ -100,6 +104,7 @@ export default function ActionPage() {
               setCryptoSelected={setCryptoSelected}
               account={account}
               chainId={chainId}
+              queryClient={queryClient}
             />
           ) : (
             <Skeleton className="h-[510px] w-[250px] rounded-xl" />

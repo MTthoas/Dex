@@ -12,9 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ethers } from "ethers";
-import { useEffect, useState } from "react";
-import { Chain } from "../actions.type";
 import {
   Select,
   SelectContent,
@@ -22,6 +19,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { postTransaction } from "@/hook/transactions.hook";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { useMutation } from "@tanstack/react-query";
+import { ethers } from "ethers";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Chain } from "../actions.type";
 
 export default function SwapCard({
   address,
@@ -32,6 +36,7 @@ export default function SwapCard({
   cryptoSelected,
   setCryptoSelected,
   chainId,
+  queryClient,
 }: {
   address: any;
   isConnected: boolean;
@@ -41,6 +46,7 @@ export default function SwapCard({
   cryptoSelected: any;
   setCryptoSelected: any;
   chainId: number;
+  queryClient: any;
 }) {
   const [selectedToken, setSelectedToken] = useState("");
   const [relatedToken, setRelatedToken] = useState("");
@@ -55,7 +61,16 @@ export default function SwapCard({
   const [tokenASupply, setTokenASupply] = useState(0);
   const [tokenBSupply, setTokenBSupply] = useState(0);
 
+  const [isLoading, setIsLoading] = useState(false);
   const signer = getSigner(chainId);
+  const [refresh, setRefresh] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: postTransaction,
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+    },
+  });
 
   useEffect(() => {
     const fetchAndSetTokenDetails = async () => {
@@ -124,7 +139,7 @@ export default function SwapCard({
     };
 
     fetchAndSetTokenDetails();
-  }, [selectedToken, relatedToken, pairs, signer, address, allTokens]);
+  }, [selectedToken, relatedToken, pairs, signer, address, allTokens, refresh]);
 
   useEffect(() => {
     if (cryptoSelected) {
@@ -156,15 +171,14 @@ export default function SwapCard({
       setAmountOut("");
     }
     if (relatedToken !== "" || amountIn !== "") {
-      const amountInWithFee = Number(amountIn) * 0.9;
-      const reserveIn = tokenASupply;
-      const reserveOut = tokenBSupply;
+      const amountInWithFee = Number(event.target.value) * 0.9;
+      const reserveIn = Number(tokenASupply);
+      const reserveOut = Number(tokenBSupply);
 
       if (reserveIn > 0) {
         const numerator = amountInWithFee * reserveOut;
         const denominator = reserveIn + amountInWithFee;
         const amountOutValue = numerator / denominator;
-
         setAmountOut(amountOutValue);
       }
     }
@@ -172,9 +186,20 @@ export default function SwapCard({
 
   const handleSwap = async () => {
     try {
-      if (!selectedToken || !relatedToken || !amountIn) return;
+      if (
+        !selectedToken ||
+        !relatedToken ||
+        Number(amountIn) == 0 ||
+        Number(amountOut) == 0
+      )
+        return;
 
-      const amountInWei = ethers.parseUnits(amountIn, 18);
+      setIsLoading(true);
+
+      console.log(amountIn, amountOut, selectedToken, relatedToken);
+
+      const amountInWei = ethers.parseUnits(String(amountIn), 18);
+      const amountOutWei = ethers.parseUnits(String(amountOut), 18);
       const swapContract = new ethers.Contract(
         poolAddress,
         LiquidityPoolABI,
@@ -201,29 +226,74 @@ export default function SwapCard({
         signer
       );
 
+      console.log(selectedToken);
+
       const approveTxFirst = await firstContract.approve(
         poolAddress,
         amountInWei
       );
       const approveTxSecond = await secondContract.approve(
         poolAddress,
-        amountInWei
+        amountOutWei
       );
 
       await approveTxFirst.wait();
+      toast.success(`Approval successful for ${selectedToken}`, {
+        description:
+          "Transaction hash : https://amoy.polygonscan.com/tx/" +
+          approveTxFirst.hash,
+      });
       await approveTxSecond.wait();
+      toast.success(`Approval successful for ${selectedToken}`, {
+        description:
+          "Transaction hash : https://amoy.polygonscan.com/tx/" +
+          approveTxSecond.hash,
+      });
 
-      await swapContract.swap(DataCurrent.address, amountInWei, 1);
+      // Make an useQuery to post transactions
 
-      alert(" Swap successful!");
+      // useQuery({
+      //   queryKey: ["transactions"],
+      //   queryFn: postTransactions,
+      // });
+
+      const swapTx = await swapContract.swap(
+        DataCurrent.address,
+        amountInWei,
+        1
+      );
+      await swapTx.wait();
+
+      mutation.mutate({
+        amount: Number(amountIn),
+        created_at: new Date().toISOString(),
+        from: address,
+        hash: swapTx.hash,
+        amount_a: Number(amountIn),
+        amount_b: Number(amountOut),
+        symbol_a: selectedToken,
+        symbol_b: relatedToken,
+        to: address,
+        type: "swap",
+        updated_at: new Date().toISOString,
+      });
+
+      toast.success("Swap successful!", {
+        description:
+          "Transaction hash : https://amoy.polygonscan.com/tx/" + swapTx.hash,
+      });
+      setIsLoading(false);
+      setRefresh(!refresh);
     } catch (error) {
-      console.error("Swap failed:", error);
+      toast.error("Swap failed", {
+        description: error.message,
+      });
+      setIsLoading(false);
     }
   };
 
   const handlePercentageClick = (percentage) => {
     const newAmount = (balanceA * percentage) / 100;
-    setAmountIn(newAmount.toFixed(2));
     handleAmountInChange({ target: { value: newAmount.toFixed(2) } });
   };
 
@@ -261,6 +331,13 @@ export default function SwapCard({
           />
         </div>
         <div className="flex space-x-2 mb-2">
+          <Button
+            className="bg-[#313140] text-xs h-6"
+            variant="secondary"
+            onClick={() => handlePercentageClick(2)}
+          >
+            2%
+          </Button>
           <Button
             className="bg-[#313140] text-xs h-6"
             variant="secondary"
@@ -327,9 +404,20 @@ export default function SwapCard({
           </div>
           <div className="pt-4">
             {address ? (
-              <Button className="w-full" onClick={handleSwap}>
-                Swap
-              </Button>
+              isLoading ? (
+                <Button disabled className="w-full">
+                  <ReloadIcon className="mr-2 w-4 h-4 animate-spin" />
+                  Loading...
+                </Button>
+              ) : (
+                <Button
+                  className="w-full"
+                  variant="primary"
+                  onClick={handleSwap}
+                >
+                  Swap
+                </Button>
+              )
             ) : (
               <CustomConnectButton />
             )}

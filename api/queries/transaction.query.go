@@ -11,7 +11,7 @@ type TransactionQueries struct {
 
 func (tq *TransactionQueries) GetAllTransactions() ([]models.Transaction, error) {
 	var transactions []models.Transaction
-	if err := tq.DB.Find(&transactions).Error; err != nil {
+	if err := tq.DB.Select("id", "from", "to", "hash", "amount_a", "amount_b", "type", "symbol_a", "symbol_b", "updated_at").Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 	return transactions, nil

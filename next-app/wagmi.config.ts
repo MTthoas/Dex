@@ -1,4 +1,4 @@
-import { GenxAddress, LiquidityAddress, LiquidityFactoryAddress, StakingAddress, StakingFactoryAddress, TokenManagerAddress, UserRegistryAddress } from "@/abi/address";
+import { GenxAddress, liquidityFactoryAddress, StakingAddress, StakingFactoryAddress, TokenManagerAddress, UserRegistryAddress } from "@/abi/address";
 import { defineConfig } from "@wagmi/cli";
 import { react } from "@wagmi/cli/plugins";
 import { Address } from "viem";
@@ -762,7 +762,6 @@ export default defineConfig(() => {
       },
       {
         name: "LiquidityPool",
-        address: LiquidityAddress as Address,
         abi: [
             {
                 "type": "constructor",
@@ -1491,7 +1490,7 @@ export default defineConfig(() => {
       },
       {
         name: "LiquidityPoolFactory",
-        address: LiquidityFactoryAddress as Address,
+        address: liquidityFactoryAddress as Address,
         abi: [
             {
                 "type": "constructor",

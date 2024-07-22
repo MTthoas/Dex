@@ -24,8 +24,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { postTransaction } from "@/hook/transactions.hook";
+import { EnumTransactionType } from "@/types/transaction.type";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { useMutation } from "@tanstack/react-query";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { parseEther } from "viem";
 import { SendCardProps } from "../actions.type";
 
@@ -38,6 +43,7 @@ export default function SendCard({
   setCryptoSelected,
   account,
   chainId,
+  queryClient,
 }: SendCardProps) {
   const [amount, setAmount] = useState<String>("0");
   const [recipientAddress, setRecipientAddress] = useState("");
@@ -46,6 +52,16 @@ export default function SendCard({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [transactionHash, setTransactionHash] = useState("");
   const signer = getSigner(chainId);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: postTransaction,
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+    },
+  });
 
   useEffect(() => {
     if (allTokens && cryptoSelected && allTokens.length > 0) {
@@ -72,7 +88,7 @@ export default function SendCard({
     if (selectedTokenAddress) {
       fetchTokenBalance();
     }
-  }, [selectedTokenAddress, account]);
+  }, [selectedTokenAddress, account, refresh]);
 
   const handleTransfer = async () => {
     console.log("Recipient address", recipientAddress);
@@ -80,6 +96,8 @@ export default function SendCard({
     if (!recipientAddress || !amount) {
       return;
     }
+
+    setIsLoading(true);
 
     const tokenContract = new ethers.Contract(
       selectedTokenAddress,
@@ -93,9 +111,34 @@ export default function SendCard({
         parseEther(amount.toString())
       );
 
+      tx.wait();
+
+      mutation.mutate({
+        amount: Number(amount),
+        created_at: new Date().toISOString(),
+        from: account.address,
+        hash: tx.hash,
+        amount_a: Number(amount),
+        amount_b: 0,
+        symbol_a: cryptoSelected,
+        symbol_b: "",
+        to: recipientAddress,
+        type: EnumTransactionType.Send,
+        updated_at: new Date().toISOString(),
+      });
+
       setTransactionHash(tx.hash);
-      setIsDialogOpen(true);
+      setIsLoading(false);
+      setRefresh(!refresh);
+      toast.success("Transaction successful", {
+        description:
+          "Transaction hash : https://amoy.polygonscan.com/tx/" + tx.hash,
+      });
     } catch (error) {
+      setIsLoading(false);
+      toast.error("Transaction failed", {
+        description: error.message,
+      });
       console.error("Transaction failed", error);
     }
   };
@@ -170,11 +213,22 @@ export default function SendCard({
             </div>
             <div className="mt-11">
               {isConnected ? (
-                <>
-                  <Button onClick={handleTransfer} className="w-full">
-                    Send Transaction
+                isLoading ? (
+                  <Button disabled className="w-full">
+                    <ReloadIcon className="mr-2 w-4 h-4 animate-spin" />
+                    Loading...
                   </Button>
-                </>
+                ) : (
+                  <Button
+                    className="w-full"
+                    onClick={() => {
+                      setIsLoading(true);
+                      handleTransfer().then(() => setIsLoading(false));
+                    }}
+                  >
+                    Send
+                  </Button>
+                )
               ) : (
                 <CustomConnectButton />
               )}
