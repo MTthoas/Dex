@@ -30,11 +30,3 @@ export async function getUsers() {
     return response.json();
   }
   
-  export async function getTransactions() {
-    const response = await fetch(apiUrl + "transactions");
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return response.json();
-  }
-  

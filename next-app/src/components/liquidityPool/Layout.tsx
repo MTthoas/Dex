@@ -85,8 +85,6 @@ export default function Layout() {
     chainId,
   });
 
-  console.log("baaa :" + baaa);
-
   const { data: balanceLPT } = useReadContract({
     abi: ERC20,
     functionName: "balanceOf",

@@ -31,7 +31,7 @@ func PublicRoutes(a *fiber.App) {
 	route.Delete("/users/:id", controllers.DeleteUser)
 
 	route.Get("/transactions", controllers.GetTransactions)
-	route.Get("/transaction/:id", controllers.GetTransaction)
+	route.Get("/transactions/:id", controllers.GetTransaction)
 	route.Post("/transactions", controllers.CreateTransaction)
 	route.Put("/transactions", controllers.UpdateTransaction)
 	route.Delete("/transactions/:id", controllers.DeleteTransaction)
