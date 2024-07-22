@@ -33,12 +33,13 @@ const BanUserAddress = () => {
     if (address && addressToBan) {
       if (address !== addressToBan) {
         try {
-          const user = await getUserByAdress(addressToBan as string);
-          if (!user) {
+          console.log("Banning user with address:", addressToBan);
+          const user = await getUserByAdress(addressToBan.toLowerCase());
+          if (!user.data) {
             throw new Error("User not found");
           }
-          console.log("Banning user id:", user.Id);
-          await updateUser(user.Id, { banned: true });
+          console.log("Banning user id:", user.data.id);
+          await updateUser(user.data.id, { banned: true });
           await writeUserRegistryBanUser({
             args: [addressToBan as Address],
           }).then((hash) => {

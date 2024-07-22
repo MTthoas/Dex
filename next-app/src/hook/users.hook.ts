@@ -15,6 +15,14 @@ export async function getUsers() {
     }
     return response.json();
   }
+
+  export async function getUsersBanned(): Promise<any> {
+    const response = await fetch(apiUrl + "users/banned");
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    return response.json();
+  }
   
   export async function createUser(data: CreateUserRequest): Promise<any> {
     const response = await fetch(apiUrl + "users", {

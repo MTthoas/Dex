@@ -123,7 +123,7 @@ func GetUsersBanned(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
-	users, err := db.UserQueries.GetAllBannedUsers()
+	users, err := db.UserQueries.GetAllUsersBanned()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
