@@ -26,8 +26,14 @@ import { useAccount } from "wagmi";
 
 const UnBanUserAddress = () => {
   const { address } = useAccount();
-  const { writeContractAsync: writeUserRegistryUnbanUser } =
-    useWriteUserRegistryUnbanUser();
+  const {
+    writeContractAsync: writeUserRegistryUnbanUser,
+    data,
+    isPending,
+    error,
+    isSuccess,
+    isError,
+  } = useWriteUserRegistryUnbanUser();
   const [bannedUsers, setBannedUsers] = useState<
     Array<{ address: string; id: number }>
   >([]);
@@ -40,7 +46,11 @@ const UnBanUserAddress = () => {
     const fetchBannedUsers = async () => {
       try {
         const response = await getUsersBanned();
-        setBannedUsers(response.data); // Access the 'data' field
+        // Filter out users that are not banned (temporary fix since the API doesn't want me to get only banned users...)
+        const bannedUsers = response.data.filter(
+          (user: any) => user.banned === "true"
+        );
+        setBannedUsers(bannedUsers);
       } catch (error) {
         console.error("Error fetching banned users:", error);
       }
@@ -53,22 +63,30 @@ const UnBanUserAddress = () => {
     setShowError(null);
     setIsUpdating(true);
     if (address && addressToUnban) {
-      if (address !== addressToUnban) {
+      if (address.toLowerCase() !== addressToUnban.toLowerCase()) {
         try {
-          console.log("Unbanning user with address:", addressToUnban.toLowerCase());
+          console.log(
+            "Unbanning user with address:",
+            addressToUnban.toLowerCase()
+          );
           const user = await getUserByAdress(addressToUnban.toLowerCase());
           if (!user.data) {
             throw new Error("User not found");
           }
-          await updateUser(user.data.id, { banned: false });
           await writeUserRegistryUnbanUser({
             args: [addressToUnban as Address],
-          }).then((hash) => {
+          }).then(async (hash) => {
             console.log("User unbanned with hash:", hash);
+
+            console.log("Unbanning user id:", user.data.id);
+            await updateUser(user.data.id, { banned: "false" });
+
             setShowConfirmation(addressToUnban.toLowerCase());
             setTimeout(() => setShowConfirmation(null), 3000);
             setBannedUsers((prev) =>
-              prev.filter((u) => u.address.toLowerCase() !== addressToUnban.toLowerCase())
+              prev.filter(
+                (u) => u.address.toLowerCase() !== addressToUnban.toLowerCase()
+              )
             );
           });
         } catch (writeError: any) {
