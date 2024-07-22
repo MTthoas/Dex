@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/context/ThemeProvider";
 import Web3ModalProvider from "@/context/index";
 import type { Metadata } from "next";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Genx DEX",
@@ -32,6 +33,7 @@ export default function RootLayout({
               <div className="relative z-10 h-full w-full">
                 <Header />
                 {children}
+                <Toaster />
                 {/* <Footer /> */}
               </div>
             </div>
