@@ -230,7 +230,11 @@ export default function SendCard({
                   </Button>
                 )
               ) : (
-                <CustomConnectButton />
+                <CustomConnectButton
+                  showChainModal={false}
+                  showAccountModal={false}
+                  showError={true}
+                />
               )}
             </div>
           </div>
