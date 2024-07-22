@@ -1,3 +1,4 @@
+import Globe from "@/components/magicui/globe";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -17,12 +18,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { darkTheme } from "@rainbow-me/rainbowkit";
 import { Activity, DollarSign } from "lucide-react";
 
 const page = () => {
   return (
     <div key="1" className="flex justify-center items-center min-h-screen">
-      <div className="container mx-auto">
+      <div className="container mx-auto mb-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 ml-12">
           <div className="lg:col-span-2">
             <h1 className="text-7xl font-bold mb-4">
@@ -34,7 +36,7 @@ const page = () => {
               to trade over 400 tokens instantly, no registration needed.
             </p>
             <div className="grid gap-4 md:gap-8 lg:grid-cols-3">
-              <Card>
+              <Card className="bg-transparant">
                 <CardHeader className="pb-2">
                   <CardDescription>This Week</CardDescription>
                   <CardTitle className="text-4xl">$1,329</CardTitle>
@@ -48,7 +50,7 @@ const page = () => {
                   <Progress value={25} aria-label="25% increase" />
                 </CardFooter>
               </Card>
-              <Card x-chunk="dashboard-01-chunk-0 dark:bg-black bg-white  ">
+              <Card x-chunk="dashboard-01-chunk-0" className="bg-transparant">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     Total Revenue
@@ -62,7 +64,7 @@ const page = () => {
                   </p>
                 </CardContent>
               </Card>
-              <Card x-chunk="dashboard-01-chunk-3">
+              <Card x-chunk="dashboard-01-chunk-3" className="bg-transparant">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     Active Now
@@ -77,6 +79,9 @@ const page = () => {
                 </CardContent>
               </Card>
             </div>
+          </div>
+          <div className="relative flex h-full w-full max-w-[32rem] items-center justify-center overflow-hidden">
+            <Globe className="top-5" />
           </div>
         </div>
       </div>
