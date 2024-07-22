@@ -29,8 +29,8 @@ const PlatformFee = () => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleSaveChanges = async () => {
-    setShowError(null); // Reset error state
-    setIsUpdating(true); // Set updating state
+    setShowError(null);
+    setIsUpdating(true);
     try {
       if (feePercentage !== "" && parseFloat(feePercentage) >= 0) {
         const feePercentageBigInt = BigInt(

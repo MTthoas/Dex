@@ -107,6 +107,33 @@ func GetUserByAddress(c *fiber.Ctx) error {
 	})
 }
 
+// GetUsersBanned function to get all banned users
+// @Summary Get all banned users
+// @Description Retrieves a list of all banned users in the database.
+// @Tags User
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.User
+// @Failure 500 {object} map[string]interface{}
+// @Router /api/v1/users/banned [get]
+func GetUsersBanned(c *fiber.Ctx) error {
+	db, err := database.OpenDBConnection()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	users, err := db.UserQueries.GetAllUsersBanned()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"data": users,
+	})
+}
+
 // CreateUser function to create a new user
 // @Summary Create a new user
 // @Description Creates a new user in the database.
