@@ -74,7 +74,7 @@ export const CustomConnectButton: React.FC<CustomConnectButtonProps> = ({
             await registerUser({ args: [randomName] }).then((hash) => {
               console.log("User registered with hash:", hash);
             });
-            await createUser({ address: address, name: "User" });
+            await createUser({ address: address, name: randomName, banned: false });
           }
         } catch (error: any) {
           setError(error.message);

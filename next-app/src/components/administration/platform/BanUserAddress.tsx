@@ -16,6 +16,7 @@ import { CircleCheckIcon } from "@/components/Icons";
 import { useWriteUserRegistryBanUser } from "@/hook/WagmiGenerated";
 import { Address } from "viem";
 import { useAccount } from "wagmi";
+import { getUserByAdress, updateUser } from "@/hook/users.hook";
 
 const BanUserAddress = () => {
   const { address } = useAccount();
@@ -32,6 +33,12 @@ const BanUserAddress = () => {
     if (address && addressToBan) {
       if (address !== addressToBan) {
         try {
+          const user = await getUserByAdress(addressToBan as string);
+          if (!user) {
+            throw new Error("User not found");
+          }
+          console.log("Banning user id:", user.Id);
+          await updateUser(user.Id, { banned: true });
           await writeUserRegistryBanUser({
             args: [addressToBan as Address],
           }).then((hash) => {

@@ -8,6 +8,6 @@ export const MaxeAddress = "0x583e5178113ab52d556e05a034cb68e0c3070865"; // To d
 export const StakingAddress = "0x937cD4Aa88445B27f8eBe6d35A760a4aF18aE682";
 export const StakingFactoryAddress = "0xEfb5b5FDfB52074F41e4DA095D8a3CCE65370232";
 export const TokenManagerAddress = "0xe54947ce60667E6bA9C15619D85169b20299BF63";
-export const UserRegistryAddress = "0x2c95Cb4E5C4Faf654513352De35a0470E956241e";
+export const UserRegistryAddress = "0x76F6F2cdd70129Bef9e73C89dDCA4df253a33100";
 
 export const ContractsOwnerAddress = "0x0a629f2643b4ef012fe9fd91fed130e01db895dc";
