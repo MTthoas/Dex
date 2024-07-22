@@ -33,10 +33,10 @@ func (uq *UserQueries) GetUserByAddress(address string) (models.User, error) {
 	return user, nil
 }
 
-func (uq *UserQueries) GetAllBannedUsers() ([]models.User, error) {
+func (uq *UserQueries) GetAllUsersBanned() ([]models.User, error) {
 	var users []models.User
-	if err := uq.DB.Where("banned = ?", true).Find(&users).Error; err != nil {
-		return nil, err
+	if err := uq.DB.Where("banned = ?", "true").Find(&users).Error; err != nil {
+		return []models.User{}, err
 	}
 	return users, nil
 }

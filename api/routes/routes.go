@@ -27,7 +27,7 @@ func PublicRoutes(a *fiber.App) {
 	route.Get("/users/address/:address", controllers.GetUserByAddress)
 	route.Get("/users/banned", controllers.GetUsersBanned)
 	route.Post("/users", controllers.CreateUser)
-	route.Put("/users", controllers.UpdateUser)
+	route.Put("/users/:id", controllers.UpdateUser)
 	route.Delete("/users/:id", controllers.DeleteUser)
 
 	route.Get("/transactions", controllers.GetTransactions)

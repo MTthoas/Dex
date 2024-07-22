@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import PlatformFee from "@/components/administration/platform/PlatformFee";
 import BanUserAddress from "@/components/administration/platform/BanUserAddress";
 import { SearchIcon } from "@/components/Icons";
+import UnBanUserAddress from "@/components/administration/platform/UnBanUserAddress";
 
 
 const PlatformPage: React.FC = () => {
@@ -28,8 +29,11 @@ const PlatformPage: React.FC = () => {
       </header>
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-2">
-          <PlatformFee />
           <BanUserAddress />
+          <UnBanUserAddress />
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-2">
+          <PlatformFee />
         </div>
       </main>
     </>

@@ -1,22 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { CircleCheckIcon } from "@/components/Icons";
+import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { CircleCheckIcon } from "@/components/Icons";
+import { Label } from "@/components/ui/label";
+import { getUserByAdress, updateUser } from "@/hook/users.hook";
 import { useWriteUserRegistryBanUser } from "@/hook/WagmiGenerated";
+import { useState } from "react";
 import { Address } from "viem";
 import { useAccount } from "wagmi";
-import { getUserByAdress, updateUser } from "@/hook/users.hook";
 
 const BanUserAddress = () => {
   const { address } = useAccount();
@@ -31,18 +31,21 @@ const BanUserAddress = () => {
     setShowError(null);
     setIsUpdating(true);
     if (address && addressToBan) {
-      if (address !== addressToBan) {
+      if (address.toLowerCase() !== addressToBan.toLowerCase()) {
         try {
-          const user = await getUserByAdress(addressToBan as string);
-          if (!user) {
+          console.log("Banning user with address:", addressToBan);
+          const user = await getUserByAdress(addressToBan.toLowerCase());
+          if (!user.data) {
             throw new Error("User not found");
           }
-          console.log("Banning user id:", user.Id);
-          await updateUser(user.Id, { banned: true });
           await writeUserRegistryBanUser({
             args: [addressToBan as Address],
-          }).then((hash) => {
+          }).then(async (hash) => {
             console.log("User banned with hash:", hash);
+
+            console.log("Banning user id:", user.data.id);
+            await updateUser(user.data.id, { banned: "true" });
+
             setShowConfirmation(addressToBan as string);
             setTimeout(() => setShowConfirmation(null), 3000);
           });
