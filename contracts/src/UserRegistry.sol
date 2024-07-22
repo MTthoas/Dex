@@ -98,7 +98,7 @@ contract UserRegistry is ReentrancyGuard, AccessControl {
      * @param _name The name of the user.
      * @return uint256 The user ID.
      */
-    function registerUser(string memory _name) public onlyRole(ADMIN_ROLE) nonReentrant returns (uint256) {
+    function registerUser(string memory _name) public nonReentrant returns (uint256) {
         require(users[msg.sender].id == 0, "User already registered");
 
         uint256 userId = registeredUserIds.length() + 1; // TODO: this is not working if we remove a user but can we remove a user ?

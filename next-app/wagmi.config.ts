@@ -1,4 +1,12 @@
-import { GenxAddress, LiquidityAddress, LiquidityFactoryAddress, StakingAddress, StakingFactoryAddress, TokenManagerAddress, UserRegistryAddress } from "@/abi/address";
+import {
+  GenxAddress,
+  LiquidityAddress,
+  LiquidityFactoryAddress,
+  StakingAddress,
+  StakingFactoryAddress,
+  TokenManagerAddress,
+  UserRegistryAddress,
+} from "@/abi/address";
 import { defineConfig } from "@wagmi/cli";
 import { react } from "@wagmi/cli/plugins";
 import { Address } from "viem";
@@ -764,2152 +772,2152 @@ export default defineConfig(() => {
         name: "LiquidityPool",
         address: LiquidityAddress as Address,
         abi: [
-            {
-                "type": "constructor",
-                "inputs": [
-                    {
-                        "name": "_tokenA",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "_tokenB",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "_liquidityToken",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "_platformFee",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "_minimumLiquidity",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "_admin",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "_admin2",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "_admin3",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "ADMIN_ROLE",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "DEFAULT_ADMIN_ROLE",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "addLiquidity",
-                "inputs": [
-                    {
-                        "name": "tokenAAmount",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "tokenBAmount",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "calculateRewards",
-                "inputs": [
-                    {
-                        "name": "user",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "rewardA",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "rewardB",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "claimRewards",
-                "inputs": [],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "getAmountOut",
-                "inputs": [
-                    {
-                        "name": "amountIn",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "tokenIn",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "getPair",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "getPrice",
-                "inputs": [
-                    {
-                        "name": "tokenIn",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "amountIn",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "getReserves",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "getRoleAdmin",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "grantRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "hasRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bool",
-                        "internalType": "bool"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "liquidityToken",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "contract LiquidityToken"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "platformFee",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "removeLiquidity",
-                "inputs": [
-                    {
-                        "name": "liquidity",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "renounceRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "callerConfirmation",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "revokeRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "supportsInterface",
-                "inputs": [
-                    {
-                        "name": "interfaceId",
-                        "type": "bytes4",
-                        "internalType": "bytes4"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bool",
-                        "internalType": "bool"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "swap",
-                "inputs": [
-                    {
-                        "name": "tokenIn",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "amountIn",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "minAmountOut",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "tokenA",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "contract Token"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "tokenB",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "contract Token"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "updatePlatformFee",
-                "inputs": [
-                    {
-                        "name": "_platformFee",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "userLiquidity",
-                "inputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "amountTokenA",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "amountTokenB",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "liquidity",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "timestamp",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "userRewardsA",
-                "inputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "userRewardsB",
-                "inputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "event",
-                "name": "LiquidityAdded",
-                "inputs": [
-                    {
-                        "name": "user",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "amountTokenA",
-                        "type": "uint256",
-                        "indexed": false,
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "amountTokenB",
-                        "type": "uint256",
-                        "indexed": false,
-                        "internalType": "uint256"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "LiquidityRemoved",
-                "inputs": [
-                    {
-                        "name": "user",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "amountTokenA",
-                        "type": "uint256",
-                        "indexed": false,
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "amountTokenB",
-                        "type": "uint256",
-                        "indexed": false,
-                        "internalType": "uint256"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "RewardClaimed",
-                "inputs": [
-                    {
-                        "name": "user",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "rewardAmountA",
-                        "type": "uint256",
-                        "indexed": false,
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "rewardAmountB",
-                        "type": "uint256",
-                        "indexed": false,
-                        "internalType": "uint256"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "RoleAdminChanged",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "previousAdminRole",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "newAdminRole",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "RoleGranted",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "sender",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "RoleRevoked",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "sender",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "Swap",
-                "inputs": [
-                    {
-                        "name": "user",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "tokenIn",
-                        "type": "address",
-                        "indexed": false,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "amountIn",
-                        "type": "uint256",
-                        "indexed": false,
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "tokenOut",
-                        "type": "address",
-                        "indexed": false,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "amountOut",
-                        "type": "uint256",
-                        "indexed": false,
-                        "internalType": "uint256"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "error",
-                "name": "AccessControlBadConfirmation",
-                "inputs": []
-            },
-            {
-                "type": "error",
-                "name": "AccessControlUnauthorizedAccount",
-                "inputs": [
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "neededRole",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ]
-            },
-            {
-                "type": "error",
-                "name": "MathOverflowedMulDiv",
-                "inputs": []
-            },
-            {
-                "type": "error",
-                "name": "ReentrancyGuardReentrantCall",
-                "inputs": []
-            }
+          {
+            type: "constructor",
+            inputs: [
+              {
+                name: "_tokenA",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "_tokenB",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "_liquidityToken",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "_platformFee",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "_minimumLiquidity",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "_admin",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "_admin2",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "_admin3",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "ADMIN_ROLE",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "DEFAULT_ADMIN_ROLE",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "addLiquidity",
+            inputs: [
+              {
+                name: "tokenAAmount",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "tokenBAmount",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "calculateRewards",
+            inputs: [
+              {
+                name: "user",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "rewardA",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "rewardB",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "claimRewards",
+            inputs: [],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "getAmountOut",
+            inputs: [
+              {
+                name: "amountIn",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "tokenIn",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "getPair",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "getPrice",
+            inputs: [
+              {
+                name: "tokenIn",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "amountIn",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "getReserves",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "getRoleAdmin",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "grantRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "hasRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bool",
+                internalType: "bool",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "liquidityToken",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "contract LiquidityToken",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "platformFee",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "removeLiquidity",
+            inputs: [
+              {
+                name: "liquidity",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "renounceRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "callerConfirmation",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "revokeRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "supportsInterface",
+            inputs: [
+              {
+                name: "interfaceId",
+                type: "bytes4",
+                internalType: "bytes4",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bool",
+                internalType: "bool",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "swap",
+            inputs: [
+              {
+                name: "tokenIn",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "amountIn",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "minAmountOut",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "tokenA",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "contract Token",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "tokenB",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "contract Token",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "updatePlatformFee",
+            inputs: [
+              {
+                name: "_platformFee",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "userLiquidity",
+            inputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            outputs: [
+              {
+                name: "amountTokenA",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "amountTokenB",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "liquidity",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "timestamp",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "userRewardsA",
+            inputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "userRewardsB",
+            inputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "event",
+            name: "LiquidityAdded",
+            inputs: [
+              {
+                name: "user",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "amountTokenA",
+                type: "uint256",
+                indexed: false,
+                internalType: "uint256",
+              },
+              {
+                name: "amountTokenB",
+                type: "uint256",
+                indexed: false,
+                internalType: "uint256",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "LiquidityRemoved",
+            inputs: [
+              {
+                name: "user",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "amountTokenA",
+                type: "uint256",
+                indexed: false,
+                internalType: "uint256",
+              },
+              {
+                name: "amountTokenB",
+                type: "uint256",
+                indexed: false,
+                internalType: "uint256",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "RewardClaimed",
+            inputs: [
+              {
+                name: "user",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "rewardAmountA",
+                type: "uint256",
+                indexed: false,
+                internalType: "uint256",
+              },
+              {
+                name: "rewardAmountB",
+                type: "uint256",
+                indexed: false,
+                internalType: "uint256",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "RoleAdminChanged",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "previousAdminRole",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "newAdminRole",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "RoleGranted",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "sender",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "RoleRevoked",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "sender",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "Swap",
+            inputs: [
+              {
+                name: "user",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "tokenIn",
+                type: "address",
+                indexed: false,
+                internalType: "address",
+              },
+              {
+                name: "amountIn",
+                type: "uint256",
+                indexed: false,
+                internalType: "uint256",
+              },
+              {
+                name: "tokenOut",
+                type: "address",
+                indexed: false,
+                internalType: "address",
+              },
+              {
+                name: "amountOut",
+                type: "uint256",
+                indexed: false,
+                internalType: "uint256",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "error",
+            name: "AccessControlBadConfirmation",
+            inputs: [],
+          },
+          {
+            type: "error",
+            name: "AccessControlUnauthorizedAccount",
+            inputs: [
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "neededRole",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+          },
+          {
+            type: "error",
+            name: "MathOverflowedMulDiv",
+            inputs: [],
+          },
+          {
+            type: "error",
+            name: "ReentrancyGuardReentrantCall",
+            inputs: [],
+          },
         ],
       },
       {
         name: "LiquidityPoolFactory",
         address: LiquidityFactoryAddress as Address,
         abi: [
-            {
-                "type": "constructor",
-                "inputs": [
-                    {
-                        "name": "_liquidityToken",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "admin",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "admin2",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "admin3",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "ADMIN_ROLE",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "DEFAULT_ADMIN_ROLE",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "allPools",
-                "inputs": [
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "allPoolsAddress",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "address[]",
-                        "internalType": "address[]"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "allPoolsLength",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "createPool",
-                "inputs": [
-                    {
-                        "name": "tokenA",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "tokenB",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "poolOwner",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "platformFee",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "admin2",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "admin3",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "pool",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "getPool",
-                "inputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "getPoolAddress",
-                "inputs": [
-                    {
-                        "name": "tokenA",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "tokenB",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "getPoolAddressByIndex",
-                "inputs": [
-                    {
-                        "name": "index",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "getRoleAdmin",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "grantRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "hasRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bool",
-                        "internalType": "bool"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "isPoolPairAlreadyExists",
-                "inputs": [
-                    {
-                        "name": "tokenA",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "tokenB",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bool",
-                        "internalType": "bool"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "liquidityToken",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "contract LiquidityToken"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "renounceRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "callerConfirmation",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "revokeRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "supportsInterface",
-                "inputs": [
-                    {
-                        "name": "interfaceId",
-                        "type": "bytes4",
-                        "internalType": "bytes4"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bool",
-                        "internalType": "bool"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "event",
-                "name": "PoolCreated",
-                "inputs": [
-                    {
-                        "name": "tokenA",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "tokenB",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "poolAddress",
-                        "type": "address",
-                        "indexed": false,
-                        "internalType": "address"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "RoleAdminChanged",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "previousAdminRole",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "newAdminRole",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "RoleGranted",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "sender",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "RoleRevoked",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "sender",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "error",
-                "name": "AccessControlBadConfirmation",
-                "inputs": []
-            },
-            {
-                "type": "error",
-                "name": "AccessControlUnauthorizedAccount",
-                "inputs": [
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "neededRole",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ]
-            },
-            {
-                "type": "error",
-                "name": "ReentrancyGuardReentrantCall",
-                "inputs": []
-            }
+          {
+            type: "constructor",
+            inputs: [
+              {
+                name: "_liquidityToken",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "admin",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "admin2",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "admin3",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "ADMIN_ROLE",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "DEFAULT_ADMIN_ROLE",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "allPools",
+            inputs: [
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "allPoolsAddress",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "address[]",
+                internalType: "address[]",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "allPoolsLength",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "createPool",
+            inputs: [
+              {
+                name: "tokenA",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "tokenB",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "poolOwner",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "platformFee",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "admin2",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "admin3",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "pool",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "getPool",
+            inputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "getPoolAddress",
+            inputs: [
+              {
+                name: "tokenA",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "tokenB",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "getPoolAddressByIndex",
+            inputs: [
+              {
+                name: "index",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "getRoleAdmin",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "grantRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "hasRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bool",
+                internalType: "bool",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "isPoolPairAlreadyExists",
+            inputs: [
+              {
+                name: "tokenA",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "tokenB",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bool",
+                internalType: "bool",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "liquidityToken",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "contract LiquidityToken",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "renounceRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "callerConfirmation",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "revokeRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "supportsInterface",
+            inputs: [
+              {
+                name: "interfaceId",
+                type: "bytes4",
+                internalType: "bytes4",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bool",
+                internalType: "bool",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "event",
+            name: "PoolCreated",
+            inputs: [
+              {
+                name: "tokenA",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "tokenB",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "poolAddress",
+                type: "address",
+                indexed: false,
+                internalType: "address",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "RoleAdminChanged",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "previousAdminRole",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "newAdminRole",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "RoleGranted",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "sender",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "RoleRevoked",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "sender",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "error",
+            name: "AccessControlBadConfirmation",
+            inputs: [],
+          },
+          {
+            type: "error",
+            name: "AccessControlUnauthorizedAccount",
+            inputs: [
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "neededRole",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+          },
+          {
+            type: "error",
+            name: "ReentrancyGuardReentrantCall",
+            inputs: [],
+          },
         ],
       },
       {
         name: "TokenManager",
         address: TokenManagerAddress as Address,
         abi: [
-            {
-                "type": "constructor",
-                "inputs": [
-                    {
-                        "name": "_admin",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "_admin2",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "_admin3",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "ADMIN_ROLE",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "DEFAULT_ADMIN_ROLE",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "delistToken",
-                "inputs": [
-                    {
-                        "name": "_tokenAddress",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "getListedTokens",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "tokens",
-                        "type": "address[]",
-                        "internalType": "address[]"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "getRoleAdmin",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "getTokenInfo",
-                "inputs": [
-                    {
-                        "name": "_tokenAddress",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "name",
-                        "type": "string",
-                        "internalType": "string"
-                    },
-                    {
-                        "name": "symbol",
-                        "type": "string",
-                        "internalType": "string"
-                    },
-                    {
-                        "name": "decimals",
-                        "type": "uint8",
-                        "internalType": "uint8"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "grantRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "hasRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bool",
-                        "internalType": "bool"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "listToken",
-                "inputs": [
-                    {
-                        "name": "_tokenAddress",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "_name",
-                        "type": "string",
-                        "internalType": "string"
-                    },
-                    {
-                        "name": "_symbol",
-                        "type": "string",
-                        "internalType": "string"
-                    },
-                    {
-                        "name": "_decimals",
-                        "type": "uint8",
-                        "internalType": "uint8"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "renounceRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "callerConfirmation",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "revokeRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "supportsInterface",
-                "inputs": [
-                    {
-                        "name": "interfaceId",
-                        "type": "bytes4",
-                        "internalType": "bytes4"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bool",
-                        "internalType": "bool"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "tokenInfos",
-                "inputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "name",
-                        "type": "string",
-                        "internalType": "string"
-                    },
-                    {
-                        "name": "symbol",
-                        "type": "string",
-                        "internalType": "string"
-                    },
-                    {
-                        "name": "decimals",
-                        "type": "uint8",
-                        "internalType": "uint8"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "event",
-                "name": "RoleAdminChanged",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "previousAdminRole",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "newAdminRole",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "RoleGranted",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "sender",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "RoleRevoked",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "sender",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "TokenDelisted",
-                "inputs": [
-                    {
-                        "name": "tokenAddress",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "TokenListed",
-                "inputs": [
-                    {
-                        "name": "tokenAddress",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "name",
-                        "type": "string",
-                        "indexed": false,
-                        "internalType": "string"
-                    },
-                    {
-                        "name": "symbol",
-                        "type": "string",
-                        "indexed": false,
-                        "internalType": "string"
-                    },
-                    {
-                        "name": "decimals",
-                        "type": "uint8",
-                        "indexed": false,
-                        "internalType": "uint8"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "error",
-                "name": "AccessControlBadConfirmation",
-                "inputs": []
-            },
-            {
-                "type": "error",
-                "name": "AccessControlUnauthorizedAccount",
-                "inputs": [
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "neededRole",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ]
-            }
+          {
+            type: "constructor",
+            inputs: [
+              {
+                name: "_admin",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "_admin2",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "_admin3",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "ADMIN_ROLE",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "DEFAULT_ADMIN_ROLE",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "delistToken",
+            inputs: [
+              {
+                name: "_tokenAddress",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "getListedTokens",
+            inputs: [],
+            outputs: [
+              {
+                name: "tokens",
+                type: "address[]",
+                internalType: "address[]",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "getRoleAdmin",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "getTokenInfo",
+            inputs: [
+              {
+                name: "_tokenAddress",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "name",
+                type: "string",
+                internalType: "string",
+              },
+              {
+                name: "symbol",
+                type: "string",
+                internalType: "string",
+              },
+              {
+                name: "decimals",
+                type: "uint8",
+                internalType: "uint8",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "grantRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "hasRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bool",
+                internalType: "bool",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "listToken",
+            inputs: [
+              {
+                name: "_tokenAddress",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "_name",
+                type: "string",
+                internalType: "string",
+              },
+              {
+                name: "_symbol",
+                type: "string",
+                internalType: "string",
+              },
+              {
+                name: "_decimals",
+                type: "uint8",
+                internalType: "uint8",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "renounceRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "callerConfirmation",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "revokeRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "supportsInterface",
+            inputs: [
+              {
+                name: "interfaceId",
+                type: "bytes4",
+                internalType: "bytes4",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bool",
+                internalType: "bool",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "tokenInfos",
+            inputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "name",
+                type: "string",
+                internalType: "string",
+              },
+              {
+                name: "symbol",
+                type: "string",
+                internalType: "string",
+              },
+              {
+                name: "decimals",
+                type: "uint8",
+                internalType: "uint8",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "event",
+            name: "RoleAdminChanged",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "previousAdminRole",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "newAdminRole",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "RoleGranted",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "sender",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "RoleRevoked",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "sender",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "TokenDelisted",
+            inputs: [
+              {
+                name: "tokenAddress",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "TokenListed",
+            inputs: [
+              {
+                name: "tokenAddress",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "name",
+                type: "string",
+                indexed: false,
+                internalType: "string",
+              },
+              {
+                name: "symbol",
+                type: "string",
+                indexed: false,
+                internalType: "string",
+              },
+              {
+                name: "decimals",
+                type: "uint8",
+                indexed: false,
+                internalType: "uint8",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "error",
+            name: "AccessControlBadConfirmation",
+            inputs: [],
+          },
+          {
+            type: "error",
+            name: "AccessControlUnauthorizedAccount",
+            inputs: [
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "neededRole",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+          },
         ],
       },
       {
         name: "UserRegistry",
         address: UserRegistryAddress as Address,
         abi: [
-            {
-                "type": "constructor",
-                "inputs": [
-                    {
-                        "name": "_admin",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "_admin2",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "_admin3",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "ADMIN_ROLE",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "DEFAULT_ADMIN_ROLE",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "banUser",
-                "inputs": [
-                    {
-                        "name": "_userAddress",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "getRegisteredUserIds",
-                "inputs": [],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256[]",
-                        "internalType": "uint256[]"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "getRoleAdmin",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "getUserId",
-                "inputs": [
-                    {
-                        "name": "_address",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "grantRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "hasRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bool",
-                        "internalType": "bool"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "isRegisteredUser",
-                "inputs": [
-                    {
-                        "name": "_address",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bool",
-                        "internalType": "bool"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "isUserBanned",
-                "inputs": [
-                    {
-                        "name": "_userAddress",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bool",
-                        "internalType": "bool"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "registerUser",
-                "inputs": [
-                    {
-                        "name": "_name",
-                        "type": "string",
-                        "internalType": "string"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "renounceRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "callerConfirmation",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "revokeRole",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "supportsInterface",
-                "inputs": [
-                    {
-                        "name": "interfaceId",
-                        "type": "bytes4",
-                        "internalType": "bytes4"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bool",
-                        "internalType": "bool"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "function",
-                "name": "transferUserId",
-                "inputs": [
-                    {
-                        "name": "_oldAddress",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "_newAddress",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "unbanUser",
-                "inputs": [
-                    {
-                        "name": "_userAddress",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    }
-                ],
-                "stateMutability": "nonpayable"
-            },
-            {
-                "type": "function",
-                "name": "users",
-                "inputs": [
-                    {
-                        "name": "",
-                        "type": "address",
-                        "internalType": "address"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "id",
-                        "type": "uint256",
-                        "internalType": "uint256"
-                    },
-                    {
-                        "name": "name",
-                        "type": "string",
-                        "internalType": "string"
-                    },
-                    {
-                        "name": "isBanned",
-                        "type": "bool",
-                        "internalType": "bool"
-                    }
-                ],
-                "stateMutability": "view"
-            },
-            {
-                "type": "event",
-                "name": "RoleAdminChanged",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "previousAdminRole",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "newAdminRole",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "RoleGranted",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "sender",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "RoleRevoked",
-                "inputs": [
-                    {
-                        "name": "role",
-                        "type": "bytes32",
-                        "indexed": true,
-                        "internalType": "bytes32"
-                    },
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "sender",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "UserBanned",
-                "inputs": [
-                    {
-                        "name": "userAddress",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "userId",
-                        "type": "uint256",
-                        "indexed": false,
-                        "internalType": "uint256"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "UserRegistered",
-                "inputs": [
-                    {
-                        "name": "userAddress",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "userId",
-                        "type": "uint256",
-                        "indexed": false,
-                        "internalType": "uint256"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "event",
-                "name": "UserUnbanned",
-                "inputs": [
-                    {
-                        "name": "userAddress",
-                        "type": "address",
-                        "indexed": true,
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "userId",
-                        "type": "uint256",
-                        "indexed": false,
-                        "internalType": "uint256"
-                    }
-                ],
-                "anonymous": false
-            },
-            {
-                "type": "error",
-                "name": "AccessControlBadConfirmation",
-                "inputs": []
-            },
-            {
-                "type": "error",
-                "name": "AccessControlUnauthorizedAccount",
-                "inputs": [
-                    {
-                        "name": "account",
-                        "type": "address",
-                        "internalType": "address"
-                    },
-                    {
-                        "name": "neededRole",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
-                    }
-                ]
-            },
-            {
-                "type": "error",
-                "name": "ReentrancyGuardReentrantCall",
-                "inputs": []
-            }
+          {
+            type: "constructor",
+            inputs: [
+              {
+                name: "_admin",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "_admin2",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "_admin3",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "ADMIN_ROLE",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "DEFAULT_ADMIN_ROLE",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "banUser",
+            inputs: [
+              {
+                name: "_userAddress",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "getRegisteredUserIds",
+            inputs: [],
+            outputs: [
+              {
+                name: "",
+                type: "uint256[]",
+                internalType: "uint256[]",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "getRoleAdmin",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "getUserId",
+            inputs: [
+              {
+                name: "_address",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "grantRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "hasRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bool",
+                internalType: "bool",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "isRegisteredUser",
+            inputs: [
+              {
+                name: "_address",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bool",
+                internalType: "bool",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "isUserBanned",
+            inputs: [
+              {
+                name: "_userAddress",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bool",
+                internalType: "bool",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "registerUser",
+            inputs: [
+              {
+                name: "_name",
+                type: "string",
+                internalType: "string",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "renounceRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "callerConfirmation",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "revokeRole",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "supportsInterface",
+            inputs: [
+              {
+                name: "interfaceId",
+                type: "bytes4",
+                internalType: "bytes4",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "bool",
+                internalType: "bool",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "function",
+            name: "transferUserId",
+            inputs: [
+              {
+                name: "_oldAddress",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "_newAddress",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "unbanUser",
+            inputs: [
+              {
+                name: "_userAddress",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "",
+                type: "uint256",
+                internalType: "uint256",
+              },
+            ],
+            stateMutability: "nonpayable",
+          },
+          {
+            type: "function",
+            name: "users",
+            inputs: [
+              {
+                name: "",
+                type: "address",
+                internalType: "address",
+              },
+            ],
+            outputs: [
+              {
+                name: "id",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "name",
+                type: "string",
+                internalType: "string",
+              },
+              {
+                name: "isBanned",
+                type: "bool",
+                internalType: "bool",
+              },
+            ],
+            stateMutability: "view",
+          },
+          {
+            type: "event",
+            name: "RoleAdminChanged",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "previousAdminRole",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "newAdminRole",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "RoleGranted",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "sender",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "RoleRevoked",
+            inputs: [
+              {
+                name: "role",
+                type: "bytes32",
+                indexed: true,
+                internalType: "bytes32",
+              },
+              {
+                name: "account",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "sender",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "UserBanned",
+            inputs: [
+              {
+                name: "userAddress",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "userId",
+                type: "uint256",
+                indexed: false,
+                internalType: "uint256",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "UserRegistered",
+            inputs: [
+              {
+                name: "userAddress",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "userId",
+                type: "uint256",
+                indexed: false,
+                internalType: "uint256",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "event",
+            name: "UserUnbanned",
+            inputs: [
+              {
+                name: "userAddress",
+                type: "address",
+                indexed: true,
+                internalType: "address",
+              },
+              {
+                name: "userId",
+                type: "uint256",
+                indexed: false,
+                internalType: "uint256",
+              },
+            ],
+            anonymous: false,
+          },
+          {
+            type: "error",
+            name: "AccessControlBadConfirmation",
+            inputs: [],
+          },
+          {
+            type: "error",
+            name: "AccessControlUnauthorizedAccount",
+            inputs: [
+              {
+                name: "account",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "neededRole",
+                type: "bytes32",
+                internalType: "bytes32",
+              },
+            ],
+          },
+          {
+            type: "error",
+            name: "ReentrancyGuardReentrantCall",
+            inputs: [],
+          },
         ],
-      }
+      },
     ],
     plugins: [react()],
   };

@@ -12,7 +12,6 @@ func PublicRoutes(a *fiber.App) {
 
 	route.Get("/healthCheck", controllers.HealthCheck)
 
-	// Routes for GET method:
 	route.Get("/tokens", controllers.GetTokensController)
 	route.Get("/tokens/ethereum", controllers.GetEthereumTokensController)
 	route.Get("/tokens/ethereum/:addresses", controllers.GetEthereumTokenByAddressController)
@@ -26,6 +25,7 @@ func PublicRoutes(a *fiber.App) {
 	route.Get("/users", controllers.GetUsers)
 	route.Get("/users/:id", controllers.GetUsers)
 	route.Get("/users/address/:address", controllers.GetUserByAddress)
+	route.Get("/users/banned", controllers.GetUsersBanned)
 	route.Post("/users", controllers.CreateUser)
 	route.Put("/users", controllers.UpdateUser)
 	route.Delete("/users/:id", controllers.DeleteUser)
