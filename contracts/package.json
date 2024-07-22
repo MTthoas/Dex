@@ -1,0 +1,28 @@
+{
+  "name": "dex",
+  "version": "1.0.0",
+  "description": "Decentralized Exchange",
+  "main": "index.js",
+  "license": "MIT",
+  "files": [
+    "src/**/*.sol"
+  ],
+  "devDependencies": {
+    "prettier": "3.2.5",
+    "prettier-plugin-solidity": "1.3.1"
+  },
+  "scripts": {
+    "prettier": "prettier --write --plugin=prettier-plugin-solidity 'contracts/**/*.sol'",
+    "lint": "prettier --list-different --plugin=prettier-plugin-solidity 'contracts/**/*.sol'",
+    "sub-modules": "cd ../ && git submodule update --init --recursive",
+    "gas-report": "forge test --gas-report",
+    "build": "forge build",
+    "test": "forge test -vvvv",
+    "deploy-access-manager": "forge script script/00_deployAccessManager.s.sol --rpc-url $RPC_URL --private-key $ACCOUNT_PRIVATE_KEY --broadcast --verify -vvvv"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2",
+    "@openzeppelin/contracts-upgradeable": "^5.0.2",
+    "dotenv": "16.4.5"
+  }
+}
