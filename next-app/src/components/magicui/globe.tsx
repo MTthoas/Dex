@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
 import createGlobe, { COBEOptions } from "cobe";
+import { useCallback, useEffect, useRef } from "react";
 import { useSpring } from "react-spring";
 
 import { cn } from "@/lib/utils";
@@ -17,7 +17,7 @@ const GLOBE_CONFIG: COBEOptions = {
   diffuse: 0.4,
   mapSamples: 12000,
   mapBrightness: 1.2,
-  baseColor: [0.5, 0.5, 0.5],
+  baseColor: [1, 1, 1],
   markerColor: [189 / 255, 30 / 255, 89 / 255],
   glowColor: [0.1, 0.1, 0.1],
   markers: [

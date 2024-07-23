@@ -33,8 +33,6 @@ const Page = () => {
     queryFn: getUsers,
   });
 
-  console.log(users);
-
   const transactionData = React.useMemo(() => {
     if (!transactions || !transactions.data) return [];
 
@@ -50,26 +48,30 @@ const Page = () => {
       {}
     );
 
-    return Object.keys(dateMap).map((date) => ({
-      date,
-      transactions: dateMap[date],
-    }));
+    return Object.keys(dateMap)
+      .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+      .map((date) => ({
+        date,
+        transactions: dateMap[date],
+      }));
   }, [transactions]);
 
   const userData = React.useMemo(() => {
     if (!users || !users.data) return [];
 
     const dateMap = users.data.reduce((acc: any, user: User) => {
-      const date = new Date(user.updated_at).toISOString().split("T")[0];
+      const date = new Date(user.created_at).toISOString().split("T")[0];
       if (!acc[date]) acc[date] = 0;
       acc[date]++;
       return acc;
     }, {});
 
-    return Object.keys(dateMap).map((date) => ({
-      date,
-      users: dateMap[date],
-    }));
+    return Object.keys(dateMap)
+      .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+      .map((date) => ({
+        date,
+        users: dateMap[date],
+      }));
   }, [users]);
 
   const chartConfig = {
