@@ -24,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { queryClient } from "@/context";
 import { postTransaction } from "@/hook/transactions.hook";
 import { EnumTransactionType } from "@/types/transaction.type";
 import { ReloadIcon } from "@radix-ui/react-icons";
@@ -44,6 +43,7 @@ export default function SendCard({
   setCryptoSelected,
   account,
   chainId,
+  queryClient,
 }: SendCardProps) {
   const [amount, setAmount] = useState<String>("0");
   const [recipientAddress, setRecipientAddress] = useState("");

@@ -113,10 +113,34 @@ func (tq *TokenQueries) CreateToken(token models.Token) (models.Token, error) {
 }
 
 func (tq *TokenQueries) UpdateToken(token models.Token) (models.Token, error) {
-	if err := tq.DB.Save(&token).Error; err != nil {
+	var existingToken models.Token
+	if err := tq.DB.First(&existingToken, token.Id).Error; err != nil {
+		return models.Token{}, err // Return an error if the token doesn't exist
+	}
+
+	// Update the fields
+	existingToken.Name = token.Name
+	existingToken.Symbol = token.Symbol
+	existingToken.Image = token.Image
+	existingToken.Address = token.Address
+	existingToken.CurrentPrice = token.CurrentPrice
+	existingToken.MarketCap = token.MarketCap
+	existingToken.MarketCapRank = token.MarketCapRank
+	existingToken.TotalVolume = token.TotalVolume
+	existingToken.PriceChange24h = token.PriceChange24h
+	existingToken.PriceChangePercentage24h = token.PriceChangePercentage24h
+	existingToken.MarketCapChange24h = token.MarketCapChange24h
+	existingToken.MarketCapChangePercentage = token.MarketCapChangePercentage
+	existingToken.TotalSupply = token.TotalSupply
+	existingToken.MaxSupply = token.MaxSupply
+
+	// print the updated token
+	fmt.Println(existingToken)
+
+	if err := tq.DB.Save(&existingToken).Error; err != nil {
 		return models.Token{}, err
 	}
-	return token, nil
+	return existingToken, nil
 }
 
 func (tq *TokenQueries) DeleteToken(id string) error {

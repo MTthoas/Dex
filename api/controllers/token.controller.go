@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/MTthoas/dex/api/models"
 	"github.com/MTthoas/dex/api/platform/database"
@@ -76,6 +77,22 @@ func CreateTokenController(c *fiber.Ctx) error {
 		})
 	}
 
+	// Verify if the token already exists with the same address
+	existingTokenByAddress, err := db.TokenQueries.GetTokenByAddress(token.Address)
+	if err == nil && existingTokenByAddress.Id != 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Token with this address already exists",
+		})
+	}
+
+	// Verify if the token already exists with the same symbol
+	existingTokenBySymbol, err := db.TokenQueries.GetTokenBySymbol(token.Symbol)
+	if err == nil && existingTokenBySymbol.Id != 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Token with this symbol already exists",
+		})
+	}
+
 	createdToken, err := db.TokenQueries.CreateToken(*token)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -108,6 +125,13 @@ func UpdateTokenController(c *fiber.Ctx) error {
 	}
 
 	id := c.Params("id")
+	uintID, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid ID format",
+		})
+	}
+
 	token := new(models.Token)
 	if err := c.BodyParser(token); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -115,7 +139,9 @@ func UpdateTokenController(c *fiber.Ctx) error {
 		})
 	}
 
-	updatedToken, err := db.TokenQueries.GetTokenById(id)
+	token.Id = uint(uintID) // Set the ID of the token to be updated
+
+	updatedToken, err := db.TokenQueries.UpdateToken(*token)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -125,7 +151,6 @@ func UpdateTokenController(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": updatedToken,
 	})
-
 }
 
 // DeleteToken function to delete a token
