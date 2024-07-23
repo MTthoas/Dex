@@ -14,8 +14,7 @@ export type BaseResponse = {
 export interface User extends BaseResponse {
   name: string;
   address: string;
-  created_at: string;
-  updated_at: string;
+  banned: string;
 };
 
 // export interface Transaction extends BaseResponse {

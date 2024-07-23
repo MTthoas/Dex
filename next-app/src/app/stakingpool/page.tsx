@@ -4,7 +4,6 @@ import StakingFactoryModalAddStake from "@/components/stakingPool/AddStakeModal"
 import StakePoolCard from "@/components/stakingPool/StakePoolCard";
 import { useAccount, useReadContract } from "wagmi";
 import { useEffect, useState } from "react";
-import { useReadStakingFactoryContractGetAllStakingContracts, useReadStakingContractIsInitialized } from "@/hook/WagmiGenerated";
 import { AdminWallet } from "@/abi/address";
 import { stakingFactoryAbi } from "@/abi/StakingFactory";
 import { stakingAbi } from "@/abi/Staking";
@@ -38,9 +37,10 @@ export default function StakingPoolFactoryPage() {
   })
   console.log("test", isInitialized);
 
+  console.log("contract", stakingContracts);
+
   return (
     <div className="space-y-12">
-      {isAdmin ? <StakingFactoryModalAddStake /> : null}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {stakingContracts && stakingContracts.map((contractInfo, index) => (
           <StakePoolCard key={index} addressContract={contractInfo.stakingContract} addressToken={contractInfo.stakingToken}/>
