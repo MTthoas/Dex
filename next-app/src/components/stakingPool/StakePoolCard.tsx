@@ -1,4 +1,5 @@
 "use client";
+<<<<<<< HEAD
 import { AdminWallet } from "@/abi/address";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,17 +15,39 @@ import { Label } from "@/components/ui/label";
 import { queryClient } from "@/context";
 import { postTransaction } from "@/hook/transactions.hook";
 import {
+=======
+import { ContractsOwnerAddress } from "@/abi/address";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+>>>>>>> 39a1eccacaf6207580dca682c6d9066133a3e725
   useReadStakingContractGetReserve,
   useReadStakingContractGetStakedAmount,
   useReadStakingContractIsInitialized,
   useReadStakingContractPendingRewards,
 } from "@/hook/WagmiGenerated";
+<<<<<<< HEAD
 import { useMutation } from "@tanstack/react-query";
 import { ethers, formatEther, parseUnits } from "ethers";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Address } from "viem";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
+=======
+import { ethers, formatEther, parseUnits } from "ethers";
+import { useEffect, useState } from "react";
+import { Address } from "viem";
+import { useAccount, useWriteContract } from "wagmi";
+>>>>>>> 39a1eccacaf6207580dca682c6d9066133a3e725
 import { tokenAbi } from "../../abi/ERC20Upgradeable";
 import { stakingAbi } from "../../abi/Staking";
 import { useEthersProvider, useEthersSigner } from "../../config/ethers";
@@ -93,7 +116,11 @@ const StakePoolCard: React.FC<StakePoolCardProps> = ({
   useEffect(() => {
     if (
       isConnected &&
+<<<<<<< HEAD
       addressUser?.toLowerCase() === AdminWallet.toLowerCase()
+=======
+      addressUser?.toLowerCase() === ContractsOwnerAddress.toLowerCase()
+>>>>>>> 39a1eccacaf6207580dca682c6d9066133a3e725
     ) {
       setIsAdmin(true);
     } else {
@@ -311,6 +338,11 @@ const StakePoolCard: React.FC<StakePoolCardProps> = ({
             setReserved={setAmount}
           />
         )}
+        {isInitialized === false && isAdmin === false && (
+          <span className="text-xs text-red-500">
+            Contract is not initialized yet.
+          </span>
+        )}
         {isInitialized === true && (
           <form onSubmit={handleStake}>
             <div className="space-y-2">
@@ -331,8 +363,12 @@ const StakePoolCard: React.FC<StakePoolCardProps> = ({
                     Balance:{" "}
                     {parseFloat(
                       formatEther(tokenBalances[addressToken])
+<<<<<<< HEAD
                     ).toFixed(1)}
                     {" " + Symbol}
+=======
+                    ).toFixed(2)}
+>>>>>>> 39a1eccacaf6207580dca682c6d9066133a3e725
                   </span>
                 )}
                 {stakedData !== undefined && (
