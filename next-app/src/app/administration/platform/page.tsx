@@ -35,7 +35,7 @@ const PlatformPage: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-2">
           <PlatformFee />
-          <UnregisterUser />
+          {/* <UnregisterUser /> */}
         </div>
       </main>
     </>
