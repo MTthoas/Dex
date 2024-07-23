@@ -7,7 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getCoins } from "@/hook/coins.hook";
 import { getTokens } from "@/hook/tokens.hook";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -27,9 +28,22 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronDownIcon } from "lucide-react";
-import { useState } from "react";
-import { columns } from "./ColumnDef";
+import { useMemo, useState } from "react";
+import { columns as tokenColumns } from "./ColumnDef";
+import { ethereumColumns } from "./ColumnDefEthereum";
 import { Token } from "./token.model";
+
+function formatMarketCap(value: number) {
+  let formattedValue;
+  if (value >= 1e9) {
+    formattedValue = `${(value / 1e9).toFixed(2)} B`;
+  } else if (value >= 1e6) {
+    formattedValue = `${(value / 1e6).toFixed(2)} M`;
+  } else {
+    formattedValue = value.toFixed(2);
+  }
+  return formattedValue;
+}
 
 export default function TokenPage() {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -39,17 +53,35 @@ export default function TokenPage() {
 
   const {
     data: tokens,
-    isLoading,
-    isError,
+    isLoading: isLoadingTokens,
+    isError: isErrorTokens,
   } = useQuery<Token[]>({
     queryKey: ["tokens"],
     queryFn: getTokens,
     placeholderData: [],
   });
 
-  const table = useReactTable({
+  const {
+    data: coins,
+    isLoading: isLoadingCoins,
+    isError: isErrorCoins,
+  } = useQuery<Token[]>({
+    queryKey: ["coins"],
+    queryFn: getCoins,
+    placeholderData: [],
+  });
+
+  console.log("coins", coins);
+
+  const ethereumCoins = useMemo(() => {
+    return coins?.slice(0, 10) ?? [];
+  }, [coins]);
+
+  console.log("ethereumCoins", ethereumCoins);
+
+  const tokenTable = useReactTable({
     data: tokens ?? [],
-    columns: columns,
+    columns: tokenColumns,
     state: {
       sorting,
       columnFilters,
@@ -63,16 +95,32 @@ export default function TokenPage() {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  if (isLoading) {
+  const ethereumTable = useReactTable({
+    data: ethereumCoins,
+    columns: ethereumColumns,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  if (isLoadingTokens || isLoadingCoins) {
     return <div>Loading...</div>;
   }
 
-  if (isError) {
-    return <div>Error loading tokens</div>;
+  if (isErrorTokens || isErrorCoins) {
+    return <div>Error loading data</div>;
   }
 
   return (
-    <div className="container min-h-screen py-32">
+    <div className="container min-h-screen pb-12">
       <div className="mx-auto xl:mx-14">
         <div className="w-full mt-7">
           <h1 className="text-3xl font-semibold">List of tokens</h1>
@@ -81,15 +129,7 @@ export default function TokenPage() {
           </p>
         </div>
 
-        <div className="flex items-center py-4">
-          <Input
-            placeholder="Filter tokens..."
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
+        <div className="flex items-center pb-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
@@ -97,7 +137,104 @@ export default function TokenPage() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {table.getAllColumns().map((column) => {
+              {tokenTable.getAllColumns().map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        <div className="rounded-lg border mb-10">
+          <Table>
+            <TableHeader>
+              {tokenTable.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {isLoadingTokens
+                ? Array.from({ length: 5 }).map((_, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Skeleton className="h-4 w-16" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-20" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-40" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-16" />
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <Skeleton className="h-4 w-16" />
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <Skeleton className="h-4 w-16" />
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <Skeleton className="h-4 w-24" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-16" />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : tokenTable.getRowModel().rows.map((row) => (
+                    <TableRow key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <div className="w-full mt-20">
+          <h1 className="text-3xl font-semibold">List of Ethereum Coins</h1>
+          <p className="text-sm text-muted-foreground mt-2">
+            Each token has a unique ID and can be used to access the Genx API.
+          </p>
+        </div>
+
+        <div className="flex items-center pb-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {ethereumTable.getAllColumns().map((column) => {
                 return (
                   <DropdownMenuCheckboxItem
                     key={column.id}
@@ -118,7 +255,7 @@ export default function TokenPage() {
         <div className="rounded-lg border">
           <Table>
             <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
+              {ethereumTable.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead key={header.id}>
@@ -134,7 +271,7 @@ export default function TokenPage() {
               ))}
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows.map((row) => (
+              {ethereumTable.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
