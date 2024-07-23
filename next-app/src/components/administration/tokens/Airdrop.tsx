@@ -73,6 +73,7 @@ const Airdrop = () => {
   const [name, setName] = React.useState("");
   const [address, setAddress] = React.useState("");
   const [symbol, setSymbol] = React.useState("");
+  const [supply, setSupply] = React.useState("");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const { chainId } = useAccount();
 
@@ -116,9 +117,6 @@ const Airdrop = () => {
             queryClient.invalidateQueries(["tokens"]);
             toast.success("Token deleted successfully!");
           },
-          onError: (error) => {
-            toast.error(`Error deleting token: ${error.message}`);
-          },
         });
 
         if (allTokenAddresses.includes(token.address)) {
@@ -129,7 +127,7 @@ const Airdrop = () => {
           <Button
             variant="destructive"
             size="sm"
-            onClick={() => deleteMutation.mutate({ id: token.id })}
+            onClick={() => deleteMutation.mutate(token.id)}
           >
             Delete
           </Button>
@@ -156,7 +154,13 @@ const Airdrop = () => {
 
   const handleCreateToken = () => {
     setIsSubmitting(true);
-    mutation.mutate({ name, symbol, address });
+    mutation.mutate({
+      name,
+      symbol,
+      address,
+      max_supply: supply,
+      total_supply: supply,
+    });
   };
 
   const {
@@ -235,6 +239,16 @@ const Airdrop = () => {
                   placeholder="Enter address of the token"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
+                  required
+                />
+                <Label htmlFor="address">Supply</Label>
+                <Input
+                  id="address"
+                  type="text"
+                  className="w-full"
+                  placeholder="Enter supply of the token"
+                  value={supply}
+                  onChange={(e) => setSupply(e.target.value)}
                   required
                 />
               </div>
