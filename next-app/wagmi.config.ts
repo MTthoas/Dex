@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from '@wagmi/cli'
 import { react } from '@wagmi/cli/plugins'
 import { Address } from 'viem'
+import { StakingFactoryAddress, GenxAddress } from "@/abi/address";
 
 
 export default defineConfig(() => {
@@ -13,9 +14,8 @@ export default defineConfig(() => {
     contracts: [
     {
       name: "StakingContract",
-      address: env.NEXT_PUBLIC_STAKING_ADDRESS as Address,
       "abi":[
-        {
+         {
             "type":"constructor",
             "inputs":[
                {
@@ -24,9 +24,9 @@ export default defineConfig(() => {
                   "internalType":"address"
                },
                {
-                  "name":"_initialRewardReserve",
-                  "type":"uint256",
-                  "internalType":"uint256"
+                  "name":"_admin",
+                  "type":"address",
+                  "internalType":"address"
                }
             ],
             "stateMutability":"nonpayable"
@@ -41,6 +41,21 @@ export default defineConfig(() => {
                
             ],
             "stateMutability":"nonpayable"
+         },
+         {
+            "type":"function",
+            "name":"getReserve",
+            "inputs":[
+               
+            ],
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
+            ],
+            "stateMutability":"view"
          },
          {
             "type":"function",
@@ -82,6 +97,36 @@ export default defineConfig(() => {
                   "name":"reserve",
                   "type":"uint256",
                   "internalType":"uint256"
+               }
+            ],
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"initialize",
+            "inputs":[
+               {
+                  "name":"_initialRewardReserve",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
+            ],
+            "outputs":[
+               
+            ],
+            "stateMutability":"nonpayable"
+         },
+         {
+            "type":"function",
+            "name":"isInitialized",
+            "inputs":[
+               
+            ],
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"bool",
+                  "internalType":"bool"
                }
             ],
             "stateMutability":"view"
@@ -317,111 +362,133 @@ export default defineConfig(() => {
     },
     {
         name: "StakingFactoryContract",
-        address: env.NEXT_PUBLIC_STAKING_FACTORY_ADDRESS as Address,
+        address: StakingFactoryAddress,
         abi : [
             {
                 "type":"function",
                 "name":"createStakingContract",
                 "inputs":[
-                    {
-                        "name":"_stakingToken",
-                        "type":"address",
-                        "internalType":"address"
-                    },
-                    {
-                        "name":"_initialRewardReserve",
-                        "type":"uint256",
-                        "internalType":"uint256"
-                    }
+                   {
+                      "name":"_stakingToken",
+                      "type":"address",
+                      "internalType":"address"
+                   },
+                   {
+                      "name":"_admin",
+                      "type":"address",
+                      "internalType":"address"
+                   }
                 ],
                 "outputs":[
-                    {
-                        "name":"",
-                        "type":"address",
-                        "internalType":"address"
-                    }
+                   {
+                      "name":"",
+                      "type":"address",
+                      "internalType":"address"
+                   }
                 ],
                 "stateMutability":"nonpayable"
-            },
-            {
+             },
+             {
                 "type":"function",
                 "name":"getAllStakingContracts",
                 "inputs":[
-                    
+                   
                 ],
                 "outputs":[
-                    {
-                        "name":"",
-                        "type":"address[]",
-                        "internalType":"address[]"
-                    }
+                   {
+                      "name":"",
+                      "type":"tuple[]",
+                      "internalType":"struct StakingFactory.StakingInfo[]",
+                      "components":[
+                         {
+                            "name":"stakingContract",
+                            "type":"address",
+                            "internalType":"address"
+                         },
+                         {
+                            "name":"stakingToken",
+                            "type":"address",
+                            "internalType":"address"
+                         }
+                      ]
+                   }
                 ],
                 "stateMutability":"view"
-            },
-            {
+             },
+             {
                 "type":"function",
                 "name":"getAllStakingStats",
                 "inputs":[
-                    
+                   
                 ],
                 "outputs":[
-                    {
-                        "name":"totalStaked",
-                        "type":"uint256",
-                        "internalType":"uint256"
-                    },
-                    {
-                        "name":"totalRewardRate",
-                        "type":"uint256",
-                        "internalType":"uint256"
-                    }
+                   {
+                      "name":"totalStaked",
+                      "type":"uint256",
+                      "internalType":"uint256"
+                   },
+                   {
+                      "name":"totalRewardRate",
+                      "type":"uint256",
+                      "internalType":"uint256"
+                   }
                 ],
                 "stateMutability":"view"
-            },
-            {
+             },
+             {
                 "type":"function",
                 "name":"stakingContracts",
                 "inputs":[
-                    {
-                        "name":"",
-                        "type":"uint256",
-                        "internalType":"uint256"
-                    }
+                   {
+                      "name":"",
+                      "type":"uint256",
+                      "internalType":"uint256"
+                   }
                 ],
                 "outputs":[
-                    {
-                        "name":"",
-                        "type":"address",
-                        "internalType":"address"
-                    }
+                   {
+                      "name":"stakingContract",
+                      "type":"address",
+                      "internalType":"address"
+                   },
+                   {
+                      "name":"stakingToken",
+                      "type":"address",
+                      "internalType":"address"
+                   }
                 ],
                 "stateMutability":"view"
-            },
-            {
+             },
+             {
                 "type":"event",
                 "name":"StakingContractCreated",
                 "inputs":[
-                    {
-                        "name":"stakingContract",
-                        "type":"address",
-                        "indexed":true,
-                        "internalType":"address"
-                    }
+                   {
+                      "name":"stakingContract",
+                      "type":"address",
+                      "indexed":true,
+                      "internalType":"address"
+                   },
+                   {
+                      "name":"stakingToken",
+                      "type":"address",
+                      "indexed":true,
+                      "internalType":"address"
+                   }
                 ],
                 "anonymous":false
-            },
-            {
+             },
+             {
                 "type":"error",
                 "name":"ReentrancyGuardReentrantCall",
                 "inputs":[
-                
-            ]
-            }
+                   
+                ]
+             }
         ]
     },
     {
       name: "TokenContract",
-      address: env.NEXT_PUBLIC_GENX_ADDRESS as Address,
       abi: [
         {
           "type": "constructor",
