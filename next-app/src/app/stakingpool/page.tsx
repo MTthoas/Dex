@@ -4,7 +4,7 @@ import StakingFactoryModalAddStake from "@/components/stakingPool/AddStakeModal"
 import StakePoolCard from "@/components/stakingPool/StakePoolCard";
 import { useAccount, useReadContract } from "wagmi";
 import { useEffect, useState } from "react";
-import { AdminWallet } from "@/abi/address";
+import { ContractsOwnerAddress } from "@/abi/address";
 import { stakingFactoryAbi } from "@/abi/StakingFactory";
 import { stakingAbi } from "@/abi/Staking";
 import { StakingFactoryAddress } from "@/abi/address";
@@ -14,7 +14,7 @@ export default function StakingPoolFactoryPage() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    if (isConnected && addressUser?.toLowerCase() === AdminWallet.toLowerCase()) {
+    if (isConnected && addressUser?.toLowerCase() === ContractsOwnerAddress.toLowerCase()) {
       setIsAdmin(true);
     } else {
       setIsAdmin(false);

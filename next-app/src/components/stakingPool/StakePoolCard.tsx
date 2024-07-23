@@ -1,32 +1,30 @@
-'use client';
-import {
-  CardTitle,
-  CardDescription,
-  CardHeader,
-  CardContent,
-  CardFooter,
-  Card,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+"use client";
+import { ContractsOwnerAddress } from "@/abi/address";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
-import { useAccount, useWriteContract } from "wagmi";
-import { ethers, parseUnits, formatEther } from "ethers";
-import { stakingAbi } from "../../abi/Staking";
-import { AdminWallet } from "@/abi/address";
-import { tokenAbi } from "../../abi/ERC20Upgradeable";
-import { useEthersProvider, useEthersSigner } from "../../config/ethers";
 import {
-  useReadTokenContractBalanceOf,
-  useReadStakingContractGetStakedAmount,
-  useReadStakingContractPendingRewards,
-  useReadStakingContractIsInitialized,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
   useReadStakingContractGetReserve,
+  useReadStakingContractGetStakedAmount,
+  useReadStakingContractIsInitialized,
+  useReadStakingContractPendingRewards,
 } from "@/hook/WagmiGenerated";
+import { ethers, formatEther, parseUnits } from "ethers";
+import { useEffect, useState } from "react";
 import { Address } from "viem";
+import { useAccount, useWriteContract } from "wagmi";
+import { tokenAbi } from "../../abi/ERC20Upgradeable";
+import { stakingAbi } from "../../abi/Staking";
+import { useEthersProvider, useEthersSigner } from "../../config/ethers";
 import StakingFactoryModalInitializeStake from "./InitializeStakeModal";
-import { parse } from "path";
 
 interface StakePoolCardProps {
   addressContract: string;
@@ -67,7 +65,10 @@ const StakePoolCard: React.FC<StakePoolCardProps> = ({
   }, [isInitializedData]);
 
   useEffect(() => {
-    if (isConnected && addressUser?.toLowerCase() === AdminWallet.toLowerCase()) {
+    if (
+      isConnected &&
+      addressUser?.toLowerCase() === ContractsOwnerAddress.toLowerCase()
+    ) {
       setIsAdmin(true);
     } else {
       setIsAdmin(false);
@@ -206,6 +207,11 @@ const StakePoolCard: React.FC<StakePoolCardProps> = ({
             setReserved={setAmount}
           />
         )}
+        {isInitialized === false && isAdmin === false && (
+          <span className="text-xs text-red-500">
+            Contract is not initialized yet.
+          </span>
+        )}
         {isInitialized === true && (
           <form onSubmit={handleStake}>
             <div className="space-y-2">
@@ -223,7 +229,10 @@ const StakePoolCard: React.FC<StakePoolCardProps> = ({
               <div className="flex flex-row-reverse space-x-reverse space-x-6 justify-between">
                 {tokenBalances[addressToken] !== undefined && (
                   <span className="text-xs">
-                    Balance: {parseFloat(formatEther(tokenBalances[addressToken])).toFixed(2)}
+                    Balance:{" "}
+                    {parseFloat(
+                      formatEther(tokenBalances[addressToken])
+                    ).toFixed(2)}
                   </span>
                 )}
                 {stakedData !== undefined && (
