@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
   CardTitle,
   CardDescription,
@@ -46,7 +46,6 @@ const StakePoolCard: React.FC<StakePoolCardProps> = ({
   const [tokenBalances, setTokenBalances] = useState<{ [key: string]: string }>(
     {}
   );
-  const { writeContract } = useWriteContract();
   const { writeContractAsync: writeContractAsync } = useWriteContract();
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -74,12 +73,6 @@ const StakePoolCard: React.FC<StakePoolCardProps> = ({
       setIsAdmin(false);
     }
   }, [isConnected, addressUser]);
-
-  const balanceAbi = useReadTokenContractBalanceOf({
-    args: [addressUser as Address],
-    address: addressToken as Address,
-  });
-  const { data: balance, refetch: refetchBalance } = balanceAbi;
 
   const stakedDataAbi = useReadStakingContractGetStakedAmount({
     args: [addressUser as Address],
@@ -188,13 +181,13 @@ const StakePoolCard: React.FC<StakePoolCardProps> = ({
   };
 
   const refreshData = async () => {
-    await refetchBalance();
     await refetchStakedData();
     await refetchPendingRewards();
     await refetchReserve();
     fetchInitializationStatus();
 
     const balances = await getAllTokenBalances();
+    console.log("balances", balances);
     setTokenBalances(balances);
   };
 
@@ -228,9 +221,9 @@ const StakePoolCard: React.FC<StakePoolCardProps> = ({
                 onChange={(e) => setAmount(e.target.value)}
               />
               <div className="flex flex-row-reverse space-x-reverse space-x-6 justify-between">
-                {balance !== undefined && (
+                {tokenBalances[addressToken] !== undefined && (
                   <span className="text-xs">
-                    Balance: {parseFloat(formatEther(balance)).toFixed(2)}
+                    Balance: {parseFloat(formatEther(tokenBalances[addressToken])).toFixed(2)}
                   </span>
                 )}
                 {stakedData !== undefined && (
