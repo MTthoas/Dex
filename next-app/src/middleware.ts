@@ -1,12 +1,13 @@
 import { ContractsOwnerAddress } from "@/abi/address";
 import { NextRequest, NextResponse } from "next/server";
+import { getUsersBanned } from "./hook/users.hook";
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (pathname.startsWith("/administration")) {
     const address = wagmiStore(req);
-    if (address.toLowerCase() !== ContractsOwnerAddress.toLowerCase()) {
+    if (!ContractsOwnerAddress.map((addr) => addr.toLowerCase()).includes(address.toLowerCase())) {
       return NextResponse.redirect(new URL("/", req.url));
     }
   }
@@ -18,13 +19,14 @@ export function middleware(req: NextRequest) {
     }
   }
 
+  // Check if the user is banned. If so, redirect to the home page
+
   return NextResponse.next();
 }
 
 export const config = {
   matcher: ["/administration/:path*", "/profil"],
 };
-
 
 function wagmiStore(req: NextRequest) {
   const wagmiCookie = req.cookies.get("wagmi.store");
@@ -38,4 +40,11 @@ function wagmiStore(req: NextRequest) {
   }
 
   return address;
+}
+
+async function isUserBanned(address: string): Promise<boolean> {
+  const response = await getUsersBanned();
+  return response.data.some(
+    (user: any) => user.address.toLowerCase() === address.toLowerCase()
+  );
 }
