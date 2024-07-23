@@ -79,7 +79,7 @@ contract LiquidityPoolTest is Script {
 
         // Remove liquidity
         uint256 liquidityToRemove = liquidityToken.balanceOf(user) / 2;
-        liquidityPool.removeLiquidity(liquidityToRemove);
+        liquidityPool.removeLiquidity(liquidityToRemove, liquidityToRemove);
 
         // Get reserves after removing liquidity
         (reserveA, reserveB) = liquidityPool.getReserves();

@@ -43,6 +43,17 @@ contract UserRegistryTest is Test {
         assertEq(userIds[0], 1);
     }
 
+    function testUnregisterUser() public {
+        vm.prank(admin);
+        userRegistry.registerUser("User1");
+        vm.prank(admin);
+        userRegistry.unregisterUser(admin);
+        assertFalse(userRegistry.isRegisteredUser(admin));
+        uint256[] memory userIds = userRegistry.getRegisteredUserIds();
+        assertEq(userIds.length, 0);
+    }
+
+
     function testBanUser() public {
         vm.prank(admin);
         userRegistry.registerUser("User1");
