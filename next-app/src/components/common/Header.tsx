@@ -78,14 +78,17 @@ export default function Header(): JSX.Element {
               {link.name}
             </Link>
           ))}
-          {address?.toLowerCase() === ContractsOwnerAddress.toLowerCase() && (
-            <Link
-              href="/administration/dashboard"
-              className="text-sm font-medium hover:text-gray-500"
-            >
-              Administration
-            </Link>
-          )}
+          {address &&
+            ContractsOwnerAddress.map((addr) => addr.toLowerCase()).includes(
+              address.toLowerCase()
+            ) && (
+              <Link
+                href="/administration/dashboard"
+                className="text-sm font-medium hover:text-gray-500"
+              >
+                Administration
+              </Link>
+            )}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end pt-1 w-1/3">
           <CustomConnectButton
