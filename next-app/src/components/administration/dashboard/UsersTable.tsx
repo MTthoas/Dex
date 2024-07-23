@@ -20,6 +20,7 @@ import React, { useEffect, useState } from "react";
 
 import { GensAddress, GenxAddress } from "@/abi/address";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getTokens } from "@/hook/tokens.hook";
 import { useFetchBalances } from "@/hook/useFetchBalances";
 import { User } from "@/types/user.type";
 import { useAccount } from "wagmi";
@@ -33,16 +34,21 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, isLoading }) => {
   const { chainId } = useAccount();
   const [currentPage, setCurrentPage] = useState(1);
   const [listOfUsersAddress, setListOfUsersAddress] = useState<string[]>([]);
+  const data = getTokens();
   const rowsPerPage = 5;
 
-  const contractAddresses = [GenxAddress, GensAddress];
+  
 
   useEffect(() => {
     setListOfUsersAddress(users.map((user) => user.address));
   }, [users]);
 
+  console.log("dataTokens", data);
+
+  const tokenAddressList = [GenxAddress, GensAddress];
+
   const { balances, isSuccess, error } = useFetchBalances(
-    contractAddresses,
+    tokenAddressList,
     listOfUsersAddress,
     chainId
   );

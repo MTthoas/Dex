@@ -1,11 +1,11 @@
-import { useReadContracts } from "wagmi";
-import { useEffect, useState, useMemo } from "react";
 import { ERC20 } from "@/abi/ERC20";
+import { useEffect, useMemo, useState } from "react";
+import { useReadContracts } from "wagmi";
 
 export function useFetchBalances(list, userAddresses, chainId) {
   const [balances, setBalances] = useState({});
   const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<unknown | null>(null);
 
   const balanceContracts = useMemo(() => {
     return list.flatMap((contractAddress) =>
@@ -19,25 +19,44 @@ export function useFetchBalances(list, userAddresses, chainId) {
     );
   }, [list, userAddresses, chainId]);
 
-  const { data: balancesData, error: fetchError, isFetched } = useReadContracts({
+  const {
+    data: balancesData,
+    error: fetchError,
+    isFetched,
+  } = useReadContracts({
     contracts: balanceContracts,
   });
 
   useEffect(() => {
-    if (isFetched && balancesData) {
-      const balanceResults = list.reduce((acc, contractAddress, contractIndex) => {
-        acc[contractAddress] = userAddresses.reduce((userAcc, userAddress, userIndex) => {
-          userAcc[userAddress] = balancesData[contractIndex * userAddresses.length + userIndex]?.result || 0n;
-          return userAcc;
-        }, {});
-        return acc;
-      }, {});
-      setBalances(balanceResults);
-      setIsSuccess(true);
-    } else if (fetchError) {
+    if (fetchError) {
       setError(fetchError);
     }
-  }, [balancesData, isFetched, fetchError, list, userAddresses]);
+  }, [fetchError]);
+
+  useEffect(() => {
+    if (isFetched) {
+      const balanceResults = list.reduce(
+        (acc, contractAddress, contractIndex) => {
+          acc[contractAddress] = userAddresses.reduce(
+            (userAcc, userAddress, userIndex) => {
+              userAcc[userAddress] =
+                balancesData[contractIndex * userAddresses.length + userIndex]
+                  ?.result || 0n;
+              return userAcc;
+            },
+            {}
+          );
+          return acc;
+        },
+        {}
+      );
+      setBalances(balanceResults);
+      setIsSuccess(true);
+    }
+  }, [balancesData, isFetched, userAddresses]);
+
+  console.log("Balances", balances);
+  console.log("IsSuccess", isSuccess);
 
   return { balances, isSuccess, error };
 }
