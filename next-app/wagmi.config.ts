@@ -2470,508 +2470,521 @@ export default defineConfig(() => {
         name: "UserRegistry",
         address: UserRegistryAddress as Address,
         abi: [
-          {
-            type: "constructor",
-            inputs: [
-              {
-                name: "_admin",
-                type: "address",
-                internalType: "address",
-              },
-              {
-                name: "_admin2",
-                type: "address",
-                internalType: "address",
-              },
-              {
-                name: "_admin3",
-                type: "address",
-                internalType: "address",
-              },
+        {
+            "type": "constructor",
+            "inputs": [
+                {
+                    "name": "_admin",
+                    "type": "address",
+                    "internalType": "address"
+                },
+                {
+                    "name": "_admin2",
+                    "type": "address",
+                    "internalType": "address"
+                },
+                {
+                    "name": "_admin3",
+                    "type": "address",
+                    "internalType": "address"
+                }
             ],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "function",
-            name: "ADMIN_ROLE",
-            inputs: [],
-            outputs: [
-              {
-                name: "",
-                type: "bytes32",
-                internalType: "bytes32",
-              },
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "ADMIN_ROLE",
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bytes32",
+                    "internalType": "bytes32"
+                }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "DEFAULT_ADMIN_ROLE",
-            inputs: [],
-            outputs: [
-              {
-                name: "",
-                type: "bytes32",
-                internalType: "bytes32",
-              },
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "DEFAULT_ADMIN_ROLE",
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bytes32",
+                    "internalType": "bytes32"
+                }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "banUser",
-            inputs: [
-              {
-                name: "_userAddress",
-                type: "address",
-                internalType: "address",
-              },
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "banUser",
+            "inputs": [
+                {
+                    "name": "_userAddress",
+                    "type": "address",
+                    "internalType": "address"
+                }
             ],
-            outputs: [
-              {
-                name: "",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
             ],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "function",
-            name: "getRegisteredUserIds",
-            inputs: [],
-            outputs: [
-              {
-                name: "",
-                type: "uint256[]",
-                internalType: "uint256[]",
-              },
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "getRegisteredUserIds",
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256[]",
+                    "internalType": "uint256[]"
+                }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "getRoleAdmin",
-            inputs: [
-              {
-                name: "role",
-                type: "bytes32",
-                internalType: "bytes32",
-              },
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "getRoleAdmin",
+            "inputs": [
+                {
+                    "name": "role",
+                    "type": "bytes32",
+                    "internalType": "bytes32"
+                }
             ],
-            outputs: [
-              {
-                name: "",
-                type: "bytes32",
-                internalType: "bytes32",
-              },
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bytes32",
+                    "internalType": "bytes32"
+                }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "getUserId",
-            inputs: [
-              {
-                name: "_address",
-                type: "address",
-                internalType: "address",
-              },
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "getUserId",
+            "inputs": [
+                {
+                    "name": "_address",
+                    "type": "address",
+                    "internalType": "address"
+                }
             ],
-            outputs: [
-              {
-                name: "",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "grantRole",
-            inputs: [
-              {
-                name: "role",
-                type: "bytes32",
-                internalType: "bytes32",
-              },
-              {
-                name: "account",
-                type: "address",
-                internalType: "address",
-              },
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "grantRole",
+            "inputs": [
+                {
+                    "name": "role",
+                    "type": "bytes32",
+                    "internalType": "bytes32"
+                },
+                {
+                    "name": "account",
+                    "type": "address",
+                    "internalType": "address"
+                }
             ],
-            outputs: [],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "function",
-            name: "hasRole",
-            inputs: [
-              {
-                name: "role",
-                type: "bytes32",
-                internalType: "bytes32",
-              },
-              {
-                name: "account",
-                type: "address",
-                internalType: "address",
-              },
+            "outputs": [],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "hasRole",
+            "inputs": [
+                {
+                    "name": "role",
+                    "type": "bytes32",
+                    "internalType": "bytes32"
+                },
+                {
+                    "name": "account",
+                    "type": "address",
+                    "internalType": "address"
+                }
             ],
-            outputs: [
-              {
-                name: "",
-                type: "bool",
-                internalType: "bool",
-              },
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bool",
+                    "internalType": "bool"
+                }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "isRegisteredUser",
-            inputs: [
-              {
-                name: "_address",
-                type: "address",
-                internalType: "address",
-              },
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "isRegisteredUser",
+            "inputs": [
+                {
+                    "name": "_address",
+                    "type": "address",
+                    "internalType": "address"
+                }
             ],
-            outputs: [
-              {
-                name: "",
-                type: "bool",
-                internalType: "bool",
-              },
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bool",
+                    "internalType": "bool"
+                }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "isUserBanned",
-            inputs: [
-              {
-                name: "_userAddress",
-                type: "address",
-                internalType: "address",
-              },
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "isUserBanned",
+            "inputs": [
+                {
+                    "name": "_userAddress",
+                    "type": "address",
+                    "internalType": "address"
+                }
             ],
-            outputs: [
-              {
-                name: "",
-                type: "bool",
-                internalType: "bool",
-              },
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bool",
+                    "internalType": "bool"
+                }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "registerUser",
-            inputs: [
-              {
-                name: "_name",
-                type: "string",
-                internalType: "string",
-              },
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "registerUser",
+            "inputs": [
+                {
+                    "name": "_name",
+                    "type": "string",
+                    "internalType": "string"
+                }
             ],
-            outputs: [
-              {
-                name: "",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
             ],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "function",
-            name: "renounceRole",
-            inputs: [
-              {
-                name: "role",
-                type: "bytes32",
-                internalType: "bytes32",
-              },
-              {
-                name: "callerConfirmation",
-                type: "address",
-                internalType: "address",
-              },
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "renounceRole",
+            "inputs": [
+                {
+                    "name": "role",
+                    "type": "bytes32",
+                    "internalType": "bytes32"
+                },
+                {
+                    "name": "callerConfirmation",
+                    "type": "address",
+                    "internalType": "address"
+                }
             ],
-            outputs: [],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "function",
-            name: "revokeRole",
-            inputs: [
-              {
-                name: "role",
-                type: "bytes32",
-                internalType: "bytes32",
-              },
-              {
-                name: "account",
-                type: "address",
-                internalType: "address",
-              },
+            "outputs": [],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "revokeRole",
+            "inputs": [
+                {
+                    "name": "role",
+                    "type": "bytes32",
+                    "internalType": "bytes32"
+                },
+                {
+                    "name": "account",
+                    "type": "address",
+                    "internalType": "address"
+                }
             ],
-            outputs: [],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "function",
-            name: "supportsInterface",
-            inputs: [
-              {
-                name: "interfaceId",
-                type: "bytes4",
-                internalType: "bytes4",
-              },
+            "outputs": [],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "supportsInterface",
+            "inputs": [
+                {
+                    "name": "interfaceId",
+                    "type": "bytes4",
+                    "internalType": "bytes4"
+                }
             ],
-            outputs: [
-              {
-                name: "",
-                type: "bool",
-                internalType: "bool",
-              },
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bool",
+                    "internalType": "bool"
+                }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "transferUserId",
-            inputs: [
-              {
-                name: "_oldAddress",
-                type: "address",
-                internalType: "address",
-              },
-              {
-                name: "_newAddress",
-                type: "address",
-                internalType: "address",
-              },
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "transferUserId",
+            "inputs": [
+                {
+                    "name": "_oldAddress",
+                    "type": "address",
+                    "internalType": "address"
+                },
+                {
+                    "name": "_newAddress",
+                    "type": "address",
+                    "internalType": "address"
+                }
             ],
-            outputs: [
-              {
-                name: "",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
             ],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "function",
-            name: "unbanUser",
-            inputs: [
-              {
-                name: "_userAddress",
-                type: "address",
-                internalType: "address",
-              },
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "unbanUser",
+            "inputs": [
+                {
+                    "name": "_userAddress",
+                    "type": "address",
+                    "internalType": "address"
+                }
             ],
-            outputs: [
-              {
-                name: "",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
             ],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "function",
-            name: "users",
-            inputs: [
-              {
-                name: "",
-                type: "address",
-                internalType: "address",
-              },
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "unregisterUser",
+            "inputs": [
+                {
+                    "name": "_userAddress",
+                    "type": "address",
+                    "internalType": "address"
+                }
             ],
-            outputs: [
-              {
-                name: "id",
-                type: "uint256",
-                internalType: "uint256",
-              },
-              {
-                name: "name",
-                type: "string",
-                internalType: "string",
-              },
-              {
-                name: "isBanned",
-                type: "bool",
-                internalType: "bool",
-              },
+            "outputs": [],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "users",
+            "inputs": [
+                {
+                    "name": "",
+                    "type": "address",
+                    "internalType": "address"
+                }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "event",
-            name: "RoleAdminChanged",
-            inputs: [
-              {
-                name: "role",
-                type: "bytes32",
-                indexed: true,
-                internalType: "bytes32",
-              },
-              {
-                name: "previousAdminRole",
-                type: "bytes32",
-                indexed: true,
-                internalType: "bytes32",
-              },
-              {
-                name: "newAdminRole",
-                type: "bytes32",
-                indexed: true,
-                internalType: "bytes32",
-              },
+            "outputs": [
+                {
+                    "name": "id",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                },
+                {
+                    "name": "name",
+                    "type": "string",
+                    "internalType": "string"
+                },
+                {
+                    "name": "isBanned",
+                    "type": "bool",
+                    "internalType": "bool"
+                }
             ],
-            anonymous: false,
-          },
-          {
-            type: "event",
-            name: "RoleGranted",
-            inputs: [
-              {
-                name: "role",
-                type: "bytes32",
-                indexed: true,
-                internalType: "bytes32",
-              },
-              {
-                name: "account",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
-              {
-                name: "sender",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
+            "stateMutability": "view"
+        },
+        {
+            "type": "event",
+            "name": "RoleAdminChanged",
+            "inputs": [
+                {
+                    "name": "role",
+                    "type": "bytes32",
+                    "indexed": true,
+                    "internalType": "bytes32"
+                },
+                {
+                    "name": "previousAdminRole",
+                    "type": "bytes32",
+                    "indexed": true,
+                    "internalType": "bytes32"
+                },
+                {
+                    "name": "newAdminRole",
+                    "type": "bytes32",
+                    "indexed": true,
+                    "internalType": "bytes32"
+                }
             ],
-            anonymous: false,
-          },
-          {
-            type: "event",
-            name: "RoleRevoked",
-            inputs: [
-              {
-                name: "role",
-                type: "bytes32",
-                indexed: true,
-                internalType: "bytes32",
-              },
-              {
-                name: "account",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
-              {
-                name: "sender",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
+            "anonymous": false
+        },
+        {
+            "type": "event",
+            "name": "RoleGranted",
+            "inputs": [
+                {
+                    "name": "role",
+                    "type": "bytes32",
+                    "indexed": true,
+                    "internalType": "bytes32"
+                },
+                {
+                    "name": "account",
+                    "type": "address",
+                    "indexed": true,
+                    "internalType": "address"
+                },
+                {
+                    "name": "sender",
+                    "type": "address",
+                    "indexed": true,
+                    "internalType": "address"
+                }
             ],
-            anonymous: false,
-          },
-          {
-            type: "event",
-            name: "UserBanned",
-            inputs: [
-              {
-                name: "userAddress",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
-              {
-                name: "userId",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-              },
+            "anonymous": false
+        },
+        {
+            "type": "event",
+            "name": "RoleRevoked",
+            "inputs": [
+                {
+                    "name": "role",
+                    "type": "bytes32",
+                    "indexed": true,
+                    "internalType": "bytes32"
+                },
+                {
+                    "name": "account",
+                    "type": "address",
+                    "indexed": true,
+                    "internalType": "address"
+                },
+                {
+                    "name": "sender",
+                    "type": "address",
+                    "indexed": true,
+                    "internalType": "address"
+                }
             ],
-            anonymous: false,
-          },
-          {
-            type: "event",
-            name: "UserRegistered",
-            inputs: [
-              {
-                name: "userAddress",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
-              {
-                name: "userId",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-              },
+            "anonymous": false
+        },
+        {
+            "type": "event",
+            "name": "UserBanned",
+            "inputs": [
+                {
+                    "name": "userAddress",
+                    "type": "address",
+                    "indexed": true,
+                    "internalType": "address"
+                },
+                {
+                    "name": "userId",
+                    "type": "uint256",
+                    "indexed": false,
+                    "internalType": "uint256"
+                }
             ],
-            anonymous: false,
-          },
-          {
-            type: "event",
-            name: "UserUnbanned",
-            inputs: [
-              {
-                name: "userAddress",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
-              {
-                name: "userId",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-              },
+            "anonymous": false
+        },
+        {
+            "type": "event",
+            "name": "UserRegistered",
+            "inputs": [
+                {
+                    "name": "userAddress",
+                    "type": "address",
+                    "indexed": true,
+                    "internalType": "address"
+                },
+                {
+                    "name": "userId",
+                    "type": "uint256",
+                    "indexed": false,
+                    "internalType": "uint256"
+                }
             ],
-            anonymous: false,
-          },
-          {
-            type: "error",
-            name: "AccessControlBadConfirmation",
-            inputs: [],
-          },
-          {
-            type: "error",
-            name: "AccessControlUnauthorizedAccount",
-            inputs: [
-              {
-                name: "account",
-                type: "address",
-                internalType: "address",
-              },
-              {
-                name: "neededRole",
-                type: "bytes32",
-                internalType: "bytes32",
-              },
+            "anonymous": false
+        },
+        {
+            "type": "event",
+            "name": "UserUnbanned",
+            "inputs": [
+                {
+                    "name": "userAddress",
+                    "type": "address",
+                    "indexed": true,
+                    "internalType": "address"
+                },
+                {
+                    "name": "userId",
+                    "type": "uint256",
+                    "indexed": false,
+                    "internalType": "uint256"
+                }
             ],
-          },
-          {
-            type: "error",
-            name: "ReentrancyGuardReentrantCall",
-            inputs: [],
-          },
-        ],
+            "anonymous": false
+        },
+        {
+            "type": "error",
+            "name": "AccessControlBadConfirmation",
+            "inputs": []
+        },
+        {
+            "type": "error",
+            "name": "AccessControlUnauthorizedAccount",
+            "inputs": [
+                {
+                    "name": "account",
+                    "type": "address",
+                    "internalType": "address"
+                },
+                {
+                    "name": "neededRole",
+                    "type": "bytes32",
+                    "internalType": "bytes32"
+                }
+            ]
+        },
+        {
+            "type": "error",
+            "name": "ReentrancyGuardReentrantCall",
+            "inputs": []
+        }
+    ],
       },
     ],
     plugins: [react()],
