@@ -1,16 +1,15 @@
-import { GenxAddress, liquidityFactoryAddress, StakingFactoryAddress, TokenManagerAddress, UserRegistryAddress } from "@/abi/address";
-import { defineConfig } from '@wagmi/cli';
-import { react } from '@wagmi/cli/plugins';
-import { Address } from 'viem';
-
+import { GenxAddress, liquidityFactoryAddress, StakingAddress, StakingFactoryAddress, TokenManagerAddress, UserRegistryAddress } from "@/abi/address";
+import { defineConfig } from "@wagmi/cli";
+import { react } from "@wagmi/cli/plugins";
+import { Address } from "viem";
 
 export default defineConfig(() => {
   return {
     out: "src/hook/WagmiGenerated.ts",
     contracts: [
-    {
-      name: "StakingContract",
-      "abi":[
+      {
+        name: "StakingContract",
+        abi: [
          {
             "type":"constructor",
             "inputs":[
@@ -25,31 +24,16 @@ export default defineConfig(() => {
                   "internalType":"address"
                }
             ],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "function",
-            name: "claimRewards",
-            inputs: [],
-            outputs: [],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "function",
-            name: "getStakedAmount",
-            inputs: [
-              {
-                name: "_user",
-                type: "address",
-                internalType: "address",
-              },
+            "stateMutability":"nonpayable"
+         },
+         {
+            "type":"function",
+            "name":"claimRewards",
+            "inputs":[
+               
             ],
-            outputs: [
-              {
-                name: "",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "outputs":[
+               
             ],
             "stateMutability":"nonpayable"
          },
@@ -68,35 +52,47 @@ export default defineConfig(() => {
             ],
             "stateMutability":"view"
          },
-          {
-            type: "function",
-            name: "pendingRewards",
-            inputs: [
-              {
-                name: "_user",
-                type: "address",
-                internalType: "address",
-              },
+         {
+            "type":"function",
+            "name":"getStakedAmount",
+            "inputs":[
+               {
+                  "name":"_user",
+                  "type":"address",
+                  "internalType":"address"
+               }
             ],
-            outputs: [
-              {
-                name: "",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "rewardRatePerDay",
-            inputs: [],
-            outputs: [
-              {
-                name: "",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"getStakingStats",
+            "inputs":[
+               
+            ],
+            "outputs":[
+               {
+                  "name":"stakedAmount",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               },
+               {
+                  "name":"rewardRate",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               },
+               {
+                  "name":"reserve",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
             ],
             "stateMutability":"view"
          },
@@ -130,309 +126,243 @@ export default defineConfig(() => {
             ],
             "stateMutability":"view"
          },
-          {
-            type: "function",
-            name: "stake",
-            inputs: [
-              {
-                name: "_amount",
-                type: "uint256",
-                internalType: "uint256",
-              },
+         {
+            "type":"function",
+            "name":"pendingRewards",
+            "inputs":[
+               {
+                  "name":"_user",
+                  "type":"address",
+                  "internalType":"address"
+               }
             ],
-            outputs: [],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "function",
-            name: "stakes",
-            inputs: [
-              {
-                name: "",
-                type: "address",
-                internalType: "address",
-              },
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
             ],
-            outputs: [
-              {
-                name: "amount",
-                type: "uint256",
-                internalType: "uint256",
-              },
-              {
-                name: "rewardDebt",
-                type: "uint256",
-                internalType: "uint256",
-              },
-              {
-                name: "lastStakedTime",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"rewardRatePerDay",
+            "inputs":[
+               
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "stakingToken",
-            inputs: [],
-            outputs: [
-              {
-                name: "",
-                type: "address",
-                internalType: "contract Token",
-              },
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "totalStaked",
-            inputs: [],
-            outputs: [
-              {
-                name: "",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"rewardReserve",
+            "inputs":[
+               
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "unstake",
-            inputs: [
-              {
-                name: "_amount",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
             ],
-            outputs: [],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "event",
-            name: "RewardsClaimed",
-            inputs: [
-              {
-                name: "user",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
-              {
-                name: "rewardAmount",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-              },
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"stake",
+            "inputs":[
+               {
+                  "name":"_amount",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
             ],
-            anonymous: false,
-          },
-          {
-            type: "event",
-            name: "RewardsUpdated",
-            inputs: [
-              {
-                name: "user",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
-              {
-                name: "rewardDebt",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-              },
-              {
-                name: "accumulatedReward",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-              },
+            "outputs":[
+               
             ],
-            anonymous: false,
-          },
-          {
-            type: "event",
-            name: "Staked",
-            inputs: [
-              {
-                name: "user",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
-              {
-                name: "amount",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-              },
+            "stateMutability":"nonpayable"
+         },
+         {
+            "type":"function",
+            "name":"stakes",
+            "inputs":[
+               {
+                  "name":"",
+                  "type":"address",
+                  "internalType":"address"
+               }
             ],
-            anonymous: false,
-          },
-          {
-            type: "event",
-            name: "Unstaked",
-            inputs: [
-              {
-                name: "user",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
-              {
-                name: "amount",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-              },
+            "outputs":[
+               {
+                  "name":"amount",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               },
+               {
+                  "name":"rewardDebt",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               },
+               {
+                  "name":"lastStakedTime",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
             ],
-            anonymous: false,
-          },
-          {
-            type: "error",
-            name: "ReentrancyGuardReentrantCall",
-            inputs: [],
-          },
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"stakingToken",
+            "inputs":[
+               
+            ],
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"address",
+                  "internalType":"contract Token"
+               }
+            ],
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"totalStaked",
+            "inputs":[
+               
+            ],
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
+            ],
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"unstake",
+            "inputs":[
+               {
+                  "name":"_amount",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
+            ],
+            "outputs":[
+               
+            ],
+            "stateMutability":"nonpayable"
+         },
+         {
+            "type":"event",
+            "name":"RewardsClaimed",
+            "inputs":[
+               {
+                  "name":"user",
+                  "type":"address",
+                  "indexed":true,
+                  "internalType":"address"
+               },
+               {
+                  "name":"rewardAmount",
+                  "type":"uint256",
+                  "indexed":false,
+                  "internalType":"uint256"
+               }
+            ],
+            "anonymous":false
+         },
+         {
+            "type":"event",
+            "name":"RewardsUpdated",
+            "inputs":[
+               {
+                  "name":"user",
+                  "type":"address",
+                  "indexed":true,
+                  "internalType":"address"
+               },
+               {
+                  "name":"rewardDebt",
+                  "type":"uint256",
+                  "indexed":false,
+                  "internalType":"uint256"
+               },
+               {
+                  "name":"accumulatedReward",
+                  "type":"uint256",
+                  "indexed":false,
+                  "internalType":"uint256"
+               }
+            ],
+            "anonymous":false
+         },
+         {
+            "type":"event",
+            "name":"Staked",
+            "inputs":[
+               {
+                  "name":"user",
+                  "type":"address",
+                  "indexed":true,
+                  "internalType":"address"
+               },
+               {
+                  "name":"amount",
+                  "type":"uint256",
+                  "indexed":false,
+                  "internalType":"uint256"
+               }
+            ],
+            "anonymous":false
+         },
+         {
+            "type":"event",
+            "name":"Unstaked",
+            "inputs":[
+               {
+                  "name":"user",
+                  "type":"address",
+                  "indexed":true,
+                  "internalType":"address"
+               },
+               {
+                  "name":"amount",
+                  "type":"uint256",
+                  "indexed":false,
+                  "internalType":"uint256"
+               }
+            ],
+            "anonymous":false
+         },
+         {
+            "type":"error",
+            "name":"ReentrancyGuardReentrantCall",
+            "inputs":[
+               
+            ]
+         }
         ],
       },
       {
         name: "StakingFactoryContract",
-        address: StakingFactoryAddress,
-        abi : [
-            {
-                "type":"function",
-                "name":"createStakingContract",
-                "inputs":[
-                   {
-                      "name":"_stakingToken",
-                      "type":"address",
-                      "internalType":"address"
-                   },
-                   {
-                      "name":"_admin",
-                      "type":"address",
-                      "internalType":"address"
-                   }
-                ],
-                "outputs":[
-                   {
-                      "name":"",
-                      "type":"address",
-                      "internalType":"address"
-                   }
-                ],
-                "stateMutability":"nonpayable"
-             },
-             {
-                "type":"function",
-                "name":"getAllStakingContracts",
-                "inputs":[
-                   
-                ],
-                "outputs":[
-                   {
-                      "name":"",
-                      "type":"tuple[]",
-                      "internalType":"struct StakingFactory.StakingInfo[]",
-                      "components":[
-                         {
-                            "name":"stakingContract",
-                            "type":"address",
-                            "internalType":"address"
-                         },
-                         {
-                            "name":"stakingToken",
-                            "type":"address",
-                            "internalType":"address"
-                         }
-                      ]
-                   }
-                ],
-                "stateMutability":"view"
-             },
-             {
-                "type":"function",
-                "name":"getAllStakingStats",
-                "inputs":[
-                   
-                ],
-                "outputs":[
-                   {
-                      "name":"totalStaked",
-                      "type":"uint256",
-                      "internalType":"uint256"
-                   },
-                   {
-                      "name":"totalRewardRate",
-                      "type":"uint256",
-                      "internalType":"uint256"
-                   }
-                ],
-                "stateMutability":"view"
-             },
-             {
-                "type":"function",
-                "name":"stakingContracts",
-                "inputs":[
-                   {
-                      "name":"",
-                      "type":"uint256",
-                      "internalType":"uint256"
-                   }
-                ],
-                "outputs":[
-                   {
-                      "name":"stakingContract",
-                      "type":"address",
-                      "internalType":"address"
-                   },
-                   {
-                      "name":"stakingToken",
-                      "type":"address",
-                      "internalType":"address"
-                   }
-                ],
-                "stateMutability":"view"
-             },
-             {
-                "type":"event",
-                "name":"StakingContractCreated",
-                "inputs":[
-                   {
-                      "name":"stakingContract",
-                      "type":"address",
-                      "indexed":true,
-                      "internalType":"address"
-                   },
-                   {
-                      "name":"stakingToken",
-                      "type":"address",
-                      "indexed":true,
-                      "internalType":"address"
-                   }
-                ],
-                "anonymous":false
-             },
-             {
-                "type":"error",
-                "name":"ReentrancyGuardReentrantCall",
-                "inputs":[
-                   
-                ]
-             }
-        ]
-    },
-    {
-      name: "TokenContract",
-      abi: [
-        {
-          "type": "constructor",
-          "inputs": [
+        address: StakingFactoryAddress as Address,
+        abi: [
+          {
+            type: "function",
+            name: "createStakingContract",
+            inputs: [
               {
                 name: "_stakingToken",
                 type: "address",
