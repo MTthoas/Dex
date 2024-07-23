@@ -324,35 +324,35 @@ export default function SwapCard({
         </div>
         <div className="flex space-x-2 mb-2">
           <Button
-            className="bg-[#313140] text-xs h-6"
+            className="bg-[#313140] text-xs h-6 text-secondary dark:text-primary"
             variant="secondary"
             onClick={() => handlePercentageClick(2)}
           >
             2%
           </Button>
           <Button
-            className="bg-[#313140] text-xs h-6"
-            variant="secondary"
+            className="bg-[#313140] text-xs h-6 text-secondary dark:text-primary"
+            variant="secondary "
             onClick={() => handlePercentageClick(25)}
           >
             25%
           </Button>
           <Button
-            className="bg-[#313140] text-xs h-6"
+            className="bg-[#313140] text-xs h-6 text-secondary dark:text-primary"
             variant="secondary"
             onClick={() => handlePercentageClick(50)}
           >
             50%
           </Button>
           <Button
-            className="bg-[#313140] text-xs h-6"
+            className="bg-[#313140] text-xs h-6 text-secondary dark:text-primary"
             variant="secondary"
             onClick={() => handlePercentageClick(75)}
           >
             75%
           </Button>
           <Button
-            className="bg-[#313140] text-xs h-6"
+            className="bg-[#313140] text-xs h-6 text-secondary dark:text-primary"
             variant="secondary"
             onClick={() => handlePercentageClick(100)}
           >

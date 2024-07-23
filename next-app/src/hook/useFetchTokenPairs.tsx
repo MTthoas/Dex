@@ -16,6 +16,7 @@ function transformToPairs(
     if (index % 2 === 0 && index + 1 < array.length) {
       if (index / 2 < listOfAddress.length && index < reserves.length - 1) {
         const userData = userInfoData[Math.floor(index / 2)]?.result || [];
+        const rewardData = rewardsData[index / 2] || {}; // Ensure rewardsData[index / 2] is defined
         acc.push({
           id: index / 2 + 1,
           address: listOfAddress[index / 2],
@@ -26,7 +27,7 @@ function transformToPairs(
           reserveA: reserves[index],
           reserveB: reserves[index + 1],
           hasAddedLiquidity: hasAddedLiquidity[index / 2] || false,
-          liquidityTokens: rewardsData[index / 2].result || 0,
+          liquidityTokens: rewardData.result || 0, // Access result safely
           tokenAAmount: userData[1] || 0n,
           tokenBAmount: userData[2] || 0n,
           timeRemaining: userData[3] || 0n,
