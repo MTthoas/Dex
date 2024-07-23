@@ -12,5 +12,5 @@ export const AdminWallet: Address = "0x4646367b5203563bb13c0e280156ad705549592e"
 export const TokenManagerAddress = "0xe54947ce60667E6bA9C15619D85169b20299BF63";
 export const UserRegistryAddress = "0x76F6F2cdd70129Bef9e73C89dDCA4df253a33100";
 
-export const ContractsOwnerAddress = "0x3964D0011EB003488Ab59B1ce0C235baA3998bdd";
+export const ContractsOwnerAddress = "0x4646367b5203563bb13c0E280156AD705549592E";
 
