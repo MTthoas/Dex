@@ -133,12 +133,6 @@ export const CustomConnectButton: React.FC<CustomConnectButtonProps> = ({
                     Connect Wallet
                   </Button>
                 );
-              } else if (isBanned) {
-                return showError ? (
-                  <div className="text-red-500">
-                    You are banned from this platform.
-                  </div>
-                ) : null;
               } else if (error) {
                 return showError ? (
                   <div className="text-red-500">Error: {error}</div>
