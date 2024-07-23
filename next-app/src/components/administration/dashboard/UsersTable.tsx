@@ -198,7 +198,7 @@ function UserRow({
       {tokens.map((token) => (
         <TableCell key={token.address}>
           {balances[token.address]?.[user.address]
-            ? formatBigNumber(balances[token.address]?.[user.address].toString())
+            ? formatBigNumber(balances[token.address]?.[user.address]?.toString())
             : "Loading..."}
         </TableCell>
       ))}

@@ -93,7 +93,9 @@ const StakePoolCard: React.FC<StakePoolCardProps> = ({
   useEffect(() => {
     if (
       isConnected &&
-      addressUser?.toLowerCase() === ContractsOwnerAddress.toLowerCase()
+      ContractsOwnerAddress.some(
+        (addr) => addr.toLowerCase() === addressUser?.toLowerCase()
+      )
     ) {
       setIsAdmin(true);
     } else {

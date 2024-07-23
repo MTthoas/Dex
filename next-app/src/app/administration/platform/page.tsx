@@ -5,6 +5,7 @@ import PlatformFee from "@/components/administration/platform/PlatformFee";
 import BanUserAddress from "@/components/administration/platform/BanUserAddress";
 import { SearchIcon } from "@/components/Icons";
 import UnBanUserAddress from "@/components/administration/platform/UnBanUserAddress";
+import UnregisterUser from "@/components/administration/platform/UnregisterUser";
 
 
 const PlatformPage: React.FC = () => {
@@ -34,6 +35,7 @@ const PlatformPage: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-2">
           <PlatformFee />
+          <UnregisterUser />
         </div>
       </main>
     </>
