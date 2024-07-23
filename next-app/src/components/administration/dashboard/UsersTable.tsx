@@ -16,10 +16,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatAddress } from "@/utils/string.util";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
+import { GensAddress, GenxAddress } from "@/abi/address";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useFetchBalances } from "@/hook/useFetchBalances";
 import { User } from "@/types/user.type";
+import { useAccount } from "wagmi";
 
 type UsersTableProps = {
   users: User[];
@@ -27,13 +30,39 @@ type UsersTableProps = {
 };
 
 const UsersTable: React.FC<UsersTableProps> = ({ users, isLoading }) => {
+  const { chainId } = useAccount();
   const [currentPage, setCurrentPage] = useState(1);
+  const [listOfUsersAddress, setListOfUsersAddress] = useState<string[]>([]);
   const rowsPerPage = 5;
+
+  const contractAddresses = [GenxAddress, GensAddress];
+
+  useEffect(() => {
+    setListOfUsersAddress(users.map((user) => user.address));
+  }, [users]);
+
+  const { balances, isSuccess, error } = useFetchBalances(
+    contractAddresses,
+    listOfUsersAddress,
+    chainId
+  );
+
+  useEffect(() => {
+    if (isSuccess) {
+      console.log("Balances fetched successfully:", balances);
+    }
+  }, [isSuccess, balances]);
+
+  useEffect(() => {
+    if (error) {
+      console.error("Error fetching balances:", error);
+    }
+  }, [error]);
 
   const handleChangePage = (newPage: number) => {
     setCurrentPage(newPage);
   };
-
+  
   const currentUsers = users.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
@@ -84,7 +113,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, isLoading }) => {
                   </TableRow>
                 ))
               : currentUsers.map((user) => (
-                  <UserRow key={user.id} user={user} />
+                  <UserRow key={user.id} user={user} balances={balances} />
                 ))}
           </TableBody>
         </Table>
@@ -121,7 +150,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, isLoading }) => {
   );
 };
 
-function UserRow({ user }: { user: User }) {
+function UserRow({ user, balances }: { user: User; balances: any }) {
   const updatedDate = new Date(user.updated_at).toLocaleString("fr");
   const createdDate = new Date(user.created_at).toLocaleString("fr");
 
@@ -133,6 +162,12 @@ function UserRow({ user }: { user: User }) {
       <TableCell>{user.name}</TableCell>
       <TableCell>{formatAddress(user.address)}</TableCell>
       <TableCell>{user.banned}</TableCell>
+      <TableCell>
+        {balances[GenxAddress]?.[user.address]?.toString() || "Loading..."}
+      </TableCell>
+      <TableCell>
+        {balances[GensAddress]?.[user.address]?.toString() || "Loading..."}
+      </TableCell>
     </TableRow>
   );
 }
