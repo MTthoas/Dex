@@ -16,7 +16,7 @@ contract deployERC20 is Script {
 
     function run() external {
         vm.startBroadcast(admin);
-        Token tokenA = new Token("Dorian", "DONX", 24000000 * 10 ** 18);
+        Token tokenA = new Token("Helder", "PORTO", 24000000 * 10 ** 18);
         vm.stopBroadcast();
     }
 }

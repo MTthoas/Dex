@@ -1,12 +1,12 @@
 "use client";
 
+import { ContractsOwnerAddress } from "@/abi/address";
 import { NavLink } from "@/types/header.type";
 import { UserRound } from "lucide-react";
 import Link from "next/link";
 import { useAccount } from "wagmi";
 import { ModeToggle } from "../ModeToggle";
 import { Button } from "../ui/button";
-import { ContractsOwnerAddress } from "@/abi/address";
 import { CustomConnectButton } from "./ConnectButton";
 
 const HeaderLinks: NavLink[] = [
@@ -39,9 +39,7 @@ export default function Header(): JSX.Element {
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
             <div className="flex flex-col">
-              <span className="text-lg font-semibold leading-5 text-white ">
-                GenX
-              </span>
+              <span className="text-lg font-semibold leading-5">GenX</span>
             </div>
           </Link>
         </div>

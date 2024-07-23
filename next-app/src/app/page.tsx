@@ -1,16 +1,88 @@
+"use client";
+
 import Globe from "@/components/magicui/globe";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Activity, DollarSign } from "lucide-react";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { getTransactions } from "@/hook/transactions.hook";
+import { getUsers } from "@/hook/users.hook";
+import { Hook } from "@/types/hookResponse.type";
+import { Transaction } from "@/types/transaction.type";
+import { User } from "@/types/user.type";
+import { useQuery } from "@tanstack/react-query";
+import * as React from "react";
+import { CartesianGrid, Line, LineChart, Tooltip, XAxis } from "recharts";
 
-const page = () => {
+const Page = () => {
+  const { data: transactions } = useQuery<Hook<Transaction[]>>({
+    queryKey: ["transactions"],
+    queryFn: getTransactions,
+  });
+
+  const { data: users } = useQuery<Hook<User[]>>({
+    queryKey: ["users"],
+    queryFn: getUsers,
+  });
+
+  console.log(users);
+
+  const transactionData = React.useMemo(() => {
+    if (!transactions || !transactions.data) return [];
+
+    const dateMap = transactions.data.reduce(
+      (acc: any, transaction: Transaction) => {
+        const date = new Date(transaction.updated_at)
+          .toISOString()
+          .split("T")[0];
+        if (!acc[date]) acc[date] = 0;
+        acc[date]++;
+        return acc;
+      },
+      {}
+    );
+
+    return Object.keys(dateMap).map((date) => ({
+      date,
+      transactions: dateMap[date],
+    }));
+  }, [transactions]);
+
+  const userData = React.useMemo(() => {
+    if (!users || !users.data) return [];
+
+    const dateMap = users.data.reduce((acc: any, user: User) => {
+      const date = new Date(user.updated_at).toISOString().split("T")[0];
+      if (!acc[date]) acc[date] = 0;
+      acc[date]++;
+      return acc;
+    }, {});
+
+    return Object.keys(dateMap).map((date) => ({
+      date,
+      users: dateMap[date],
+    }));
+  }, [users]);
+
+  const chartConfig = {
+    transactions: {
+      label: "Transactions",
+      color: "hsl(var(--chart-1))",
+    },
+    users: {
+      label: "Users",
+      color: "hsl(var(--chart-2))",
+    },
+  } satisfies ChartConfig;
+
   return (
     <div key="1" className="flex justify-center items-center min-h-screen">
       <div className="container mx-auto mb-12">
@@ -22,49 +94,137 @@ const page = () => {
             </h1>
             <p className="text-xl mb-8">
               Unlock the world of cryptocurrency trading. Experience the freedom
-              to trade over 400 tokens instantly, no registration needed.
+              to trade tokens instantly, no registration needed.
             </p>
             <div className="grid gap-4 md:gap-8 lg:grid-cols-3">
-              <Card className="bg-transparant">
-                <CardHeader className="pb-2">
-                  <CardDescription>This Week</CardDescription>
-                  <CardTitle className="text-4xl">$1,329</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xs text-muted-foreground">
-                    +25% from last week
+              <Card className="row-span-2 col-span-2">
+                <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
+                  <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
+                    <CardTitle>Transaction History</CardTitle>
+                    <CardDescription>
+                      Showing the number of transactions per day
+                    </CardDescription>
                   </div>
-                </CardContent>
-                <CardFooter>
-                  <Progress value={25} aria-label="25% increase" />
-                </CardFooter>
-              </Card>
-              <Card x-chunk="dashboard-01-chunk-0" className="bg-transparant">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total Revenue
-                  </CardTitle>
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">$45,231.89</div>
-                  <p className="text-xs text-muted-foreground">
-                    +20.1% from last month
-                  </p>
+                <CardContent className="px-2 sm:p-6">
+                  <ChartContainer
+                    config={chartConfig}
+                    className="aspect-auto h-[250px] w-full"
+                  >
+                    <LineChart
+                      accessibilityLayer
+                      data={transactionData}
+                      margin={{
+                        left: 12,
+                        right: 12,
+                      }}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="date"
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        minTickGap={32}
+                        tickFormatter={(value) => {
+                          const date = new Date(value);
+                          return date.toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          });
+                        }}
+                      />
+                      <Tooltip
+                        content={
+                          <ChartTooltipContent
+                            className="w-[150px]"
+                            nameKey="transactions"
+                            labelFormatter={(value) => {
+                              return new Date(value).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                }
+                              );
+                            }}
+                          />
+                        }
+                      />
+                      <Line
+                        dataKey="transactions"
+                        type="monotone"
+                        stroke={`var(--color-transactions)`}
+                        strokeWidth={2}
+                        dot={false}
+                      />
+                    </LineChart>
+                  </ChartContainer>
                 </CardContent>
               </Card>
-              <Card x-chunk="dashboard-01-chunk-3" className="bg-transparant">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Active Now
-                  </CardTitle>
-                  <Activity className="h-4 w-4 text-muted-foreground" />
+              <Card className="row-span-2 col-span-1">
+                <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
+                  <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
+                    <CardTitle>User Activity</CardTitle>
+                    <CardDescription>New users per day</CardDescription>
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">+573</div>
-                  <p className="text-xs text-muted-foreground">
-                    +201 since last hour
-                  </p>
+                <CardContent className="px-2 sm:p-6">
+                  <ChartContainer
+                    config={chartConfig}
+                    className="aspect-auto h-[250px] w-full"
+                  >
+                    <LineChart
+                      accessibilityLayer
+                      data={userData}
+                      margin={{
+                        left: 12,
+                        right: 12,
+                      }}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="date"
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        minTickGap={32}
+                        tickFormatter={(value) => {
+                          const date = new Date(value);
+                          return date.toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          });
+                        }}
+                      />
+                      <Tooltip
+                        content={
+                          <ChartTooltipContent
+                            className="w-[150px]"
+                            nameKey="users"
+                            labelFormatter={(value) => {
+                              return new Date(value).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                }
+                              );
+                            }}
+                          />
+                        }
+                      />
+                      <Line
+                        dataKey="users"
+                        type="monotone"
+                        stroke={`var(--color-users)`}
+                        strokeWidth={2}
+                        dot={false}
+                      />
+                    </LineChart>
+                  </ChartContainer>
                 </CardContent>
               </Card>
             </div>
@@ -78,4 +238,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
