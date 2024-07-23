@@ -22,7 +22,7 @@ import { Token } from "@/app/tokens/token.model";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFetchBalances } from "@/hook/useFetchBalances";
 import { User } from "@/types/user.type";
-import { formatUnits } from "viem";
+import { formatBigNumber } from "@/utils/number.utils";
 import { useAccount } from "wagmi";
 
 type UsersTableProps = {
@@ -186,7 +186,6 @@ function UserRow({
 }) {
   const updatedDate = new Date(user.updated_at).toLocaleString("fr");
   const createdDate = new Date(user.created_at).toLocaleString("fr");
-  //formatUnits(data, 2)
 
   return (
     <TableRow>
@@ -199,12 +198,7 @@ function UserRow({
       {tokens.map((token) => (
         <TableCell key={token.address}>
           {balances[token.address]?.[user.address]
-            ? Number(
-                formatUnits(
-                  balances[token.address]?.[user.address].toString(),
-                  18
-                )
-              ).toFixed(2)
+            ? formatBigNumber(balances[token.address]?.[user.address].toString())
             : "Loading..."}
         </TableCell>
       ))}
