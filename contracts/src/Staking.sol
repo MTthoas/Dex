@@ -27,9 +27,25 @@ contract Staking is ReentrancyGuard {
     event RewardsUpdated(address indexed user, uint256 rewardDebt, uint256 accumulatedReward);
     event RewardsClaimed(address indexed user, uint256 rewardAmount);
 
-    constructor(address _stakingToken, uint256 _initialRewardReserve) {
+    constructor(address _stakingToken, address _admin) {
         stakingToken = Token(_stakingToken);
+        admin = _admin;
+    }
+
+    bool initialized=false;
+    address admin;
+
+    function initialize(uint256 _initialRewardReserve) external {
+        require(msg.sender == admin, "Only admin can initialize");
+        require(!initialized, "Staking contract already initialized");
+        require(_initialRewardReserve > 0, "Invalid initial reward reserve");
+
         rewardReserve = _initialRewardReserve;
+        initialized = true;
+    }
+
+    function isInitialized() public view returns (bool) {
+        return initialized;
     }
 
     /**
@@ -37,6 +53,7 @@ contract Staking is ReentrancyGuard {
      * @param _amount Amount of tokens to stake.
      */
     function stake(uint256 _amount) external nonReentrant {
+        require(initialized, "Staking contract not initialized");
         require(_amount > 0, "Cannot stake 0 tokens");
 
         Stake storage userStake = stakes[msg.sender];
@@ -56,6 +73,7 @@ contract Staking is ReentrancyGuard {
      * @param _amount Amount of tokens to unstake.
      */
     function unstake(uint256 _amount) external nonReentrant {
+        require (initialized);
         Stake storage userStake = stakes[msg.sender];
         require(userStake.amount >= _amount, "Insufficient staked amount");
 
@@ -72,7 +90,9 @@ contract Staking is ReentrancyGuard {
      * @notice Claim accumulated rewards.
      */
     function claimRewards() external nonReentrant {
+        require (initialized);
         Stake storage userStake = stakes[msg.sender];
+        require(rewardReserve > 0, "No rewards in reserve");
         _updateRewards(msg.sender);
 
         uint256 accumulatedReward = userStake.rewardDebt;
@@ -96,6 +116,7 @@ contract Staking is ReentrancyGuard {
      * @return Pending reward amount.
      */
     function pendingRewards(address _user) external view returns (uint256) {
+        require (initialized);
         Stake storage userStake = stakes[_user];
         uint256 accumulatedReward = _calculateReward(userStake.amount, block.timestamp - userStake.lastStakedTime);
         return userStake.rewardDebt + accumulatedReward;
@@ -107,7 +128,17 @@ contract Staking is ReentrancyGuard {
      * @return Amount of tokens staked.
      */
     function getStakedAmount(address _user) external view returns (uint256) {
+        require (initialized);
         return stakes[_user].amount;
+    }
+
+    /**
+     * @notice View function to see the reserve of the pool.
+     * @return Amount of reserve.
+     */
+    function getReserve() external view returns (uint256) {
+        require (initialized);
+        return rewardReserve;
     }
 
     /**
@@ -137,6 +168,7 @@ contract Staking is ReentrancyGuard {
 
     // View function to see staking stats
     function getStakingStats() public view returns (uint256 stakedAmount, uint256 rewardRate, uint256 reserve) {
+        require (initialized);
         stakedAmount = totalStaked;
         rewardRate = rewardRatePerDay;
         reserve = rewardReserve;

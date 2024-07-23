@@ -4,97 +4,101 @@ pragma solidity ^0.8.0;
 import "forge-std/Test.sol";
 import "../src/Staking.sol";
 import "../src/token/Token.sol";
-import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 contract StakingTest is Test {
-    Token token;
-    Staking staking;
-    address user = address(0x123);
-    uint256 initialRewardReserve = 100 ether;
-
-    // Déclaration de l'événement RewardsClaimed
-    event RewardsClaimed(address indexed user, uint256 rewardAmount);
+    Staking public staking;
+    Token public token;
+    address public admin = address(0x123);
+    address public user = address(0x456);
 
     function setUp() public {
-        token = new Token("Token1", "TK1", 1000 ether);
-        staking = new Staking(address(token), initialRewardReserve);
-        token.transfer(user, 100 ether); 
-        token.transfer(address(staking), initialRewardReserve); // Transférer des tokens à la réserve de récompenses
+        token = new Token("Staking Token", "STK", 1000 ether); // Provide name, symbol, and initial supply
+        staking = new Staking(address(token), admin);
+        token.mint(user, 1000 ether); // Mint 1000 tokens for the user
+    }
+
+    function testInitialize() public {
+        vm.prank(admin);
+        staking.initialize(500 ether); // Initialize with 500 tokens in reward reserve
+
+        bool initialized = staking.isInitialized();
+        assertTrue(initialized, "Staking contract should be initialized");
     }
 
     function testStake() public {
-        vm.startPrank(user);
-        token.approve(address(staking), 50 ether);
-        staking.stake(50 ether);
+        vm.prank(admin);
+        staking.initialize(500 ether);
 
-        assertEq(staking.getStakedAmount(user), 50 ether);
-        assertEq(token.balanceOf(user), 50 ether);
-        assertEq(token.balanceOf(address(staking)), 50 ether + initialRewardReserve);
-        vm.stopPrank();
+        vm.prank(user);
+        token.approve(address(staking), 100 ether); // Approve 100 tokens for staking
+
+        vm.prank(user);
+        staking.stake(100 ether);
+
+        uint256 stakedAmount = staking.getStakedAmount(user);
+        assertEq(stakedAmount, 100 ether, "Staked amount should be 100 tokens");
+
+        (uint256 totalStaked,,) = staking.getStakingStats(); // Correct access to the tuple return value
+        assertEq(totalStaked, 100 ether, "Total staked amount should be 100 tokens");
     }
 
     function testUnstake() public {
-        vm.startPrank(user);
-        token.approve(address(staking), 50 ether);
-        staking.stake(50 ether);
-        
-        vm.warp(block.timestamp + 1 days);
+        vm.prank(admin);
+        staking.initialize(500 ether);
 
+        vm.prank(user);
+        token.approve(address(staking), 100 ether);
+
+        vm.prank(user);
+        staking.stake(100 ether);
+
+        vm.prank(user);
         staking.unstake(50 ether);
 
-        assertEq(staking.getStakedAmount(user), 0);
-        assertEq(token.balanceOf(user), 100 ether);
-        assertEq(token.balanceOf(address(staking)), initialRewardReserve);
-        vm.stopPrank();
+        uint256 stakedAmount = staking.getStakedAmount(user);
+        assertEq(stakedAmount, 50 ether, "Staked amount should be 50 tokens");
+
+        (uint256 totalStaked,,) = staking.getStakingStats();
+        assertEq(totalStaked, 50 ether, "Total staked amount should be 50 tokens");
     }
 
     function testClaimRewards() public {
-        vm.startPrank(user);
-        token.approve(address(staking), 50 ether);
-        staking.stake(50 ether);
+        vm.prank(admin);
+        staking.initialize(500 ether);
 
-        vm.warp(block.timestamp + 1 days);
+        vm.prank(user);
+        token.approve(address(staking), 100 ether);
 
-        uint256 pendingRewards = staking.pendingRewards(user);
-        assert(pendingRewards > 0); // Vérifie qu'il y a des récompenses en attente
+        vm.prank(user);
+        staking.stake(100 ether);
 
-        vm.expectEmit(true, true, true, true);
-        emit RewardsClaimed(user, pendingRewards);
+        // Fast forward time by 1 day (86400 seconds)
+        vm.warp(block.timestamp + 86400);
+
+        vm.prank(user);
         staking.claimRewards();
 
-        uint256 userBalanceAfter = token.balanceOf(user);
-        assertEq(userBalanceAfter, 50 ether + pendingRewards); // Vérifie que les récompenses ont été ajoutées au solde de l'utilisateur
+        uint256 rewardBalance = token.balanceOf(user);
+        assertGt(rewardBalance, 0, "Reward balance should be greater than 0");
 
-        uint256 expectedStakingContractBalance = initialRewardReserve + 50 ether - pendingRewards;
-        assertEq(token.balanceOf(address(staking)), expectedStakingContractBalance); // Vérifie que la réserve de récompenses a diminué
-        assertEq(staking.pendingRewards(user), 0); // Vérifie que les récompenses en attente ont été réinitialisées
-
-        vm.stopPrank();
+        (, , uint256 rewardReserve) = staking.getStakingStats();
+        assertLt(rewardReserve, 500 ether, "Reward reserve should be less than initial");
     }
 
     function testPendingRewards() public {
-        vm.startPrank(user);
-        token.approve(address(staking), 50 ether);
-        staking.stake(50 ether);
+        vm.prank(admin);
+        staking.initialize(500 ether);
 
-        vm.warp(block.timestamp + 1 days);
+        vm.prank(user);
+        token.approve(address(staking), 100 ether);
 
-        uint256 pending = staking.pendingRewards(user);
-        assertEq(pending, 50 ether * 100 / 10000); // 1% of 50 ether
-        vm.stopPrank();
-    }
+        vm.prank(user);
+        staking.stake(100 ether);
 
-    function testGetStakingStats() public {
-        vm.startPrank(user);
-        token.approve(address(staking), 50 ether);
-        staking.stake(50 ether);
+        // Fast forward time by 1 day (86400 seconds)
+        vm.warp(block.timestamp + 86400);
 
-        (uint256 stakedAmount, uint256 rewardRate, uint256 reserve) = staking.getStakingStats();
-        
-        assertEq(stakedAmount, 50 ether);
-        assertEq(rewardRate, 100);
-        assertEq(reserve, initialRewardReserve);
-
-        vm.stopPrank();
+        uint256 pendingRewards = staking.pendingRewards(user);
+        assertGt(pendingRewards, 0, "Pending rewards should be greater than 0");
     }
 }

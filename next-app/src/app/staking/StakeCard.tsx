@@ -20,18 +20,20 @@ import {
   useReadStakingContractGetStakedAmount,
   useReadStakingContractPendingRewards,
   useWriteStakingContractStake,
+  useReadStakingContractGetReserve,
 } from "@/hook/WagmiGenerated";
 import { Address } from "viem";
+import { StakingAddress } from "@/abi/address";
 
 export default function StakingCard() {
-  const tokenAddress = process.env.NEXT_PUBLIC_GENX_ADDRESS as Address;
-  const stakingAddress = process.env.NEXT_PUBLIC_STAKING_ADDRESS as Address;
+  const stakingAddress = StakingAddress;
   const { address: addressUser, isConnected } = useAccount();
 
   const provider = useEthersProvider();
   const signer = useEthersSigner();
   const [amount, setAmount] = useState("");
   const { writeContract } = useWriteContract();
+  const tokenAddress= "0x7427f3B01878A8857fC883e8425C623588fEE954";
 
   const balanceAbi = useReadTokenContractBalanceOf({
     args: [addressUser as Address],
@@ -47,6 +49,11 @@ export default function StakingCard() {
     args: [addressUser as Address],
   });
   const { data: pendingRewards, refetch: refetchPendingRewards } = pendingRewardsAbi;
+
+  const reserveAbi = useReadStakingContractGetReserve({
+    address: stakingAddress as Address,
+  })
+  const { data: reserve, refetch: refetchReserve } = reserveAbi;
 
   const handleApprove = async () => {
     const tokenContract = new ethers.Contract(tokenAddress, tokenAbi, signer);
@@ -93,6 +100,7 @@ export default function StakingCard() {
     await refetchBalance();
     await refetchStakedData();
     await refetchPendingRewards();
+    await refetchReserve();
   };
 
   useEffect(() => {
@@ -136,7 +144,12 @@ export default function StakingCard() {
                 <span className="text-xs">
                   Earn: {parseFloat(formatEther(pendingRewards)).toFixed(2)}
                 </span>
-              )} 
+              )}
+              {reserve !== undefined && (
+                <span className="text-xs">
+                  Reserve: {parseFloat(formatEther(reserve)).toFixed(2)}
+                </span>
+              )}
             </div>
           </div>
           <CardFooter className="flex flex-col space-y-2 mt-4">

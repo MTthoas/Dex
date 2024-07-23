@@ -9,286 +9,350 @@ export default defineConfig(() => {
     contracts: [
       {
         name: "StakingContract",
-        address: StakingAddress as Address,
         abi: [
-          {
-            type: "constructor",
-            inputs: [
-              {
-                name: "_stakingToken",
-                type: "address",
-                internalType: "address",
-              },
-              {
-                name: "_initialRewardReserve",
-                type: "uint256",
-                internalType: "uint256",
-              },
+         {
+            "type":"constructor",
+            "inputs":[
+               {
+                  "name":"_stakingToken",
+                  "type":"address",
+                  "internalType":"address"
+               },
+               {
+                  "name":"_admin",
+                  "type":"address",
+                  "internalType":"address"
+               }
             ],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "function",
-            name: "claimRewards",
-            inputs: [],
-            outputs: [],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "function",
-            name: "getStakedAmount",
-            inputs: [
-              {
-                name: "_user",
-                type: "address",
-                internalType: "address",
-              },
+            "stateMutability":"nonpayable"
+         },
+         {
+            "type":"function",
+            "name":"claimRewards",
+            "inputs":[
+               
             ],
-            outputs: [
-              {
-                name: "",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "outputs":[
+               
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "getStakingStats",
-            inputs: [],
-            outputs: [
-              {
-                name: "stakedAmount",
-                type: "uint256",
-                internalType: "uint256",
-              },
-              {
-                name: "rewardRate",
-                type: "uint256",
-                internalType: "uint256",
-              },
-              {
-                name: "reserve",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "stateMutability":"nonpayable"
+         },
+         {
+            "type":"function",
+            "name":"getReserve",
+            "inputs":[
+               
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "pendingRewards",
-            inputs: [
-              {
-                name: "_user",
-                type: "address",
-                internalType: "address",
-              },
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
             ],
-            outputs: [
-              {
-                name: "",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"getStakedAmount",
+            "inputs":[
+               {
+                  "name":"_user",
+                  "type":"address",
+                  "internalType":"address"
+               }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "rewardRatePerDay",
-            inputs: [],
-            outputs: [
-              {
-                name: "",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "rewardReserve",
-            inputs: [],
-            outputs: [
-              {
-                name: "",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"getStakingStats",
+            "inputs":[
+               
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "stake",
-            inputs: [
-              {
-                name: "_amount",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "outputs":[
+               {
+                  "name":"stakedAmount",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               },
+               {
+                  "name":"rewardRate",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               },
+               {
+                  "name":"reserve",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
             ],
-            outputs: [],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "function",
-            name: "stakes",
-            inputs: [
-              {
-                name: "",
-                type: "address",
-                internalType: "address",
-              },
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"initialize",
+            "inputs":[
+               {
+                  "name":"_initialRewardReserve",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
             ],
-            outputs: [
-              {
-                name: "amount",
-                type: "uint256",
-                internalType: "uint256",
-              },
-              {
-                name: "rewardDebt",
-                type: "uint256",
-                internalType: "uint256",
-              },
-              {
-                name: "lastStakedTime",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "outputs":[
+               
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "stakingToken",
-            inputs: [],
-            outputs: [
-              {
-                name: "",
-                type: "address",
-                internalType: "contract Token",
-              },
+            "stateMutability":"nonpayable"
+         },
+         {
+            "type":"function",
+            "name":"isInitialized",
+            "inputs":[
+               
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "totalStaked",
-            inputs: [],
-            outputs: [
-              {
-                name: "",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"bool",
+                  "internalType":"bool"
+               }
             ],
-            stateMutability: "view",
-          },
-          {
-            type: "function",
-            name: "unstake",
-            inputs: [
-              {
-                name: "_amount",
-                type: "uint256",
-                internalType: "uint256",
-              },
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"pendingRewards",
+            "inputs":[
+               {
+                  "name":"_user",
+                  "type":"address",
+                  "internalType":"address"
+               }
             ],
-            outputs: [],
-            stateMutability: "nonpayable",
-          },
-          {
-            type: "event",
-            name: "RewardsClaimed",
-            inputs: [
-              {
-                name: "user",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
-              {
-                name: "rewardAmount",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-              },
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
             ],
-            anonymous: false,
-          },
-          {
-            type: "event",
-            name: "RewardsUpdated",
-            inputs: [
-              {
-                name: "user",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
-              {
-                name: "rewardDebt",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-              },
-              {
-                name: "accumulatedReward",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-              },
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"rewardRatePerDay",
+            "inputs":[
+               
             ],
-            anonymous: false,
-          },
-          {
-            type: "event",
-            name: "Staked",
-            inputs: [
-              {
-                name: "user",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
-              {
-                name: "amount",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-              },
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
             ],
-            anonymous: false,
-          },
-          {
-            type: "event",
-            name: "Unstaked",
-            inputs: [
-              {
-                name: "user",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-              },
-              {
-                name: "amount",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-              },
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"rewardReserve",
+            "inputs":[
+               
             ],
-            anonymous: false,
-          },
-          {
-            type: "error",
-            name: "ReentrancyGuardReentrantCall",
-            inputs: [],
-          },
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
+            ],
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"stake",
+            "inputs":[
+               {
+                  "name":"_amount",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
+            ],
+            "outputs":[
+               
+            ],
+            "stateMutability":"nonpayable"
+         },
+         {
+            "type":"function",
+            "name":"stakes",
+            "inputs":[
+               {
+                  "name":"",
+                  "type":"address",
+                  "internalType":"address"
+               }
+            ],
+            "outputs":[
+               {
+                  "name":"amount",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               },
+               {
+                  "name":"rewardDebt",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               },
+               {
+                  "name":"lastStakedTime",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
+            ],
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"stakingToken",
+            "inputs":[
+               
+            ],
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"address",
+                  "internalType":"contract Token"
+               }
+            ],
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"totalStaked",
+            "inputs":[
+               
+            ],
+            "outputs":[
+               {
+                  "name":"",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
+            ],
+            "stateMutability":"view"
+         },
+         {
+            "type":"function",
+            "name":"unstake",
+            "inputs":[
+               {
+                  "name":"_amount",
+                  "type":"uint256",
+                  "internalType":"uint256"
+               }
+            ],
+            "outputs":[
+               
+            ],
+            "stateMutability":"nonpayable"
+         },
+         {
+            "type":"event",
+            "name":"RewardsClaimed",
+            "inputs":[
+               {
+                  "name":"user",
+                  "type":"address",
+                  "indexed":true,
+                  "internalType":"address"
+               },
+               {
+                  "name":"rewardAmount",
+                  "type":"uint256",
+                  "indexed":false,
+                  "internalType":"uint256"
+               }
+            ],
+            "anonymous":false
+         },
+         {
+            "type":"event",
+            "name":"RewardsUpdated",
+            "inputs":[
+               {
+                  "name":"user",
+                  "type":"address",
+                  "indexed":true,
+                  "internalType":"address"
+               },
+               {
+                  "name":"rewardDebt",
+                  "type":"uint256",
+                  "indexed":false,
+                  "internalType":"uint256"
+               },
+               {
+                  "name":"accumulatedReward",
+                  "type":"uint256",
+                  "indexed":false,
+                  "internalType":"uint256"
+               }
+            ],
+            "anonymous":false
+         },
+         {
+            "type":"event",
+            "name":"Staked",
+            "inputs":[
+               {
+                  "name":"user",
+                  "type":"address",
+                  "indexed":true,
+                  "internalType":"address"
+               },
+               {
+                  "name":"amount",
+                  "type":"uint256",
+                  "indexed":false,
+                  "internalType":"uint256"
+               }
+            ],
+            "anonymous":false
+         },
+         {
+            "type":"event",
+            "name":"Unstaked",
+            "inputs":[
+               {
+                  "name":"user",
+                  "type":"address",
+                  "indexed":true,
+                  "internalType":"address"
+               },
+               {
+                  "name":"amount",
+                  "type":"uint256",
+                  "indexed":false,
+                  "internalType":"uint256"
+               }
+            ],
+            "anonymous":false
+         },
+         {
+            "type":"error",
+            "name":"ReentrancyGuardReentrantCall",
+            "inputs":[
+               
+            ]
+         }
         ],
       },
       {
