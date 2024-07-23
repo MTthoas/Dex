@@ -1,3 +1,4 @@
+"use client";
 import { liquidityFactoryAddress } from "@/abi/address";
 import { ERC20 } from "@/abi/ERC20";
 import { LiquidityPoolABI } from "@/abi/liquidityPool";
@@ -13,7 +14,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { queryClient } from "@/context";
+import { postTransaction } from "@/hook/transactions.hook";
+import { EnumTransactionType } from "@/types/transaction.type";
 import { formatTimeRemaining } from "@/utils/time.utils";
+import { useMutation } from "@tanstack/react-query";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -48,8 +53,19 @@ export default function Layout() {
   const [maxWithdrawableB, setMaxWithdrawableB] = useState(0);
   const [errorModal, setErrorModal] = useState("");
   const [loadingRewards, setLoadingRewards] = useState(false);
+  const [loading, setLoading] = useState({
+    addLiquidity: false,
+    removeLiquidity: false,
+  });
   const [ratio, setRatio] = useState(1);
   const signer = getSigner(chainId);
+
+  const mutation = useMutation({
+    mutationFn: postTransaction,
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+    },
+  });
 
   const FactoryContract = useFactoryContract({
     address: liquidityFactoryAddress,
@@ -71,14 +87,6 @@ export default function Layout() {
     chainId,
   });
 
-  const { data: baaa } = useReadContract({
-    abi: LiquidityPoolABI,
-    functionName: "calculateRewards",
-    address: "0x405313d423FE4A3347f76c9875f42f7d4C7d6501" as `0x${string}`,
-    args: [address],
-    chainId,
-  });
-
   const { data: balanceLPT } = useReadContract({
     abi: ERC20,
     functionName: "balanceOf",
@@ -92,21 +100,19 @@ export default function Layout() {
     chainId
   );
 
-  console.log("AllTokens", allTokens);
-
   const handleAddLiquidity = async () => {
+    setLoading((prev) => ({ ...prev, addLiquidity: true }));
     if (!pairsSelected) return;
     if (!addLiquidityAmountA || !addLiquidityAmountB) return;
-    // If amount are equal to 0
     if (
       BigInt(addLiquidityAmountA) === 0n ||
       BigInt(addLiquidityAmountB) === 0n
     ) {
       console.error("Amount must be greater than 0");
       toast.error("Amount must be greater than 0");
+      setLoading((prev) => ({ ...prev, addLiquidity: false }));
       return;
     }
-    console.log("pairsSelected", pairsSelected);
 
     try {
       const tokenA = allTokens.find(
@@ -119,11 +125,9 @@ export default function Layout() {
       if (!tokenA || !tokenB) {
         console.error("Token not found");
         toast.error("Token not found");
+        setLoading((prev) => ({ ...prev, addLiquidity: false }));
         return;
       }
-
-      console.log("tokenA", tokenA);
-      console.log("tokenB", tokenB);
 
       const tokenAContract = new ethers.Contract(tokenA.address, ERC20, signer);
       const tokenBContract = new ethers.Contract(tokenB.address, ERC20, signer);
@@ -139,26 +143,21 @@ export default function Layout() {
       ) {
         console.error("Liquidity amounts must be greater than zero");
         toast.error("Liquidity amounts must be greater than zero");
+        setLoading((prev) => ({ ...prev, addLiquidity: false }));
         return;
       }
 
-      console.log("Approving token A...");
       const approveTokenATx = await tokenAContract.approve(
         pairsSelected.address,
         ethers.parseUnits(BigInt(addLiquidityAmountA).toString(), 18)
       );
 
-      console.log("Approving token B...");
       const approveTokenBTx = await tokenBContract.approve(
         pairsSelected.address,
         ethers.parseUnits(BigInt(addLiquidityAmountB).toString(), 18)
       );
 
       await Promise.all([approveTokenATx.wait(), approveTokenBTx.wait()]);
-
-      console.log("Adding liquidity to the pool...");
-      console.log("Liquidity A:", addLiquidityAmountA);
-      console.log("Liquidity B:", addLiquidityAmountB);
 
       const addLiquidityTx = await liquidityPoolContract.addLiquidity(
         ethers.parseUnits(BigInt(addLiquidityAmountA).toString(), 18),
@@ -168,18 +167,36 @@ export default function Layout() {
       toast.success("Liquidity added successfully", {
         description: "Hash :" + addLiquidityTx.hash,
       });
-      await refetch(); // Ensure refetch is awaited
+
+      mutation.mutate({
+        amount: Number(addLiquidityAmountA),
+        created_at: new Date().toISOString(),
+        from: address,
+        hash: addLiquidityTx.hash,
+        amount_a: Number(addLiquidityAmountA),
+        amount_b: Number(addLiquidityAmountB),
+        symbol_a: pairsSelected.tokenA,
+        symbol_b: pairsSelected.tokenB,
+        to: pairsSelected.address,
+        type: EnumTransactionType.AddLiquidity,
+        updated_at: new Date().toISOString(),
+      });
+
+      await refetch();
+      setAddLiquidityModal(false);
     } catch (error) {
       console.error("Failed to add liquidity:", error.message);
       toast.error("Failed to add liquidity");
+    } finally {
+      setLoading((prev) => ({ ...prev, addLiquidity: false }));
     }
   };
 
   const handleRemoveLiquidity = async () => {
+    setLoading((prev) => ({ ...prev, removeLiquidity: true }));
     if (!pairsSelected) return;
     if (!removeLiquidityAmountA || !removeLiquidityAmountB) return;
 
-    // verify if amount is greater than limit withdrawable
     if (
       Number(removeLiquidityAmountA) > maxWithdrawableA ||
       Number(removeLiquidityAmountB) > maxWithdrawableB
@@ -187,22 +204,20 @@ export default function Layout() {
       console.error("Amount is greater than the maximum withdrawable amount");
       setErrorModal("Amount is greater than the maximum withdrawable amount");
       toast.error("Amount is greater than the maximum withdrawable amount");
+      setLoading((prev) => ({ ...prev, removeLiquidity: false }));
       return;
     }
 
-    // Verify if time chrono is over, pairsSelected.timeRemaining = 5826n
     const timeRemaining = Number(pairsSelected.timeRemaining);
     if (timeRemaining > 0) {
       const { hours, minutes, seconds } = formatTimeRemaining(timeRemaining);
-      console.log(
-        `Chrono will be over in ${hours} hours, ${minutes} minutes, and ${seconds} seconds`
-      );
       setErrorModal(
         `Chrono will be over in ${hours} hours, ${minutes} minutes, and ${seconds} seconds`
       );
       toast.error(
         `Chrono will be over in ${hours} hours, ${minutes} minutes, and ${seconds} seconds`
       );
+      setLoading((prev) => ({ ...prev, removeLiquidity: false }));
       return;
     }
 
@@ -218,19 +233,35 @@ export default function Layout() {
         ethers.parseUnits(BigInt(removeLiquidityAmountB).toString(), 18)
       );
       await removeLiquidityTx.wait();
+
+      mutation.mutate({
+        amount: Number(removeLiquidityAmountA),
+        created_at: new Date().toISOString(),
+        from: address,
+        hash: removeLiquidityTx.hash,
+        amount_a: Number(removeLiquidityAmountA),
+        amount_b: Number(removeLiquidityAmountB),
+        symbol_a: pairsSelected.tokenA,
+        symbol_b: pairsSelected.tokenB,
+        to: pairsSelected.address,
+        type: EnumTransactionType.RemoveLiquidity,
+        updated_at: new Date().toISOString(),
+      });
+
       setRemoveLiquidityModal(false);
-      await refetch(); // Ensure refetch is awaited
+      await refetch();
       toast.success("Liquidity removed successfully");
     } catch (error) {
       console.error("Failed to remove liquidity:", error.message);
       toast.error("Failed to remove liquidity");
+    } finally {
+      setLoading((prev) => ({ ...prev, removeLiquidity: false }));
     }
   };
 
   const handleClaimRewards = async (pairtoClaim) => {
     if (!pairtoClaim) return;
     setLoadingRewards(true);
-    console.log("pairtoClaim", pairtoClaim);
 
     const liquidityPoolContract = new ethers.Contract(
       pairtoClaim.address,
@@ -242,12 +273,28 @@ export default function Layout() {
       const claimRewardsTx = await liquidityPoolContract.claimRewards();
       await claimRewardsTx.wait();
       setClaimRewardsModal(false);
-      await refetch(); // Ensure refetch is awaited
+      await refetch();
+
+      mutation.mutate({
+        amount: Number(pairtoClaim.liquidityTokens),
+        created_at: new Date().toISOString(),
+        from: address,
+        hash: claimRewardsTx.hash,
+        amount_a: Number(ethers.formatEther(pairtoClaim.liquidityTokens)),
+        amount_b: 0,
+        symbol_a: "LPT",
+        symbol_b: "",
+        to: pairtoClaim.address,
+        type: EnumTransactionType.Claim,
+        updated_at: new Date().toISOString(),
+      });
+
       toast.success("Rewards claimed successfully");
     } catch (error) {
       console.error("Failed to claim rewards:", error.message);
-      setLoadingRewards(false);
       toast.error("Failed to claim rewards");
+    } finally {
+      setLoadingRewards(false);
     }
   };
 
@@ -292,7 +339,6 @@ export default function Layout() {
   }, [addLiquidityAmountB]);
 
   useEffect(() => {
-    // Update ratio
     if (pairsSelected && pairsSelected.reserveA && pairsSelected.reserveB) {
       const reserveA = Number(ethers.formatEther(pairsSelected.reserveA));
       const reserveB = Number(ethers.formatEther(pairsSelected.reserveB));
@@ -302,8 +348,6 @@ export default function Layout() {
         setRatio(reserveA / reserveB);
       }
     }
-
-    console.log("pairsSelected :", pairsSelected);
 
     if (pairsSelected && pairsSelected.tokenA && pairsSelected.tokenB) {
       const tokenA = allTokens.find(
@@ -344,7 +388,6 @@ export default function Layout() {
       pairsSelected.tokenAAmount &&
       pairsSelected.tokenBAmount
     ) {
-      console.log("pairsSelected", pairsSelected);
       setMaxWithdrawableA(
         Number(ethers.formatEther(pairsSelected.tokenAAmount))
       );
@@ -417,7 +460,12 @@ export default function Layout() {
               {errorModal !== "" && (
                 <p className="text-red-500">{errorModal}</p>
               )}
-              <Button onClick={handleRemoveLiquidity}>Remove Liquidity</Button>
+              <Button
+                onClick={handleRemoveLiquidity}
+                disabled={loading.removeLiquidity}
+              >
+                {loading.removeLiquidity ? "Removing..." : "Remove Liquidity"}
+              </Button>
             </div>
           </DialogFooter>
         </DialogContent>
@@ -453,7 +501,12 @@ export default function Layout() {
           <DialogFooter>
             <div className="flex justify-between w-full">
               <span> Ratio: {ratio}</span>
-              <Button onClick={handleAddLiquidity}>Add Liquidity</Button>
+              <Button
+                onClick={handleAddLiquidity}
+                disabled={loading.addLiquidity}
+              >
+                {loading.addLiquidity ? "Adding..." : "Add Liquidity"}
+              </Button>
             </div>
           </DialogFooter>
         </DialogContent>

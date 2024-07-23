@@ -43,7 +43,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
   isLoading,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5;
+  const rowsPerPage = 10;
 
   const handleChangePage = (newPage: number) => {
     setCurrentPage(newPage);

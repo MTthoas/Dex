@@ -33,18 +33,6 @@ import { columns as tokenColumns } from "./ColumnDef";
 import { ethereumColumns } from "./ColumnDefEthereum";
 import { Token } from "./token.model";
 
-function formatMarketCap(value: number) {
-  let formattedValue;
-  if (value >= 1e9) {
-    formattedValue = `${(value / 1e9).toFixed(2)} B`;
-  } else if (value >= 1e6) {
-    formattedValue = `${(value / 1e6).toFixed(2)} M`;
-  } else {
-    formattedValue = value.toFixed(2);
-  }
-  return formattedValue;
-}
-
 export default function TokenPage() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -61,6 +49,8 @@ export default function TokenPage() {
     placeholderData: [],
   });
 
+  console.log(tokens);
+
   const {
     data: coins,
     isLoading: isLoadingCoins,
@@ -70,8 +60,6 @@ export default function TokenPage() {
     queryFn: getCoins,
     placeholderData: [],
   });
-
-  console.log("coins", coins);
 
   const ethereumCoins = useMemo(() => {
     return coins?.slice(0, 10) ?? [];
@@ -116,7 +104,7 @@ export default function TokenPage() {
   }
 
   if (isErrorTokens || isErrorCoins) {
-    return <div>Error loading data</div>;
+    return <div>Error...</div>;
   }
 
   return (
@@ -174,7 +162,7 @@ export default function TokenPage() {
               ))}
             </TableHeader>
             <TableBody>
-              {isLoadingTokens
+              {(tokens && tokens.length == 0) || isLoadingTokens
                 ? Array.from({ length: 5 }).map((_, index) => (
                     <TableRow key={index}>
                       <TableCell>

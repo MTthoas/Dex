@@ -1,9 +1,9 @@
 import Header from "@/components/common/Header";
+import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import Web3ModalProvider from "@/context/index";
 import type { Metadata } from "next";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Genx DEX",
@@ -25,7 +25,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="h-full w-full dark:bg-black bg-white  dark:bg-grid-white/[0.08] bg-grid-black/[0.1] relative ">
+            <div className="h-full w-full dark:bg-black bg-white  dark:bg-grid-white/[0.08] bg-grid-black/[0.05] relative ">
               {/* Radial gradient for the container to give a faded look */}
 
               <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_15%,black)]"></div>

@@ -249,13 +249,6 @@ export default function SwapCard({
           approveTxSecond.hash,
       });
 
-      // Make an useQuery to post transactions
-
-      // useQuery({
-      //   queryKey: ["transactions"],
-      //   queryFn: postTransactions,
-      // });
-
       const swapTx = await swapContract.swap(
         DataCurrent.address,
         amountInWei,

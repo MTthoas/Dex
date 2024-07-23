@@ -1,4 +1,7 @@
 "use client";
+import { liquidityFactoryAddress, StakingFactoryAddress } from "@/abi/address";
+import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
+import { stakingFactoryAbi } from "@/abi/StakingFactory";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -7,22 +10,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ethers } from "ethers";
-import { useAccount, useWriteContract } from "wagmi";
-import { stakingFactoryAbi } from "@/abi/StakingFactory";
-import { useState, useEffect } from "react";
-import { Address } from "viem";
-import { StakingFactoryAddress } from "@/abi/address";
-import { liquidityFactoryAddress } from "@/abi/address";
-import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
-import { polygonAmoy } from "viem/chains";
-import { useReadContract } from "wagmi";
 import { useFetchTokensPairsByAddressList } from "@/hook/useFetchTokenPairs";
-
+import { useEffect, useState } from "react";
+import { Address } from "viem";
+import { polygonAmoy } from "viem/chains";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
 
 // Define the Token type
 interface Token {
@@ -45,10 +40,8 @@ export default function StakingFactoryModalAddStake() {
     chainId,
   });
 
-  const { allTokens }: { allTokens: Token[] } = useFetchTokensPairsByAddressList(
-    listOfAddress,
-    chainId
-  );
+  const { allTokens }: { allTokens: Token[] } =
+    useFetchTokensPairsByAddressList(listOfAddress, chainId);
 
   useEffect(() => {
     if (allTokens && allTokens.length > 0) {
@@ -71,13 +64,10 @@ export default function StakingFactoryModalAddStake() {
     } catch (error) {
       console.error("Transaction failed", error);
     }
-  };  
+  };
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="mt-8 ml-2 bg-white text-black">Create Staking Pool</Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>New Staking Pool</DialogTitle>

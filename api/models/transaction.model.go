@@ -6,6 +6,8 @@ const (
 	Send            EnumTransactionType = "send"
 	Swap            EnumTransactionType = "swap"
 	Stack           EnumTransactionType = "stack"
+	Unstack         EnumTransactionType = "unstack"
+	Claim           EnumTransactionType = "claim"
 	AddLiquidity    EnumTransactionType = "add_liquidity"
 	RemoveLiquidity EnumTransactionType = "remove_liquidity"
 )

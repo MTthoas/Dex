@@ -2,6 +2,8 @@ export enum EnumTransactionType {
     Send = "send",
     Swap = "swap",
     Stack = "stack",
+    Unstack = "unstack",
+    Claim = "claim",
     AddLiquidity = "add_liquidity",
     RemoveLiquidity = "remove_liquidity",
 }

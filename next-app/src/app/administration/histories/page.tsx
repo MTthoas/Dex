@@ -17,6 +17,12 @@ const HistoriesPage: React.FC = () => {
     queryFn: getTransactions,
   });
 
+  // Sort transactions by update_at
+  transactions?.data?.sort(
+    (a, b) =>
+      new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+  );
+
   return (
     <>
       <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
