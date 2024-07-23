@@ -16,7 +16,7 @@ import (
 // @Tags Tokens
 // @Accept json
 // @Produce json
-// @Success 200 {object} []models.Token
+// @Success 200 {object} []models.Coin
 // @Failure 500 {object} map[string]interface{}
 // @Router /api/v1/tokens/ethereum [get]
 func GetEthereumTokensController(c *fiber.Ctx) error {

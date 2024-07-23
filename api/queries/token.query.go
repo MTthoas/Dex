@@ -16,7 +16,7 @@ type TokenQueries struct {
 	DB *gorm.DB
 }
 
-func GetEthereumTokens() []models.Token {
+func GetEthereumTokens() []models.Coin {
 	apiUrl := "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=ethereum-ecosystem"
 
 	req, err := http.NewRequest("GET", apiUrl, nil)
@@ -47,7 +47,9 @@ func GetEthereumTokens() []models.Token {
 		return nil
 	}
 
-	var tokens []models.Token
+	// print body
+
+	var tokens []models.Coin
 	err = json.Unmarshal(body, &tokens)
 	if err != nil {
 		log.Printf("Erreur lors du décodage du JSON : %v", err)
