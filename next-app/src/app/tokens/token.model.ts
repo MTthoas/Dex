@@ -1,17 +1,18 @@
 export type Token = {
-        Id: string,
-        Index: number,
-        Name: string,
-        Symbol: string,
-        Image: string,
-        CurrentPrice: number,
-        MarketCap: number,
-        MarketCapRank: number,
-        TotalVolume: number,
-        PriceChange24h: number,
-        PriceChangePercentage24h: number,
-        MarketCapChange24h: number,
-        MarketCapChangePercentage24h: number,
-        TotalSupply: number,
-        CirculatingSupply: number,
-}
+  id: string;
+  index: number;
+  name: string;
+  symbol: string;
+  image: string;
+  address: string;
+  currentPrice: number;
+  marketCap: number;
+  marketCapRank: number;
+  totalVolume: number;
+  priceChange24h: number;
+  priceChangePercentage24h: number;
+  marketCapChange24h: number;
+  marketCapChangePercentage24h: number;
+  totalSupply: number;
+  circulatingSupply?: number;
+};

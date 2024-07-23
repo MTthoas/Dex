@@ -18,37 +18,43 @@ import {
 import { formatAddress } from "@/utils/string.util";
 import React, { useEffect, useState } from "react";
 
-import { GensAddress, GenxAddress } from "@/abi/address";
+import { Token } from "@/app/tokens/token.model";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getTokens } from "@/hook/tokens.hook";
 import { useFetchBalances } from "@/hook/useFetchBalances";
 import { User } from "@/types/user.type";
+import { formatUnits } from "viem";
 import { useAccount } from "wagmi";
 
 type UsersTableProps = {
   users: User[];
-  isLoading: boolean;
+  isUsersLoading: boolean;
+  tokens: Token[];
+  isTokensLoading: boolean;
 };
 
-const UsersTable: React.FC<UsersTableProps> = ({ users, isLoading }) => {
+const UsersTable: React.FC<UsersTableProps> = ({
+  users,
+  isUsersLoading,
+  tokens,
+  isTokensLoading,
+}) => {
   const { chainId } = useAccount();
   const [currentPage, setCurrentPage] = useState(1);
   const [listOfUsersAddress, setListOfUsersAddress] = useState<string[]>([]);
-  const data = getTokens();
+  const [listOfTokensAddress, setListOfTokensAddress] = useState<string[]>([]);
   const rowsPerPage = 5;
-
-  
 
   useEffect(() => {
     setListOfUsersAddress(users.map((user) => user.address));
   }, [users]);
 
-  console.log("dataTokens", data);
-
-  const tokenAddressList = [GenxAddress, GensAddress];
+  useEffect(() => {
+    console.log("Tokens", tokens);
+    setListOfTokensAddress(tokens.map((token) => token.address));
+  }, [tokens]);
 
   const { balances, isSuccess, error } = useFetchBalances(
-    tokenAddressList,
+    listOfTokensAddress,
     listOfUsersAddress,
     chainId
   );
@@ -68,7 +74,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, isLoading }) => {
   const handleChangePage = (newPage: number) => {
     setCurrentPage(newPage);
   };
-  
+
   const currentUsers = users.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
@@ -92,10 +98,13 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, isLoading }) => {
               <TableHead>Name</TableHead>
               <TableHead>Address</TableHead>
               <TableHead>Banned</TableHead>
+              {tokens.map((token) => (
+                <TableHead key={token.address}>{token.symbol}</TableHead>
+              ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading
+            {isUsersLoading || isTokensLoading
               ? Array.from({ length: rowsPerPage }).map((_, index) => (
                   <TableRow key={index}>
                     <TableCell>
@@ -116,10 +125,20 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, isLoading }) => {
                     <TableCell>
                       <Skeleton className="h-4 w-16" />
                     </TableCell>
+                    {tokens.map((token) => (
+                      <TableCell key={token.address}>
+                        <Skeleton className="h-4 w-16" />
+                      </TableCell>
+                    ))}
                   </TableRow>
                 ))
               : currentUsers.map((user) => (
-                  <UserRow key={user.id} user={user} balances={balances} />
+                  <UserRow
+                    key={user.id}
+                    user={user}
+                    balances={balances}
+                    tokens={tokens}
+                  />
                 ))}
           </TableBody>
         </Table>
@@ -156,9 +175,18 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, isLoading }) => {
   );
 };
 
-function UserRow({ user, balances }: { user: User; balances: any }) {
+function UserRow({
+  tokens,
+  user,
+  balances,
+}: {
+  user: User;
+  balances: any;
+  tokens: Token[];
+}) {
   const updatedDate = new Date(user.updated_at).toLocaleString("fr");
   const createdDate = new Date(user.created_at).toLocaleString("fr");
+  //formatUnits(data, 2)
 
   return (
     <TableRow>
@@ -168,12 +196,18 @@ function UserRow({ user, balances }: { user: User; balances: any }) {
       <TableCell>{user.name}</TableCell>
       <TableCell>{formatAddress(user.address)}</TableCell>
       <TableCell>{user.banned}</TableCell>
-      <TableCell>
-        {balances[GenxAddress]?.[user.address]?.toString() || "Loading..."}
-      </TableCell>
-      <TableCell>
-        {balances[GensAddress]?.[user.address]?.toString() || "Loading..."}
-      </TableCell>
+      {tokens.map((token) => (
+        <TableCell key={token.address}>
+          {balances[token.address]?.[user.address]
+            ? Number(
+                formatUnits(
+                  balances[token.address]?.[user.address].toString(),
+                  18
+                )
+              ).toFixed(2)
+            : "Loading..."}
+        </TableCell>
+      ))}
     </TableRow>
   );
 }
