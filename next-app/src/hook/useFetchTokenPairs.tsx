@@ -105,8 +105,6 @@ export function useFetchTokensPairsByAddressList(list, chainId) {
     contracts: CalculateRewards,
   });
 
-  console.log(userInfoData);
-
   useEffect(() => {
     if (
       pairsData &&

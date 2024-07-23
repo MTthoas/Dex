@@ -38,8 +38,9 @@ export async function createToken(data: any): Promise<any> {
   return response.json();
 }
 
-export async function deleteToken(address: string) {
-  const response = await fetch(apiUrl + `tokens/address/${address}`, {
+export async function deleteToken(id: any) {
+  console.log("deleteToken", id);
+  const response = await fetch(apiUrl + `tokens/${id}`, {
     method: "DELETE",
   });
   if (!response.ok) {
