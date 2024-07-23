@@ -2,10 +2,10 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
-import "../src/token/Token.sol";
-import "../src/token/LiquidityPoolToken.sol";
-import "../src/LiquidityPool.sol";
-import "../src/LiquidityPoolFactory.sol";
+import "../../src/token/Token.sol";
+import "../../src/token/LiquidityPoolToken.sol";
+import "../../src/LiquidityPool.sol";
+import "../../src/LiquidityPoolFactory.sol";
 
 contract SwapTest is Script {
     Token tokenA;

@@ -110,6 +110,14 @@ contract UserRegistry is ReentrancyGuard, AccessControl {
         return userId;
     }
 
+    function unregisterUser(address _userAddress) public onlyRole(ADMIN_ROLE) nonReentrant {
+        require(isRegisteredUser(_userAddress), "User not registered");
+
+        uint256 userId = users[_userAddress].id;
+        registeredUserIds.remove(userId);
+        delete users[_userAddress];
+    }
+
     /**
      * @notice Bans the user with the given address.
      * @param _userAddress The address of the user to ban.

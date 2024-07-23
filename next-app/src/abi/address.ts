@@ -10,7 +10,7 @@ export const StakingFactoryAddress: Address = "0xc7839a21366139D6dfa5690865d2B2b
 export const StakingAddress: Address = "0x937cD4Aa88445B27f8eBe6d35A760a4aF18aE682";
 export const AdminWallet: Address = "0x3964D0011EB003488Ab59B1ce0C235baA3998bdd";
 export const TokenManagerAddress = "0xe54947ce60667E6bA9C15619D85169b20299BF63";
-export const UserRegistryAddress = "0x76F6F2cdd70129Bef9e73C89dDCA4df253a33100";
+export const UserRegistryAddress = "0x82Ce96706DbAf66c178a100781F8002Ef23d1F95";
 
 
 export const ContractsOwnerAddress = ["0x0a629f2643b4ef012fe9fd91fed130e01db895dc", "0xc7839a21366139D6dfa5690865d2B2bcCa245917", "0x3964D0011EB003488Ab59B1ce0C235baA3998bdd"];
