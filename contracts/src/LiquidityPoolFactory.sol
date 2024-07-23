@@ -61,16 +61,8 @@ contract LiquidityPoolFactory is ReentrancyGuard, AccessControl {
         );
         require(hasRole(ADMIN_ROLE, msg.sender), "Factory: caller is not admin");
 
-        LiquidityPool liquidityPool = new LiquidityPool(
-            tokenA,
-            tokenB,
-            address(liquidityToken),
-            platformFee,
-            10,
-            poolOwner,
-            admin2,
-            admin3
-        );
+        LiquidityPool liquidityPool =
+            new LiquidityPool(tokenA, tokenB, address(liquidityToken), platformFee, 10, poolOwner, admin2, admin3);
 
         // Store pool addresses and mappings
         getPool[tokenA][tokenB] = address(liquidityPool);
@@ -116,6 +108,12 @@ contract LiquidityPoolFactory is ReentrancyGuard, AccessControl {
         return allPools[index];
     }
 
+    /**
+     * @notice Checks if a pool pair already exists.
+     * @param tokenA Address of token A.
+     * @param tokenB Address of token B.
+     * @return Boolean indicating if the pool pair already exists.
+     */
     function isPoolPairAlreadyExists(address tokenA, address tokenB) external view returns (bool) {
         return getPool[tokenA][tokenB] != address(0);
     }

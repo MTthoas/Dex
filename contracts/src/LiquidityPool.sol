@@ -40,6 +40,17 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
     event Swap(address indexed user, address tokenIn, uint256 amountIn, address tokenOut, uint256 amountOut);
     event RewardClaimed(address indexed user, uint256 rewardAmount);
 
+    /**
+     * @dev Constructor for the LiquidityPool contract.
+     * @param _tokenA Address of the first token in the pool.
+     * @param _tokenB Address of the second token in the pool.
+     * @param _liquidityToken Address of the liquidity pool token.
+     * @param _platformFee The platform fee percentage (e.g., 30 for 0.3%).
+     * @param _minimumLiquidity The minimum liquidity amount.
+     * @param _admin Address of the first admin.
+     * @param _admin2 Address of the second admin.
+     * @param _admin3 Address of the third admin.
+     */
     constructor(
         address _tokenA,
         address _tokenB,
@@ -67,10 +78,20 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         _grantRole(ADMIN_ROLE, _admin3);
     }
 
+    /**
+     * @dev Check if a user has added liquidity.
+     * @param user The address of the user to check.
+     * @return True if the user has added liquidity, false otherwise.
+     */
     function hasAddedLiquidity(address user) external view returns (bool) {
         return userLiquidity[user].length > 0;
     }
 
+    /**
+     * @dev Add liquidity to the pool.
+     * @param tokenAAmount The amount of token A to add.
+     * @param tokenBAmount The amount of token B to add.
+     */
     function addLiquidity(uint256 tokenAAmount, uint256 tokenBAmount) external nonReentrant {
         require(tokenAAmount > 0 && tokenBAmount > 0, "Invalid amounts");
 
@@ -99,6 +120,14 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         emit LiquidityAdded(msg.sender, tokenAAmount, tokenBAmount);
     }
 
+    /**
+     * @dev Get liquidity information for a user.
+     * @param user The address of the user.
+     * @return liquidityTokens Total liquidity tokens owned by the user.
+     * @return tokenAAmount Total amount of token A added by the user.
+     * @return tokenBAmount Total amount of token B added by the user.
+     * @return timeRemaining Time remaining for the minimum lock period.
+     */
     function getUserLiquidityInfo(
         address user
     ) public view returns (uint256 liquidityTokens, uint256 tokenAAmount, uint256 tokenBAmount, uint256 timeRemaining) {
@@ -125,6 +154,11 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         return (totalLiquidity, totalTokenA, totalTokenB, remainingTime);
     }
 
+    /**
+     * @dev Remove liquidity from the pool.
+     * @param tokenAAmount The amount of token A to remove.
+     * @param tokenBAmount The amount of token B to remove.
+     */
     function removeLiquidity(uint256 tokenAAmount, uint256 tokenBAmount) external nonReentrant {
         require(userLiquidity[msg.sender].length > 0, "No liquidity added");
         require(tokenAAmount > 0 && tokenBAmount > 0, "Invalid token amounts");
@@ -164,6 +198,13 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         emit LiquidityRemoved(msg.sender, tokenAAmountWithdraw, tokenBAmountWithdraw);
     }
 
+    /**
+     * @dev Internal function to update the user's liquidity information.
+     * @param user The address of the user.
+     * @param liquidity The amount of liquidity to remove.
+     * @param tokenAAmount The amount of token A to remove.
+     * @param tokenBAmount The amount of token B to remove.
+     */
     function updateUserLiquidity(address user, uint256 liquidity, uint256 tokenAAmount, uint256 tokenBAmount) internal {
         uint256 liquidityToRemove = liquidity;
         uint256 tokenAAmountToRemove = tokenAAmount;
@@ -196,6 +237,12 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         }
     }
 
+    /**
+     * @dev Swap tokens in the pool.
+     * @param tokenIn The address of the token to swap from.
+     * @param amountIn The amount of token to swap.
+     * @param minAmountOut The minimum amount of token to receive.
+     */
     function swap(address tokenIn, uint256 amountIn, uint256 minAmountOut) external nonReentrant {
         require(tokenIn == address(tokenA) || tokenIn == address(tokenB), "Invalid token address");
         require(amountIn > 0, "Invalid input amount");
@@ -214,6 +261,12 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         emit Swap(msg.sender, tokenIn, amountIn, tokenOut, amountOut);
     }
 
+    /**
+     * @dev Calculate the amount of output tokens for a given input amount.
+     * @param amountIn The amount of input tokens.
+     * @param tokenIn The address of the input token.
+     * @return The amount of output tokens.
+     */
     function getAmountOut(uint256 amountIn, address tokenIn) public view returns (uint256) {
         uint256 reserveIn = (tokenIn == address(tokenA)) ? reserveA : reserveB;
         uint256 reserveOut = (tokenIn == address(tokenA)) ? reserveB : reserveA;
@@ -221,6 +274,12 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         return (amountInWithFee * reserveOut) / (reserveIn + amountInWithFee);
     }
 
+    /**
+     * @dev Calculate the initial liquidity for the pool.
+     * @param tokenAAmount The amount of token A.
+     * @param tokenBAmount The amount of token B.
+     * @return The initial liquidity amount.
+     */
     function calculateInitialLiquidity(uint256 tokenAAmount, uint256 tokenBAmount) private view returns (uint256) {
         uint256 product = tokenAAmount * tokenBAmount;
         require(product / tokenAAmount == tokenBAmount, "Multiplication overflow");
@@ -229,6 +288,12 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         return initialLiquidity;
     }
 
+    /**
+     * @dev Calculate the liquidity to be minted for the given token amounts.
+     * @param tokenAAmount The amount of token A.
+     * @param tokenBAmount The amount of token B.
+     * @return The liquidity amount to be minted.
+     */
     function calculateLiquidity(uint256 tokenAAmount, uint256 tokenBAmount) private view returns (uint256) {
         uint256 totalSupply_ = liquidityToken.totalSupply();
         if (reserveA == 0 || reserveB == 0) {
@@ -241,24 +306,49 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         return Math.min((tokenAAmount * totalSupply_) / reserveA, (tokenBAmount * totalSupply_) / reserveB);
     }
 
+    /**
+     * @dev Get the reserves of the pool.
+     * @return reserveA The reserve of token A.
+     * @return reserveB The reserve of token B.
+     */
     function getReserves() external view returns (uint256, uint256) {
         return (reserveA, reserveB);
     }
 
+    /**
+     * @dev Get the price of the token.
+     * @param tokenIn The address of the input token.
+     * @param amountIn The amount of input tokens.
+     * @return The price of the token.
+     */
     function getPrice(address tokenIn, uint256 amountIn) external view returns (uint256) {
         return getAmountOut(amountIn, tokenIn);
     }
 
+    /**
+     * @dev Update the platform fee.
+     * @param _platformFee The new platform fee percentage (e.g., 300 for 0.3%).
+     * @return The updated platform fee.
+     */
     function updatePlatformFee(uint256 _platformFee) external onlyRole(ADMIN_ROLE) returns (uint256) {
         require(_platformFee > 0 && _platformFee < 10000, "Invalid platform fee");
         platformFee = _platformFee;
         return platformFee;
     }
 
+    /**
+     * @dev Get the pair of tokens in the pool.
+     * @return The pair of tokens.
+     */
     function getPair() external view returns (address, address) {
         return (address(tokenA), address(tokenB));
     }
 
+    /**
+     * @dev Calculate the rewards for a user.
+     * @param user The address of the user.
+     * @return reward The reward amount.
+     */
     function calculateRewards(address user) public view returns (uint256 reward) {
         require(userLiquidity[user].length > 0, "No liquidity added");
         uint256 totalLiquidity = liquidityToken.totalSupply();
@@ -273,6 +363,9 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         reward = totalReward > userRewards[user] ? totalReward - userRewards[user] : 0;
     }
 
+    /**
+     * @dev Claim rewards for a user.
+     */
     function claimRewards() external nonReentrant {
         uint256 reward = calculateRewards(msg.sender);
         require(reward > 0, "No rewards available");
@@ -283,6 +376,10 @@ contract LiquidityPool is ReentrancyGuard, AccessControl {
         emit RewardClaimed(msg.sender, reward);
     }
 
+    /**
+     * @dev Check if the reserves ratio is within the expected range.
+     * @return bool if the reserves ratio is within the expected range, false otherwise.
+     */
     function checkReservesRatio() private view returns (bool) {
         if (reserveA == 0 || reserveB == 0) {
             return true;
