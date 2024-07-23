@@ -18,9 +18,9 @@ export interface User extends BaseResponse {
   updated_at: string;
 };
 
-export interface Transaction extends BaseResponse {
-  from: string;
-  to: string;
-  amount: number;
-  transaction: string;
-}
+// export interface Transaction extends BaseResponse {
+//   from: string;
+//   to: string;
+//   amount: number;
+//   transaction: string;
+// }

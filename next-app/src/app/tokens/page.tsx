@@ -70,14 +70,14 @@ export default function TokenPage() {
   });
 
   return (
-    <div className="w-full flex justify-center ">
-      <div className="w-2/3">
-        <div className="my-12">
+    <div className="container min-h-screen py-32">
+      <div className="mx-auto xl:mx-14">
+        <div className="w-full mt-7">
           <h1 className="text-3xl font-semibold">
             {" "}
             List of tokens on Ethereum
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground mt-2">
             Each token has a unique ID and can be used to access the Genx API.
           </p>
         </div>

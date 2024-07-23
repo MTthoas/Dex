@@ -1,14 +1,13 @@
 "use client";
 
 import { NavLink } from "@/types/header.type";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { UserRound } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useAccount } from "wagmi";
 import { ModeToggle } from "../ModeToggle";
 import { Button } from "../ui/button";
 import { ContractsOwnerAddress } from "@/abi/address";
+import { CustomConnectButton } from "./ConnectButton";
 
 const HeaderLinks: NavLink[] = [
   {
@@ -91,100 +90,11 @@ export default function Header(): JSX.Element {
           )}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end pt-1 w-1/3">
-          <ConnectButton.Custom>
-            {({
-              account,
-              chain,
-              openAccountModal,
-              openChainModal,
-              openConnectModal,
-              authenticationStatus,
-              mounted,
-            }) => {
-              // Note: If your app doesn't use authentication, you
-              // can remove all 'authenticationStatus' checks
-              const ready = mounted && authenticationStatus !== "loading";
-              const connected =
-                ready &&
-                account &&
-                chain &&
-                (!authenticationStatus ||
-                  authenticationStatus === "authenticated");
-
-              return (
-                <div
-                  {...(!ready && {
-                    "aria-hidden": true,
-                    style: {
-                      opacity: 0,
-                      pointerEvents: "none",
-                      userSelect: "none",
-                    },
-                  })}
-                >
-                  {(() => {
-                    if (!connected) {
-                      return (
-                        <Button onClick={openConnectModal} variant="secondary">
-                          Connect Wallet
-                        </Button>
-                      );
-                    }
-
-                    if (chain.unsupported) {
-                      return (
-                        <Button onClick={openChainModal}>Wrong network</Button>
-                      );
-                    }
-
-                    return (
-                      <div style={{ display: "flex", gap: 12 }}>
-                        <Button
-                          onClick={openChainModal}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                          type="button"
-                          variant="ghost"
-                        >
-                          {chain.hasIcon && (
-                            <div
-                              style={{
-                                background: chain.iconBackground,
-                                width: 12,
-                                height: 12,
-                                borderRadius: 999,
-                                overflow: "hidden",
-                                marginRight: 4,
-                              }}
-                            >
-                              {chain.iconUrl && (
-                                <Image
-                                  alt={chain.name ?? "Chain icon"}
-                                  src={chain.iconUrl}
-                                  height={12}
-                                  width={12}
-                                />
-                              )}
-                            </div>
-                          )}
-                          {chain.name}
-                        </Button>
-
-                        <Button onClick={openAccountModal} type="button">
-                          {account.displayName}
-                          {account.displayBalance
-                            ? ` (${account.displayBalance})`
-                            : ""}
-                        </Button>
-                      </div>
-                    );
-                  })()}
-                </div>
-              );
-            }}
-          </ConnectButton.Custom>
+          <CustomConnectButton
+            showChainModal={true}
+            showAccountModal={true}
+            showError={true}
+          />
 
           {/* If the user is connected, show the account button */}
           {address && (

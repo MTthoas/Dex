@@ -5,11 +5,8 @@ import SendCard from "@/components/actions/send/page";
 import SwapCard from "@/components/actions/swap/page";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { chains } from "@/context";
-import {
-  useFetchTokensPairsByAddressList,
-  useFetchTokensSymbol,
-} from "@/hook/useFetchTokenPairs";
-import { useState, useEffect } from "react";
+import { useFetchTokensPairsByAddressList } from "@/hook/useFetchTokenPairs";
+import { useEffect, useState } from "react";
 import { polygonAmoy } from "viem/chains";
 import { useAccount, useReadContract } from "wagmi";
 import { Skeleton } from "../ui/skeleton";
@@ -18,53 +15,15 @@ export function findChainWithStringValue(value) {
   return chains.find((token) => token.value === value);
 }
 
-function extractTokensWithSupplyAndAddress(pairs) {
-  return pairs.flatMap((pair) => {
-    const tokens = [];
-    for (const key in pair) {
-      if (
-        key.startsWith("token") &&
-        !key.endsWith("Address") &&
-        !key.endsWith("Supply")
-      ) {
-        const tokenKey = key;
-        const addressKey = `${tokenKey}Address`;
-        const supplyKey = `${tokenKey}Supply`;
-
-        if (pair[addressKey]) {
-          tokens.push({
-            token: pair[tokenKey],
-            address: pair[addressKey],
-            supply: pair[supplyKey],
-          });
-        }
-      }
-    }
-    return tokens;
-  });
-}
-
 export default function ActionPage() {
   const [isConnected, setIsConnected] = useState(false);
-  const [cryptoSelected, setCryptoSelected] = useState("Amoy");
+  const [cryptoSelected, setCryptoSelected] = useState("Select a token");
   const [balance, setBalance] = useState<String>("0.00");
   const [isSSR, setIsSSR] = useState(true); // New state to handle SSR
 
   const account = useAccount();
   const { address } = account;
   const chainId = account.chainId ? account.chainId : polygonAmoy.id;
-
-  const { data: listOfAddress } = useReadContract({
-    abi: liquidityPoolFactoryABI,
-    functionName: "allPoolsAddress",
-    address: liquidityFactoryAddress,
-    chainId,
-  });
-
-  const { pairs, allTokens } = useFetchTokensPairsByAddressList(
-    listOfAddress,
-    chainId
-  );
 
   useEffect(() => {
     setIsSSR(false); // Set to false after the first render
@@ -78,9 +37,18 @@ export default function ActionPage() {
     }
   }, [address]);
 
-  if (isSSR) {
-    return null; // Render nothing on the first server-side render
-  }
+  // Always call hooks at the top level
+  const { data: listOfAddress } = useReadContract({
+    abi: liquidityPoolFactoryABI,
+    functionName: "allPoolsAddress",
+    address: liquidityFactoryAddress,
+    chainId,
+  });
+
+  const { pairs, allTokens } = useFetchTokensPairsByAddressList(
+    listOfAddress,
+    chainId
+  );
 
   if (!address) {
     return (
@@ -90,11 +58,15 @@ export default function ActionPage() {
     );
   }
 
+  if (isSSR) {
+    return null; // Render nothing on the first server-side render
+  }
+
   console.log(allTokens);
   console.log("pairs", pairs);
 
   return (
-    <div>
+    <div className="flex justify-center py-32">
       <Tabs defaultValue="swap" className="w-[375px]">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="swap">Swap</TabsTrigger>

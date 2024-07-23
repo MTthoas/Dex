@@ -1,14 +1,14 @@
 "use client";
-import Link from "next/link";
 import {
-  HomeIcon,
   ActivityIcon,
-  CoinsIcon,
-  WalletIcon,
-  SettingsIcon,
   ArrowLeftCircleIcon,
+  CoinsIcon,
+  HomeIcon,
+  SettingsIcon,
+  WalletIcon,
 } from "lucide-react";
-import { usePathname } from 'next/navigation'
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const Sidebar = () => {
   const location = usePathname();
@@ -18,11 +18,11 @@ const Sidebar = () => {
       : "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50";
 
   return (
-    <div className="hidden bg-gray-100/40 lg:block dark:bg-gray-800/40 rounded">
+    <div className="hidden bg-gray-100/40 lg:block dark:bg-gray-800/40 rounded ">
       <div className="flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-[60px] items-center border-b px-5">
           <Link href="/administration/dashboard" passHref>
-            <span className="font-semibold text-lg">Administration</span>
+            {/* <span className="font-semibold text-lg">Administration</span> */}
           </Link>
         </div>
         <div className="flex overflow-auto py-2">

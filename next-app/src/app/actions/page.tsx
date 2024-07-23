@@ -1,13 +1,19 @@
-import { liquidityFactoryAddress } from "@/abi/address";
-import { liquidityPoolFactoryABI } from "@/abi/liquidityPoolFactory";
+"use client";
 import ActionPage from "@/components/actions/page";
-import { useAccount, useReadContract } from "wagmi";
-import { polygonAmoy } from "viem/chains";
-
+import { useAccount } from "wagmi";
 const SwapPage = ({ children }: { children: React.ReactNode }) => {
+  const account = useAccount();
+  const { address } = account;
+
   return (
-    <div className="flex justify-center items-center  min-h-screen py-20">
-      <ActionPage />
+    <div className="container min-h-screen">
+      {address ? (
+        <ActionPage />
+      ) : (
+        <div className="flex justify-center items-center h-[80vh]">
+          <a className="text-2xl font-bold">Please connect your wallet</a>
+        </div>
+      )}
     </div>
   );
 };
